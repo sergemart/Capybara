@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph_initial"
+    app:startDestination="@id/initialSetupFragment">
+
+    <fragment
+        android:id="@+id/initialSetupFragment"
+        android:name="com.github.sergemart.mobile.capybara.ui.InitialSetupFragment"
+        android:label="fragment_initial_setup"
+        tools:layout="@layout/fragment_initial_setup" >
+        <action
+            android:id="@+id/action_initialSetup_to_initialSignin"
+            app:destination="@id/initialSigninFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/initialSigninFragment"
+        android:name="com.github.sergemart.mobile.capybara.ui.InitialSigninFragment"
+        android:label="fragment_initial_signin"
+        tools:layout="@layout/fragment_initial_signin" />
+</navigation>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph_major"
+    app:startDestination="@id/majorDummyFragment">
+
+    <fragment
+        android:id="@+id/majorLocatorFragment"
+        android:name="com.github.sergemart.mobile.capybara.ui.MajorLocatorFragment"
+        android:label="fragment_major_locator"
+        tools:layout="@layout/fragment_major_locator" />
+    <fragment
+        android:id="@+id/majorDummyFragment"
+        android:name="com.github.sergemart.mobile.capybara.ui.MajorDummyFragment"
+        android:label="fragment_major_dummy"
+        tools:layout="@layout/fragment_major_dummy" >
+        <action
+            android:id="@+id/action_majorDummy_to_majorLocator"
+            app:destination="@id/majorLocatorFragment" />
+    </fragment>
+
+</navigation>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.InitialSetupFragment">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:contentDescription="@string/desc_welcome_page_background"
+        android:background="@color/colorWelcomePageBackground"
+        android:scaleType="centerCrop"
+        android:src="@drawable/page_background"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="center">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_i_am_major"
+            style="@style/Widget.App.Button.LargeHollow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/button_i_am_major"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_i_am_minor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/Widget.App.Button.LargeHollow"
+            android:text="@string/button_i_am_minor"/>
+
+    </LinearLayout>
+</FrameLayout>

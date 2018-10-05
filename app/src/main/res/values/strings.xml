@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name" translatable="false">Capybara Family</string>
+    <string name="action_sign_in">Google Sign In</string>
+    <string name="button_i_am_major">I am a parent</string>
+    <string name="button_i_am_minor">I am a child</string>
+    <string name="desc_welcome_page_background">Background Image</string>
+    <string name="msg_google_client_connection_error">Unable to ask Google who are you</string>
+    <string name="msg_firebase_client_connection_error">Unable to ask Google who are you</string>
+</resources>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph_minor"
+    app:startDestination="@id/minorDummyFragment">
+
+    <fragment
+        android:id="@+id/minorTaskListFragment"
+        android:name="com.github.sergemart.mobile.capybara.ui.MinorTaskListFragment"
+        android:label="fragment_minor_task_list"
+        tools:layout="@layout/fragment_minor_task_list" />
+    <fragment
+        android:id="@+id/minorDummyFragment"
+        android:name="com.github.sergemart.mobile.capybara.ui.MinorDummyFragment"
+        android:label="fragment_minor_dummy"
+        tools:layout="@layout/fragment_minor_dummy" >
+        <action
+            android:id="@+id/action_minorDummy_to_minorTaskList"
+            app:destination="@id/minorTaskListFragment" />
+    </fragment>
+
+</navigation>
