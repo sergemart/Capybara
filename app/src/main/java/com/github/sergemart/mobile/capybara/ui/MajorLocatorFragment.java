@@ -1,17 +1,29 @@
 package com.github.sergemart.mobile.capybara.ui;
 
+import android.location.Location;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.github.sergemart.mobile.capybara.BuildConfig;
 import com.github.sergemart.mobile.capybara.Constants;
+import com.github.sergemart.mobile.capybara.R;
 import com.github.sergemart.mobile.capybara.data.GeoRepo;
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import io.reactivex.disposables.CompositeDisposable;
 
 
 public class MajorLocatorFragment extends SupportMapFragment {
@@ -19,6 +31,9 @@ public class MajorLocatorFragment extends SupportMapFragment {
     private static final String TAG = MajorLocatorFragment.class.getSimpleName();
 
     private GoogleMap mGoogleMap;
+
+    private Location mCurrentLocation;
+    private CompositeDisposable mDisposable;
 
 
     // --------------------------- Override fragment event handlers
@@ -74,6 +89,15 @@ public class MajorLocatorFragment extends SupportMapFragment {
     }
 
 
+    // Instance clean-up
+    @Override
+    public void onDestroy() {
+        mDisposable.clear();
+        if (BuildConfig.DEBUG) Log.d(TAG, "Subscriptions are disposed.");
+        super.onDestroy();
+    }
+
+
     // --------------------------- Widget controls
 
     /**
@@ -81,6 +105,7 @@ public class MajorLocatorFragment extends SupportMapFragment {
      */
     private void initMemberVariables() {
         super.getMapAsync(googleMap -> mGoogleMap = googleMap);
+        mDisposable = new CompositeDisposable();
     }
 
 
@@ -95,11 +120,47 @@ public class MajorLocatorFragment extends SupportMapFragment {
      * Set listeners to widgets and containers
      */
     private void setListeners() {
+        // Set a listener to the "GOT A LOCATION" event
+        mDisposable.add(GeoRepo.get().getLocationSubject()
+            .subscribe(location -> {
+                mCurrentLocation = location;
+                this.updateUi();
+            }) // TODO: Implement onError
+        );
+
     }
 
 
     // --------------------------- Subroutines
 
+
+    /**
+     * Update the UI
+     */
+    private void updateUi() {
+        if (mGoogleMap == null) return;
+
+        LatLng myPosition = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
+
+        MarkerOptions myPositionMarkerOptions = new MarkerOptions()
+            .position(myPosition)
+        ;
+        mGoogleMap.clear();
+        mGoogleMap.addMarker(myPositionMarkerOptions);
+
+        LatLngBounds bounds = new LatLngBounds.Builder()                                            // a rectangle around a set of points
+            .include(myPosition)
+            .build()
+        ;
+        int margin = getResources().getDimensionPixelSize(R.dimen.map_inset_margin);
+        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, margin);
+        mGoogleMap.animateCamera(cameraUpdate);
+    }
+
+
+    /**
+     *
+     */
     private void locateMe() {
         if (GeoRepo.get().isLocationPermissionGranted() ) {
             GeoRepo.get().startLocationUpdates();
@@ -107,5 +168,7 @@ public class MajorLocatorFragment extends SupportMapFragment {
             super.requestPermissions(Constants.LOCATION_PERMISSIONS, Constants.REQUEST_CODE_LOCATION_PERMISSIONS);
         }
     }
+
+
 
 }

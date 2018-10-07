@@ -95,8 +95,6 @@ public class InitialSigninFragment extends Fragment {
     /**
      * Set listeners to widgets and containers
      */
-    @SuppressWarnings("ResultOfMethodCallIgnored")
-    @SuppressLint("CheckResult")
     private void setListeners() {
         // Set a listener to the "Sign In" button
         mDisposable.add(
