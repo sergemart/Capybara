@@ -15,8 +15,6 @@ import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptor;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -124,7 +122,7 @@ public class MajorLocatorFragment extends SupportMapFragment {
         mDisposable.add(GeoRepo.get().getLocationSubject()
             .subscribe(location -> {
                 mCurrentLocation = location;
-                this.updateUi();
+                this.updateMap();
             }) // TODO: Implement onError
         );
 
@@ -135,9 +133,9 @@ public class MajorLocatorFragment extends SupportMapFragment {
 
 
     /**
-     * Update the UI
+     * Update the map
      */
-    private void updateUi() {
+    private void updateMap() {
         if (mGoogleMap == null) return;
 
         LatLng myPosition = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());

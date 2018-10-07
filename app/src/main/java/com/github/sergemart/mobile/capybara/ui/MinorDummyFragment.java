@@ -1,6 +1,8 @@
 package com.github.sergemart.mobile.capybara.ui;
 
+import android.location.Location;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -9,8 +11,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.github.sergemart.mobile.capybara.BuildConfig;
+import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
+import com.github.sergemart.mobile.capybara.data.GeoRepo;
 import com.github.sergemart.mobile.capybara.data.Repository;
+import com.google.android.material.button.MaterialButton;
+import com.jakewharton.rxbinding2.view.RxView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -18,11 +25,17 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import io.reactivex.disposables.CompositeDisposable;
 
 
 public class MinorDummyFragment extends Fragment {
 
-    private ImageView mImageView;
+    private static final String TAG = InitialSigninFragment.class.getSimpleName();
+
+    private MaterialButton mSendMyLocationButton;
+
+    private Location mCurrentLocation;
+    private CompositeDisposable mDisposable;
 
 
     // --------------------------- Override fragment event handlers
@@ -53,13 +66,50 @@ public class MinorDummyFragment extends Fragment {
     }
 
 
+    /**
+     * A callback on process the runtime permission dialog
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case Constants.REQUEST_CODE_LOCATION_PERMISSIONS:
+                if ( GeoRepo.get().isLocationPermissionGranted() ) this.locateMe();                 // 2nd try, if granted
+                else {} // TODO: Notify about restricted functionality
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
+
+
+    /**
+     *
+     */
+    @Override
+    public void onPause() {
+        GeoRepo.get().stopLocationUpdates();
+        super.onPause();
+    }
+
+
+    // Instance clean-up
+    @Override
+    public void onDestroy() {
+        mDisposable.clear();
+        if (BuildConfig.DEBUG) Log.d(TAG, "Subscriptions are disposed.");
+        super.onDestroy();
+    }
+
+
     // --------------------------- Widget controls
 
     /**
      * Init member variables
      */
     private void initMemberVariables(View fragmentView) {
-        mImageView = fragmentView.findViewById(R.id.imageView);
+        mSendMyLocationButton = fragmentView.findViewById(R.id.button_send_my_location);
+
+        mDisposable = new CompositeDisposable();
+
     }
 
 
@@ -74,7 +124,38 @@ public class MinorDummyFragment extends Fragment {
      * Set listeners to widgets and containers
      */
     private void setListeners() {
-        mImageView.setOnClickListener(view -> NavHostFragment.findNavController(this).navigate(R.id.action_minorDummy_to_minorTaskList));
+        // Set a listener to the "Send My Location" button
+        mDisposable.add(
+            RxView.clicks(mSendMyLocationButton).subscribe(event -> this.sendMyLocation())
+        );
+
+        // Set a listener to the "GOT A LOCATION" event
+        mDisposable.add(GeoRepo.get().getLocationSubject()
+            .subscribe(location -> mCurrentLocation = location) // TODO: Implement onError
+        );
+
+    }
+
+
+    // --------------------------- Use cases
+
+    /**
+     * Send my location
+     */
+    private void sendMyLocation() {
+        if (mCurrentLocation == null) return;
+    }
+
+
+    /**
+     *
+     */
+    private void locateMe() {
+        if (GeoRepo.get().isLocationPermissionGranted() ) {
+            GeoRepo.get().startLocationUpdates();
+        } else {
+            super.requestPermissions(Constants.LOCATION_PERMISSIONS, Constants.REQUEST_CODE_LOCATION_PERMISSIONS);
+        }
     }
 
 }

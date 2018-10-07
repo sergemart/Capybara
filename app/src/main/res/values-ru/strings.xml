@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="action_sign_in">Войдите в аккаунт Google</string>
-    <string name="button_i_am_major">Я родитель</string>
-    <string name="button_i_am_minor">Я ребёнок</string>
+    <string name="action_send_location">Сообщить, где я</string>
+    <string name="action_i_am_major">Я родитель</string>
+    <string name="action_i_am_minor">Я ребёнок</string>
     <string name="desc_welcome_page_background">Фоновый рисунок</string>
     <string name="msg_google_client_connection_error">Не могу узнать у Google, кто вы</string>
     <string name="msg_firebase_client_connection_error">Не могу узнать у Google, кто вы</string>

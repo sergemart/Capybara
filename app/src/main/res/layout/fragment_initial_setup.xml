@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:contentDescription="@string/desc_welcome_page_background"
-        android:background="@color/colorWelcomePageBackground"
+        android:background="@color/colorDefaultPageBackground"
         android:scaleType="centerCrop"
         android:src="@drawable/page_background"/>
 
@@ -25,14 +25,14 @@
             style="@style/Widget.App.Button.LargeHollow"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/button_i_am_major"/>
+            android:text="@string/action_i_am_major"/>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button_i_am_minor"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/Widget.App.Button.LargeHollow"
-            android:text="@string/button_i_am_minor"/>
+            android:text="@string/action_i_am_minor"/>
 
     </LinearLayout>
 </FrameLayout>

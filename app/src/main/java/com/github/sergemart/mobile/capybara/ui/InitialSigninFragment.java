@@ -1,6 +1,5 @@
 package com.github.sergemart.mobile.capybara.ui;
 
-import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;

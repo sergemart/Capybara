@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:contentDescription="@string/desc_welcome_page_background"
-        android:background="@color/colorWelcomePageBackground"
+        android:background="@color/colorDefaultPageBackground"
         android:scaleType="centerCrop"
         android:src="@mipmap/ic_launcher_round"/>
 
