@@ -9,8 +9,8 @@ import android.view.ViewGroup;
 import com.github.sergemart.mobile.capybara.BuildConfig;
 import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
+import com.github.sergemart.mobile.capybara.data.GoogleRepo;
 import com.github.sergemart.mobile.capybara.data.PreferenceStore;
-import com.github.sergemart.mobile.capybara.engine.CloudEngine;
 import com.github.sergemart.mobile.capybara.viewmodel.SharedStartupViewModel;
 import com.google.android.material.button.MaterialButton;
 import com.jakewharton.rxbinding2.view.RxView;
@@ -33,7 +33,6 @@ public class InitialSetupFragment extends Fragment {
     private MaterialButton mIAmMinorButton;
 
     private CompositeDisposable mDisposable;
-    private CloudEngine mCloudEngine;
     private SharedStartupViewModel mSharedStartupViewModel;
 
 
@@ -69,7 +68,7 @@ public class InitialSetupFragment extends Fragment {
     public void onStart() {
         super.onStart();
         // Auto-navigate to the sign-in page if the APP IS SET UP and the USER IS NOT AUTHENTICATED.
-        if (PreferenceStore.getStoredIsAppModeSet() && !mCloudEngine.isAuthenticated()) {
+        if (PreferenceStore.getStoredIsAppModeSet() && !GoogleRepo.get().isAuthenticated()) {
             NavHostFragment.findNavController(this).navigate(R.id.action_initialSetup_to_initialSignin);
         }
     }
@@ -95,7 +94,6 @@ public class InitialSetupFragment extends Fragment {
 
         mSharedStartupViewModel = ViewModelProviders.of(Objects.requireNonNull( super.getActivity() )).get(SharedStartupViewModel.class);
         mDisposable = new CompositeDisposable();
-        mCloudEngine = (CloudEngine)super.getActivity();
     }
 
 
@@ -139,7 +137,7 @@ public class InitialSetupFragment extends Fragment {
      * Otherwise, notify subscribers that the app is completely initialized
      */
     private void navigateToNextPage() {
-        if (!mCloudEngine.isAuthenticated()) {
+        if (!GoogleRepo.get().isAuthenticated()) {
             NavHostFragment.findNavController(this).navigate(R.id.action_initialSetup_to_initialSignin);
         } else {
             mSharedStartupViewModel.emitAppIsInitialized();

@@ -9,8 +9,8 @@ import android.view.ViewGroup;
 
 import com.github.sergemart.mobile.capybara.BuildConfig;
 import com.github.sergemart.mobile.capybara.R;
+import com.github.sergemart.mobile.capybara.data.GoogleRepo;
 import com.github.sergemart.mobile.capybara.data.PreferenceStore;
-import com.github.sergemart.mobile.capybara.engine.CloudEngine;
 import com.github.sergemart.mobile.capybara.viewmodel.SharedStartupViewModel;
 import com.google.android.material.button.MaterialButton;
 import com.jakewharton.rxbinding2.view.RxView;
@@ -32,7 +32,6 @@ public class InitialSigninFragment extends Fragment {
     private MaterialButton mSignInButton;
 
     private CompositeDisposable mDisposable;
-    private CloudEngine mCloudEngine;
     private SharedStartupViewModel mSharedStartupViewModel;
 
 
@@ -82,7 +81,6 @@ public class InitialSigninFragment extends Fragment {
         mSignInButton = fragmentView.findViewById(R.id.button_sign_in);
 
         mDisposable = new CompositeDisposable();
-        mCloudEngine = (CloudEngine)super.getActivity();
         mSharedStartupViewModel = ViewModelProviders.of(Objects.requireNonNull(super.getActivity())).get(SharedStartupViewModel.class);
     }
 
@@ -106,7 +104,7 @@ public class InitialSigninFragment extends Fragment {
         );
 
         // Set a listener to the "SIGNED IN" event
-        mDisposable.add(mSharedStartupViewModel.getFirebaseUserSubject()
+        mDisposable.add(GoogleRepo.get().getSigninSubject()
             .subscribe(event -> this.navigateToNextPage())
         );
     }
@@ -118,7 +116,7 @@ public class InitialSigninFragment extends Fragment {
      * Sign in with Google account
      */
     private void signIn() {
-        mCloudEngine.signIn();
+        GoogleRepo.get().sendSignInIntent(Objects.requireNonNull( super.getActivity() ));
     }
 
 

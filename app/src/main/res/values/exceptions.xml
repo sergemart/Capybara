@@ -1,0 +1,4 @@
+<resources>
+    <string name="exception_google_sign_in_failed" translatable="false">Google sign-in failed.</string>
+    <string name="exception_firebase_client_connection_failed" translatable="false">Firebase client connection failed.</string>
+</resources>
