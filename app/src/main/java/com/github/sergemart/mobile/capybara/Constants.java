@@ -22,6 +22,11 @@ public final class Constants {
     public static final int REQUEST_CODE_LOCATION_PERMISSIONS = 7002;
 
 
+    // ----------------------- Data keys
+
+    public static final String KEY_LOCATION = "location";
+
+
     // ----------------------- Permissions
 
     public static final String[] LOCATION_PERMISSIONS = new String[]{

@@ -18,7 +18,6 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 
 import androidx.core.content.ContextCompat;
-import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
 
@@ -88,7 +87,7 @@ public class GeoRepo {
             mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback,null);
             if (BuildConfig.DEBUG) Log.d(TAG, "Location updates started.");
         } catch (SecurityException e) {
-            String errorMessage = mContext.getString(R.string.exception_no_location_permission);
+            String errorMessage = mContext.getString(R.string.exception_location_no_permission);
             mLocationSubject.onError(new LocationPermissionException(errorMessage));
             if (BuildConfig.DEBUG) Log.e(TAG, errorMessage);
         }

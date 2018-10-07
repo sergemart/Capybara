@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import com.github.sergemart.mobile.capybara.BuildConfig;
 import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
+import com.github.sergemart.mobile.capybara.data.FirebaseRepo;
 import com.github.sergemart.mobile.capybara.data.GeoRepo;
 import com.github.sergemart.mobile.capybara.data.Repository;
 import com.google.android.material.button.MaterialButton;
@@ -143,7 +144,9 @@ public class MinorDummyFragment extends Fragment {
      * Send my location
      */
     private void sendMyLocation() {
+        this.locateMe();
         if (mCurrentLocation == null) return;
+        FirebaseRepo.get().sendLocation(mCurrentLocation);
     }
 
 

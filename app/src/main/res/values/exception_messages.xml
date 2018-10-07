@@ -3,5 +3,6 @@
     <string name="exception_google_sign_in_account_is_null" translatable="false">GoogleSignInAccount is null.</string>
     <string name="exception_firebase_client_connection_failed" translatable="false">Firebase client connection failed.</string>
     <string name="exception_firebase_user_is_null" translatable="false">Firebase user is null.</string>
-    <string name="exception_no_location_permission" translatable="false">Runtime location permissions are not granted by user.</string>
+    <string name="exception_firebase_invalid_function_call" translatable="false">Firebase function call is invalid.</string>
+    <string name="exception_location_no_permission" translatable="false">Runtime location permissions are not granted by user.</string>
 </resources>
