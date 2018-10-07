@@ -8,7 +8,7 @@ import com.github.sergemart.mobile.capybara.App;
 import com.github.sergemart.mobile.capybara.BuildConfig;
 import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
-import com.github.sergemart.mobile.capybara.data.GoogleRepo;
+import com.github.sergemart.mobile.capybara.data.FirebaseRepo;
 import com.github.sergemart.mobile.capybara.data.PreferenceStore;
 import com.github.sergemart.mobile.capybara.viewmodel.SharedStartupViewModel;
 
@@ -50,7 +50,7 @@ public class InitialActivity
         super.onStart();
         // Leave the initial graph if the APP IS SET UP and the USER IS AUTHENTICATED.
         // Otherwise implicitly delegate control to the local nav AAC
-        if ( PreferenceStore.getStoredIsAppModeSet() && GoogleRepo.get().isAuthenticated() ) this.leaveInitialGraph();
+        if ( PreferenceStore.getStoredIsAppModeSet() && FirebaseRepo.get().isAuthenticated() ) this.leaveInitialGraph();
     }
 
 
@@ -60,9 +60,9 @@ public class InitialActivity
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent responseIntent) {
         super.onActivityResult(requestCode, resultCode, responseIntent);
-        // The result returned from launching the intent from GoogleRepo.sendSignInIntent()
+        // The result returned from launching the intent from FirebaseRepo.sendSignInIntent()
         if (requestCode == Constants.REQUEST_CODE_SIGN_IN) {
-            GoogleRepo.get().proceedWithFirebaseAuth(responseIntent);
+            FirebaseRepo.get().proceedWithFirebaseAuth(responseIntent);
         }
     }
 

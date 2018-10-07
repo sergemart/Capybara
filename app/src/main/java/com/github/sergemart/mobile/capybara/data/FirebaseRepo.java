@@ -10,6 +10,8 @@ import com.github.sergemart.mobile.capybara.App;
 import com.github.sergemart.mobile.capybara.BuildConfig;
 import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
+import com.github.sergemart.mobile.capybara.exceptions.FirebaseConnectionException;
+import com.github.sergemart.mobile.capybara.exceptions.GoogleSigninException;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -27,16 +29,16 @@ import io.reactivex.subjects.Subject;
 
 
 // Singleton
-public class GoogleRepo {
+public class FirebaseRepo {
 
-    private static final String TAG = GoogleRepo.class.getSimpleName();
+    private static final String TAG = FirebaseRepo.class.getSimpleName();
 
     @SuppressLint("StaticFieldLeak")                                                                // OK for the application context
-    private static GoogleRepo sRepository;
+    private static FirebaseRepo sRepository;
 
 
     // Private constructor
-    private GoogleRepo() {
+    private FirebaseRepo() {
         mContext = App.getContext();
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -52,8 +54,8 @@ public class GoogleRepo {
 
 
     // Factory method
-    public static GoogleRepo get() {
-        if(sRepository == null) sRepository = new GoogleRepo();
+    public static FirebaseRepo get() {
+        if(sRepository == null) sRepository = new FirebaseRepo();
         return sRepository;
     }
 
@@ -113,13 +115,15 @@ public class GoogleRepo {
             googleSignInAccount = completedTask.getResult(ApiException.class);
             // Signed in successfully, show authenticated UI.
         } catch (ApiException e) {
-            mSigninSubject.onError(new RuntimeException( mContext.getString(R.string.exception_google_sign_in_failed), e ));
-            if (BuildConfig.DEBUG) Log.e(TAG, "Google sign-in failed: " + e.getStatusCode());
+            String errorMessage = mContext.getString(R.string.exception_google_sign_in_failed);
+            mSigninSubject.onError(new GoogleSigninException(errorMessage, e));
+            if (BuildConfig.DEBUG) Log.e(TAG, errorMessage + ": " + e.getMessage());
             return;
         }
         if (googleSignInAccount == null) {
-            mSigninSubject.onError(new RuntimeException( mContext.getString(R.string.exception_google_sign_in_failed) ));
-            if (BuildConfig.DEBUG) Log.e(TAG, "GoogleSignInAccount is null.");
+            String errorMessage = mContext.getString(R.string.exception_google_sign_in_account_is_null);
+            mSigninSubject.onError(new GoogleSigninException(errorMessage));
+            if (BuildConfig.DEBUG) Log.e(TAG, errorMessage);
             return;
         }
 
@@ -129,14 +133,16 @@ public class GoogleRepo {
             .signInWithCredential(authCredential)
             .addOnCompleteListener(task -> {
                 if ( !task.isSuccessful() ) {                                                       // error check
-                    mSigninSubject.onError(new RuntimeException( mContext.getString(R.string.exception_firebase_client_connection_failed) ));
-                    if (BuildConfig.DEBUG) Log.e(TAG, "Firebase sign-in failed.");
+                    String errorMessage = mContext.getString(R.string.exception_firebase_client_connection_failed);
+                    mSigninSubject.onError(new FirebaseConnectionException(errorMessage));
+                    if (BuildConfig.DEBUG) Log.e(TAG, errorMessage);
                     return;
                 }
                 mFirebaseUser = mFirebaseAuth.getCurrentUser();
                 if (mFirebaseUser == null) {
-                    mSigninSubject.onError(new RuntimeException( mContext.getString(R.string.exception_firebase_client_connection_failed) ));
-                    if (BuildConfig.DEBUG) Log.e(TAG, "Firebase user is null.");
+                    String errorMessage = mContext.getString(R.string.exception_firebase_user_is_null);
+                    mSigninSubject.onError(new RuntimeException(errorMessage));
+                    if (BuildConfig.DEBUG) Log.e(TAG, errorMessage);
                     return;
                 }
                 mUsername = mFirebaseUser.getDisplayName();
