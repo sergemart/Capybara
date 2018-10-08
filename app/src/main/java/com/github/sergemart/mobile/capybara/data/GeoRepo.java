@@ -28,7 +28,7 @@ public class GeoRepo {
     private static final String TAG = GeoRepo.class.getSimpleName();
 
     @SuppressLint("StaticFieldLeak")                                                                // OK for the application context
-    private static GeoRepo sRepository;
+    private static GeoRepo sInstance;
 
 
     // Private constructor
@@ -55,8 +55,8 @@ public class GeoRepo {
 
     // Factory method
     public static GeoRepo get() {
-        if(sRepository == null) sRepository = new GeoRepo();
-        return sRepository;
+        if(sInstance == null) sInstance = new GeoRepo();
+        return sInstance;
     }
 
 

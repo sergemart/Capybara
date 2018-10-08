@@ -11,8 +11,8 @@ import com.github.sergemart.mobile.capybara.App;
 import com.github.sergemart.mobile.capybara.BuildConfig;
 import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
+import com.github.sergemart.mobile.capybara.Tools;
 import com.github.sergemart.mobile.capybara.exceptions.FirebaseConnectionException;
-import com.github.sergemart.mobile.capybara.exceptions.FirebaseFunctionException;
 import com.github.sergemart.mobile.capybara.exceptions.GoogleSigninException;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -40,7 +40,7 @@ public class FirebaseRepo {
     private static final String TAG = FirebaseRepo.class.getSimpleName();
 
     @SuppressLint("StaticFieldLeak")                                                                // OK for the application context
-    private static FirebaseRepo sRepository;
+    private static FirebaseRepo sInstance;
 
 
     // Private constructor
@@ -61,8 +61,8 @@ public class FirebaseRepo {
 
     // Factory method
     public static FirebaseRepo get() {
-        if(sRepository == null) sRepository = new FirebaseRepo();
-        return sRepository;
+        if(sInstance == null) sInstance = new FirebaseRepo();
+        return sInstance;
     }
 
 
@@ -201,23 +201,27 @@ public class FirebaseRepo {
      * Send a location
      */
     private Task<String> callSendLocationFirebaseFunction(Location location) {
-        Map<String, Object> callParams = new HashMap<>();
-        callParams.put(Constants.KEY_LOCATION, location.toString());
+        Map<String, Object> data = new HashMap<>();
+        data.put(Constants.KEY_LOCATION, Tools.get().getJsonableLocation(location));
 
         return mFirebaseFunctions
             .getHttpsCallable("sendLocation")
-            .call(callParams)
-            .continueWith(task -> {
-                String result = null;
-                try {
-                    result = (String) task.getResult().getData();
-                } catch (Exception e) {
-                    String errorMessage = mContext.getString(R.string.exception_firebase_invalid_function_call);
-                    mSendLocationSubject.onError(new FirebaseFunctionException(errorMessage, e));
-                    if (BuildConfig.DEBUG) Log.e(TAG, errorMessage + ": " + e.getMessage());
-                }
-                return result;
-            })
+//            .call("{\"data\": { \"location\": \"locationData\" }}")
+//            .continueWith(task -> {
+//                String result = null;
+//                try {
+//                    result = (String) task.getResult().getData();
+//                } catch (Exception e) {
+//                    String errorMessage = mContext.getString(R.string.exception_firebase_invalid_function_call);
+//                    mSendLocationSubject.onError(new FirebaseFunctionException(errorMessage, e));
+//                    if (BuildConfig.DEBUG) Log.e(TAG, errorMessage + ": " + e.getMessage());
+//                }
+//                return result;
+//            })
+
+            .call(data)
+            .continueWith(task -> (String) task.getResult().getData())
+
         ;
     }
 

@@ -25,6 +25,9 @@ public final class Constants {
     // ----------------------- Data keys
 
     public static final String KEY_LOCATION = "location";
+    public static final String KEY_LOCATION_LAT = "locationLat";
+    public static final String KEY_LOCATION_LON = "locationLon";
+    public static final String KEY_LOCATION_TIME = "locationTime";
 
 
     // ----------------------- Permissions

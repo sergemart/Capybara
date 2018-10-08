@@ -7,7 +7,7 @@ import java.util.List;
 // Singleton
 public class Repository {
 
-    private static Repository sRepository = new Repository();
+    private static Repository sInstance = new Repository();
 
 
     // Private constructor
@@ -21,8 +21,8 @@ public class Repository {
 
     // Factory method
     public static Repository get() {
-        if(sRepository == null) sRepository = new Repository();
-        return sRepository;
+        if(sInstance == null) sInstance = new Repository();
+        return sInstance;
     }
 
 
