@@ -205,7 +205,6 @@ public class FirebaseRepo {
                     result = (String) task.getResult().getData();
                 } catch (Exception e) {
                     String errorMessage = mContext.getString(R.string.exception_firebase_invalid_function_call);
-                    mSendLocationSubject.onError(new FirebaseFunctionException(errorMessage, e));
                     if (BuildConfig.DEBUG) Log.e(TAG, errorMessage + ": " + e.getMessage());
                 }
                 return result;
@@ -214,17 +213,14 @@ public class FirebaseRepo {
                 if (!task.isSuccessful() && task.getException() != null) {
                     Exception e = task.getException();
                     String errorMessage = mContext.getString(R.string.exception_firebase_location_not_sent);
-                    mSendLocationSubject.onError(new FirebaseFunctionException(errorMessage, e));
                     if (BuildConfig.DEBUG) Log.e(TAG, errorMessage + ": " + e.getMessage());
                 } else if (!task.isSuccessful()) {
                     String errorMessage = mContext.getString(R.string.exception_firebase_location_not_sent);
-                    mSendLocationSubject.onError(new FirebaseFunctionException(errorMessage));
                     if (BuildConfig.DEBUG) Log.e(TAG, errorMessage);
                 }
             })
             .addOnFailureListener(e -> {
                 String errorMessage = mContext.getString(R.string.exception_firebase_location_not_sent);
-                mSendLocationSubject.onError(new FirebaseFunctionException(errorMessage, e));
                 if (BuildConfig.DEBUG) Log.e(TAG, errorMessage + ": " + e.getMessage());
             })
         ;

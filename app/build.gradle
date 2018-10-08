@@ -73,6 +73,7 @@ dependencies {
     // Firebase
     implementation 'com.google.firebase:firebase-core:16.0.3'
     implementation 'com.google.firebase:firebase-auth:16.0.3'
+    implementation 'com.google.firebase:firebase-messaging:17.3.2'
     //noinspection GradleDependency
     implementation 'com.google.firebase:firebase-functions:16.1.0'                                  // corresponds to core:16.0.3
 }
