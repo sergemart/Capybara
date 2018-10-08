@@ -13,6 +13,7 @@ import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
 import com.github.sergemart.mobile.capybara.Tools;
 import com.github.sergemart.mobile.capybara.exceptions.FirebaseConnectionException;
+import com.github.sergemart.mobile.capybara.exceptions.FirebaseFunctionException;
 import com.github.sergemart.mobile.capybara.exceptions.GoogleSigninException;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -25,6 +26,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.functions.FirebaseFunctions;
+import com.google.firebase.functions.FirebaseFunctionsException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -187,42 +189,47 @@ public class FirebaseRepo {
     }
 
 
-    public void sendLocation(Location location) {
-        this.callSendLocationFirebaseFunction(location)
-            .addOnCompleteListener(task -> {})
-            .addOnFailureListener(e -> {})
-        ;
-    }
-
-
-    // --------------------------- Subroutines
-
     /**
      * Send a location
      */
-    private Task<String> callSendLocationFirebaseFunction(Location location) {
+    public void sendLocation(Location location) {
         Map<String, Object> data = new HashMap<>();
         data.put(Constants.KEY_LOCATION, Tools.get().getJsonableLocation(location));
 
-        return mFirebaseFunctions
+        mFirebaseFunctions
             .getHttpsCallable("sendLocation")
-//            .call("{\"data\": { \"location\": \"locationData\" }}")
-//            .continueWith(task -> {
-//                String result = null;
-//                try {
-//                    result = (String) task.getResult().getData();
-//                } catch (Exception e) {
-//                    String errorMessage = mContext.getString(R.string.exception_firebase_invalid_function_call);
-//                    mSendLocationSubject.onError(new FirebaseFunctionException(errorMessage, e));
-//                    if (BuildConfig.DEBUG) Log.e(TAG, errorMessage + ": " + e.getMessage());
-//                }
-//                return result;
-//            })
-
             .call(data)
-            .continueWith(task -> (String) task.getResult().getData())
-
+            .continueWith(task -> {                                                                 // the Continuation
+                String result = null;
+                try {
+                    result = (String) task.getResult().getData();
+                } catch (Exception e) {
+                    String errorMessage = mContext.getString(R.string.exception_firebase_invalid_function_call);
+                    mSendLocationSubject.onError(new FirebaseFunctionException(errorMessage, e));
+                    if (BuildConfig.DEBUG) Log.e(TAG, errorMessage + ": " + e.getMessage());
+                }
+                return result;
+            })
+            .addOnCompleteListener(task -> {
+                if (!task.isSuccessful() && task.getException() != null) {
+                    Exception e = task.getException();
+                    String errorMessage = mContext.getString(R.string.exception_firebase_location_not_sent);
+                    mSendLocationSubject.onError(new FirebaseFunctionException(errorMessage, e));
+                    if (BuildConfig.DEBUG) Log.e(TAG, errorMessage + ": " + e.getMessage());
+                } else if (!task.isSuccessful()) {
+                    String errorMessage = mContext.getString(R.string.exception_firebase_location_not_sent);
+                    mSendLocationSubject.onError(new FirebaseFunctionException(errorMessage));
+                    if (BuildConfig.DEBUG) Log.e(TAG, errorMessage);
+                }
+            })
+            .addOnFailureListener(e -> {
+                String errorMessage = mContext.getString(R.string.exception_firebase_location_not_sent);
+                mSendLocationSubject.onError(new FirebaseFunctionException(errorMessage, e));
+                if (BuildConfig.DEBUG) Log.e(TAG, errorMessage + ": " + e.getMessage());
+            })
         ;
     }
+
+
 
 }

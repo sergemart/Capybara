@@ -3,9 +3,18 @@ package com.github.sergemart.mobile.capybara;
 import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.Context;
+import android.util.Log;
+
+import java.io.IOException;
+import java.net.SocketException;
+
+import io.reactivex.exceptions.UndeliverableException;
+import io.reactivex.plugins.RxJavaPlugins;
 
 
 public class App extends Application {
+
+    private static final String TAG = App.class.getSimpleName();
 
     @SuppressLint("StaticFieldLeak")                                                                // ok for the application context
     private static Context sContext;
@@ -19,6 +28,19 @@ public class App extends Application {
         super.onCreate();
         sContext = super.getApplicationContext();
         sFinishOnReturnToInitialGraphEnabled = false;
+
+        RxJavaPlugins.setErrorHandler(e -> {
+            if (e instanceof UndeliverableException) {
+                e = e.getCause();
+            }
+            if ((e instanceof IOException)) {                                                       // fine, irrelevant network problem or API that throws on cancellation
+                return;
+            }
+            if (e instanceof InterruptedException) {                                                // fine, some blocking code was interrupted by a dispose call
+                return;
+            }
+            if (BuildConfig.DEBUG) Log.e(TAG, e.getMessage());
+        });
     }
 
 
