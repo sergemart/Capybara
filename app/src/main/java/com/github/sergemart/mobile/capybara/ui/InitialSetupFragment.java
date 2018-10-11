@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import com.github.sergemart.mobile.capybara.BuildConfig;
 import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
-import com.github.sergemart.mobile.capybara.data.FirebaseRepo;
+import com.github.sergemart.mobile.capybara.data.CloudRepo;
 import com.github.sergemart.mobile.capybara.data.PreferenceStore;
 import com.github.sergemart.mobile.capybara.viewmodel.SharedStartupViewModel;
 import com.google.android.material.button.MaterialButton;
@@ -68,7 +68,7 @@ public class InitialSetupFragment extends Fragment {
     public void onStart() {
         super.onStart();
         // Auto-navigate to the sign-in page if the APP IS SET UP and the USER IS NOT AUTHENTICATED.
-        if (PreferenceStore.getStoredIsAppModeSet() && !FirebaseRepo.get().isAuthenticated()) {
+        if (PreferenceStore.getStoredIsAppModeSet() && !CloudRepo.get().isAuthenticated()) {
             NavHostFragment.findNavController(this).navigate(R.id.action_initialSetup_to_initialSignin);
         }
     }
@@ -137,7 +137,7 @@ public class InitialSetupFragment extends Fragment {
      * Otherwise, notify subscribers that the app is completely initialized
      */
     private void navigateToNextPage() {
-        if (!FirebaseRepo.get().isAuthenticated()) {
+        if (!CloudRepo.get().isAuthenticated()) {
             NavHostFragment.findNavController(this).navigate(R.id.action_initialSetup_to_initialSignin);
         } else {
             mSharedStartupViewModel.emitAppIsInitialized();

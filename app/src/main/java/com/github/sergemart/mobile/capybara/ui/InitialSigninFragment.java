@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 
 import com.github.sergemart.mobile.capybara.BuildConfig;
 import com.github.sergemart.mobile.capybara.R;
-import com.github.sergemart.mobile.capybara.data.FirebaseRepo;
+import com.github.sergemart.mobile.capybara.data.CloudRepo;
 import com.github.sergemart.mobile.capybara.data.PreferenceStore;
 import com.github.sergemart.mobile.capybara.viewmodel.SharedStartupViewModel;
 import com.google.android.material.button.MaterialButton;
@@ -101,7 +101,7 @@ public class InitialSigninFragment extends Fragment {
         );
 
         // Set a listener to the "SIGNED IN" event
-        mDisposable.add(FirebaseRepo.get().getSigninSubject()
+        mDisposable.add(CloudRepo.get().getSigninSubject()
             .subscribe(event -> this.navigateToNextPage()) // TODO: Implement onError
         );
     }
@@ -113,7 +113,7 @@ public class InitialSigninFragment extends Fragment {
      * Sign in with Google account
      */
     private void signIn() {
-        FirebaseRepo.get().sendSignInIntent(Objects.requireNonNull( super.getActivity() ));
+        CloudRepo.get().sendSignInIntent(Objects.requireNonNull( super.getActivity() ));
     }
 
 

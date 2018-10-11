@@ -13,7 +13,6 @@ import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
 import com.github.sergemart.mobile.capybara.Tools;
 import com.github.sergemart.mobile.capybara.exceptions.FirebaseConnectionException;
-import com.github.sergemart.mobile.capybara.exceptions.FirebaseFunctionException;
 import com.github.sergemart.mobile.capybara.exceptions.GoogleSigninException;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -26,7 +25,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.functions.FirebaseFunctions;
-import com.google.firebase.functions.FirebaseFunctionsException;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -37,18 +36,19 @@ import io.reactivex.subjects.Subject;
 
 
 // Singleton
-public class FirebaseRepo {
+public class CloudRepo {
 
-    private static final String TAG = FirebaseRepo.class.getSimpleName();
+    private static final String TAG = CloudRepo.class.getSimpleName();
 
     @SuppressLint("StaticFieldLeak")                                                                // OK for the application context
-    private static FirebaseRepo sInstance;
+    private static CloudRepo sInstance;
 
 
     // Private constructor
-    private FirebaseRepo() {
-        mContext = App.getContext();
+    private CloudRepo() {
 
+        // Init member variables
+        mContext = App.getContext();
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(mContext.getString(R.string.default_web_client_id))
             .requestEmail()
@@ -58,12 +58,16 @@ public class FirebaseRepo {
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
         if (mFirebaseUser != null) mUsername = mFirebaseUser.getDisplayName();
         mFirebaseFunctions = FirebaseFunctions.getInstance();
+        mFirebaseInstanceId = FirebaseInstanceId.getInstance();
+
+        // Perform start-up Firebase tasks
+        this.getTokenAsync();
     }
 
 
     // Factory method
-    public static FirebaseRepo get() {
-        if(sInstance == null) sInstance = new FirebaseRepo();
+    public static CloudRepo get() {
+        if(sInstance == null) sInstance = new CloudRepo();
         return sInstance;
     }
 
@@ -80,6 +84,8 @@ public class FirebaseRepo {
     private FirebaseUser mFirebaseUser;
     private String mUsername = Constants.DEFAULT_USERNAME;
     private FirebaseFunctions mFirebaseFunctions;
+    private FirebaseInstanceId mFirebaseInstanceId;
+    private String mToken;
 
 
     // --------------------------- Observable getters
@@ -131,7 +137,7 @@ public class FirebaseRepo {
      * Process the response intent from Google client and proceed with Firebase authentication.
      * Emit an event carrying the authenticated Firebase user
      */
-    public void proceedWithFirebaseAuth(Intent responseIntent) {
+    public void proceedWithFirebaseAuthAsync(Intent responseIntent) {
         // Process the response intent from Google client
         Task<GoogleSignInAccount> completedTask = GoogleSignIn.getSignedInAccountFromIntent(responseIntent);
         GoogleSignInAccount googleSignInAccount;
@@ -192,12 +198,12 @@ public class FirebaseRepo {
     /**
      * Send a location
      */
-    public void sendLocation(Location location) {
+    public void sendLocationAsync(Location location) {
         Map<String, Object> data = new HashMap<>();
         data.put(Constants.KEY_LOCATION, Tools.get().getJsonableLocation(location));
 
         mFirebaseFunctions
-            .getHttpsCallable("sendLocation")
+            .getHttpsCallable("sendLocationAsync")
             .call(data)
             .continueWith(task -> {                                                                 // the Continuation
                 String result = null;
@@ -227,5 +233,20 @@ public class FirebaseRepo {
     }
 
 
+    // --------------------------- Subroutines
+
+    private void getTokenAsync() {
+        mFirebaseInstanceId
+            .getInstanceId()
+            .addOnSuccessListener(instanseIdResult -> {
+                mToken = instanseIdResult.getToken();
+                if (BuildConfig.DEBUG) Log.d(TAG, "Got Firebase Messaging device token: " + mToken);
+            })
+            .addOnFailureListener(e -> {
+                String errorMessage = mContext.getString(R.string.exception_firebase_device_token_not_recieved);
+                if (BuildConfig.DEBUG) Log.e(TAG, errorMessage + ": " + e.getMessage());
+            })
+        ;
+    }
 
 }
