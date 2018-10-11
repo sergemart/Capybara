@@ -25,9 +25,10 @@ public final class Constants {
     // ----------------------- Data keys
 
     public static final String KEY_LOCATION = "location";
-    public static final String KEY_LOCATION_LAT = "locationLat";
-    public static final String KEY_LOCATION_LON = "locationLon";
-    public static final String KEY_LOCATION_TIME = "locationTime";
+    static final String KEY_LOCATION_LAT = "locationLat";
+    static final String KEY_LOCATION_LON = "locationLon";
+    static final String KEY_LOCATION_TIME = "locationTime";
+    public static final String KEY_DEVICE_TOKEN = "deviceToken";
 
 
     // ----------------------- Permissions

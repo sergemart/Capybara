@@ -26,6 +26,7 @@ public class MinorDummyFragment extends Fragment {
     private static final String TAG = InitialSigninFragment.class.getSimpleName();
 
     private MaterialButton mSendMyLocationButton;
+    private MaterialButton mUpdateDeviceTokenButton;
 
     private Location mCurrentLocation;
     private CompositeDisposable mDisposable;
@@ -100,6 +101,7 @@ public class MinorDummyFragment extends Fragment {
      */
     private void initMemberVariables(View fragmentView) {
         mSendMyLocationButton = fragmentView.findViewById(R.id.button_send_my_location);
+        mUpdateDeviceTokenButton = fragmentView.findViewById(R.id.button_update_device_token);
 
         mDisposable = new CompositeDisposable();
 
@@ -122,6 +124,11 @@ public class MinorDummyFragment extends Fragment {
             RxView.clicks(mSendMyLocationButton).subscribe(event -> this.sendMyLocation())
         );
 
+        // Set a listener to the "Update Device Token" button
+        mDisposable.add(
+            RxView.clicks(mUpdateDeviceTokenButton).subscribe(event -> this.updateDeviceToken())
+        );
+
         // Set a listener to the "GOT A LOCATION" event
         mDisposable.add(GeoRepo.get().getLocationSubject()
             .subscribe(location -> mCurrentLocation = location) // TODO: Implement onError
@@ -139,6 +146,14 @@ public class MinorDummyFragment extends Fragment {
         this.locateMe();
         if (mCurrentLocation == null) return;
         CloudRepo.get().sendLocationAsync(mCurrentLocation);
+    }
+
+
+    /**
+     * Update the device token
+     */
+    private void updateDeviceToken() {
+        CloudRepo.get().publishDeviceTokenAsync();
     }
 
 

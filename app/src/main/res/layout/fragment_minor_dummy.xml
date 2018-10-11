@@ -14,12 +14,26 @@
         android:scaleType="centerCrop"
         android:src="@drawable/page_background"/>
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/button_send_my_location"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        style="@style/Widget.App.Button.LargeHollow"
-        android:text="@string/action_send_location"/>
+        android:orientation="vertical"
+        android:layout_gravity="center">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_send_my_location"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/Widget.App.Button.LargeHollow"
+            android:text="@string/action_send_location"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_update_device_token"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/Widget.App.Button.LargeHollow"
+            android:text="@string/action_update_device_token"/>
+
+    </LinearLayout>
 
 </FrameLayout>
