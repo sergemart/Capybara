@@ -30,6 +30,7 @@ import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
@@ -59,6 +60,7 @@ public class CloudRepo {
         if (mFirebaseUser != null) mUsername = mFirebaseUser.getDisplayName();
         mFirebaseFunctions = FirebaseFunctions.getInstance();
         mFirebaseInstanceId = FirebaseInstanceId.getInstance();
+        mDeviceToken = "";
     }
 
 
@@ -85,7 +87,6 @@ public class CloudRepo {
     private FirebaseFunctions mFirebaseFunctions;
     private FirebaseInstanceId mFirebaseInstanceId;
     private String mDeviceToken;
-    private boolean mIsDeviceTokenPublished = false;
 
 
     // --------------------------- Observable getters
@@ -205,7 +206,7 @@ public class CloudRepo {
     }
 
 
-    // --------------------------- Repository interface: Messaging
+    // --------------------------- Repository interface: Device token for the Firebase messaging
 
     /**
      * Explicitly get Firebase Messaging device token from the cloud.
@@ -217,7 +218,7 @@ public class CloudRepo {
             .addOnSuccessListener(instanseIdResult -> {
                 mDeviceToken = instanseIdResult.getToken();
                 if (BuildConfig.DEBUG) Log.d(TAG, "Got Firebase Messaging device token: " + mDeviceToken);
-                mGetDeviceTokenSubject.onNext(Boolean.TRUE);                                                // send "DEVICE TOKEN RECEIVED" event
+                mGetDeviceTokenSubject.onNext(Boolean.TRUE);                                        // send "DEVICE TOKEN RECEIVED" event
             })
             .addOnFailureListener(e -> {
                 String errorMessage = mContext.getString(R.string.exception_firebase_device_token_not_received);
@@ -230,25 +231,30 @@ public class CloudRepo {
 
     /**
      * Update device token when externally received one.
-     * Send the "DEVICE TOKEN RECEIVED" event
+     * Init publishing the token
      */
-    public void updateDeviceToken(String deviceToken) {
+    public void onTokenReceivedByMessagingService(String deviceToken) {
+        if (deviceToken.equals(mDeviceToken)) {                                                     // break the possible loop
+            if (BuildConfig.DEBUG) Log.e(TAG, "Token already known; skipping.");
+            return;
+        }
         mDeviceToken = deviceToken;
-        mGetDeviceTokenSubject.onNext(Boolean.TRUE);                                                // send "DEVICE TOKEN RECEIVED" event
+        this.publishDeviceTokenAsync();
     }
 
 
     /**
-     * Publish device token on a backend
+     * Publish device token on a backend using custom Firebase callable function
      * Send the "DEVICE TOKEN PUBLISHED" event
      */
+    @SuppressWarnings("unchecked")
     public void publishDeviceTokenAsync() {
-        if (mDeviceToken == null) {
-            if (BuildConfig.DEBUG) Log.e(TAG, "Device token is null while attempting to publish it on backend.");
+        if (mDeviceToken == null || mDeviceToken.equals("")) {
+            if (BuildConfig.DEBUG) Log.e(TAG, "No device token set while attempting to publish it on backend; skipping.");
             return;
         }
         if (mFirebaseUser == null) {
-            if (BuildConfig.DEBUG) Log.e(TAG, "User not authenticated while attempting to publish device token on backend.");
+            if (BuildConfig.DEBUG) Log.e(TAG, "User not authenticated while attempting to publish device token on backend; skipping.");
             return;
         }
 
@@ -259,9 +265,9 @@ public class CloudRepo {
             .getHttpsCallable("updateDeviceToken")
             .call(data)
             .continueWith(task -> {
-                String result = null;
+                Map<String, Object> result = null;
                 try {
-                    result = (String) task.getResult().getData();                                   // throws an exception on error
+                    result = (Map<String, Object>) Objects.requireNonNull(task.getResult()).getData(); // throws an exception on error
                     // if success:
                     if (BuildConfig.DEBUG) Log.d(TAG, "Published Firebase Messaging device token: " + mDeviceToken);
                     mPublishDeviceTokenSubject.onNext(Boolean.TRUE);                                // send "DEVICE TOKEN PUBLISHED" event
@@ -288,13 +294,20 @@ public class CloudRepo {
     }
 
 
+    // --------------------------- Repository interface: Firebase messaging
+
     /**
-     * Send a location to a backend.
+     * Send a location to a backend using custom Firebase callable function
      * Send no resulting events, the silent task
      */
+    @SuppressWarnings("unchecked")
     public void sendLocationAsync(Location location) {
         if (location == null) {
-            if (BuildConfig.DEBUG) Log.e(TAG, "Location is null while attempting to send it to backend.");
+            if (BuildConfig.DEBUG) Log.e(TAG, "Location is null while attempting to send it to backend; skipping.");
+            return;
+        }
+        if (mFirebaseUser == null) {
+            if (BuildConfig.DEBUG) Log.e(TAG, "User not authenticated while attempting to send location to backend; skipping.");
             return;
         }
 
@@ -305,9 +318,9 @@ public class CloudRepo {
             .getHttpsCallable("sendLocation")
             .call(data)
             .continueWith(task -> {
-                String result = null;
+                Map<String, Object> result = null;
                 try {
-                    result = (String) task.getResult().getData();                                   // throws an exception on error
+                    result = (Map<String, Object>) Objects.requireNonNull(task.getResult()).getData(); // throws an exception on error
                     // if success:
                     if (BuildConfig.DEBUG) Log.d(TAG, "Sent location: " + location);
                 } catch (Exception e) {

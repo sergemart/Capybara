@@ -73,10 +73,6 @@ public class CloudMessagingService
      * Set listeners to widgets, containers and events
      */
     private void setListeners() {
-        // Set a listener to the "DEVICE TOKEN RECEIVED" event
-        mDisposable.add(CloudRepo.get().getGetDeviceTokenSubject()
-            .subscribe(event -> this.publishDeviceToken()) // TODO: Implement onError
-        );
     }
 
 
@@ -86,17 +82,9 @@ public class CloudMessagingService
      * Update the Firebase Messaging device token when received from the cloud
      */
     private void updateDeviceToken(String newDeviceToken) {
-        CloudRepo.get().updateDeviceToken(newDeviceToken);
-        if (BuildConfig.DEBUG) Log.d(TAG, "New device token released, updating.");
+        CloudRepo.get().onTokenReceivedByMessagingService(newDeviceToken);
+        if (BuildConfig.DEBUG) Log.d(TAG, "New device token received, updating.");
     }
 
-
-    /**
-     * Publish the Firebase Messaging device token
-     */
-    private void publishDeviceToken() {
-        CloudRepo.get().publishDeviceTokenAsync();
-        if (BuildConfig.DEBUG) Log.d(TAG, "New device token released, publishing.");
-    }
 
 }
