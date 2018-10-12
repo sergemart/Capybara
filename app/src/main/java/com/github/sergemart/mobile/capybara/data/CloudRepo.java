@@ -250,6 +250,10 @@ public class CloudRepo {
             if (BuildConfig.DEBUG) Log.e(TAG, "Device token is null while attempting to publish it on backend.");
             return;
         }
+        if (mFirebaseUser == null) {
+            if (BuildConfig.DEBUG) Log.e(TAG, "User not authenticated while attempting to publish device token on backend.");
+            return;
+        }
 
         Map<String, Object> data = new HashMap<>();
         data.put(Constants.KEY_DEVICE_TOKEN, mDeviceToken);
