@@ -28,6 +28,9 @@ public class InitialActivity
 
     // --------------------------- Override activity event handlers
 
+    /**
+     * Start-up actions
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

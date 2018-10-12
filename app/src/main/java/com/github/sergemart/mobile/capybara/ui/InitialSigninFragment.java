@@ -92,18 +92,31 @@ public class InitialSigninFragment extends Fragment {
 
 
     /**
-     * Set listeners to widgets and containers
+     * Set listeners to widgets, containers and events
      */
     private void setListeners() {
         // Set a listener to the "Sign In" button
-        mDisposable.add(
-            RxView.clicks(mSignInButton).subscribe(event -> this.signIn())
-        );
+        mDisposable.add(RxView.clicks(mSignInButton).subscribe(
+            event -> this.signIn()
+        ));
 
-        // Set a listener to the "SIGNED IN" event
-        mDisposable.add(CloudRepo.get().getSigninSubject()
-            .subscribe(event -> this.navigateToNextPage()) // TODO: Implement onError
-        );
+        // Set a listener to the "USER SIGNED IN" event
+        mDisposable.add(CloudRepo.get().getSigninSubject().subscribe(
+            event -> this.getDeviceToken(),
+            e -> super.startActivity(ErrorActivity.newIntent( Objects.requireNonNull(super.getActivity()), e.getLocalizedMessage() ))
+        ));
+
+        // Set a listener to the "DEVICE TOKEN RECEIVED" event
+        mDisposable.add(CloudRepo.get().getGetDeviceTokenSubject().subscribe(
+            event -> this.publishDeviceToken(),
+            e -> super.startActivity(ErrorActivity.newIntent( Objects.requireNonNull(super.getActivity()), e.getLocalizedMessage() ))
+        ));
+
+        // Set a listener to the "DEVICE TOKEN PUBLISHED" event
+        mDisposable.add(CloudRepo.get().getPublishDeviceTokenSubject().subscribe(
+            event -> this.navigateToNextPage(),
+            e -> super.startActivity(ErrorActivity.newIntent( Objects.requireNonNull(super.getActivity()), e.getLocalizedMessage() ))
+        ));
     }
 
 
@@ -114,6 +127,22 @@ public class InitialSigninFragment extends Fragment {
      */
     private void signIn() {
         CloudRepo.get().sendSignInIntent(Objects.requireNonNull( super.getActivity() ));
+    }
+
+
+    /**
+     * Get a Firebase Messaging device token
+     */
+    private void getDeviceToken() {
+        CloudRepo.get().getTokenAsync();
+    }
+
+
+    /**
+     * Publish the Firebase Messaging device token
+     */
+    private void publishDeviceToken() {
+        CloudRepo.get().publishDeviceTokenAsync();
     }
 
 

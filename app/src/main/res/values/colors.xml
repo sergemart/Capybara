@@ -4,5 +4,6 @@
     <color name="colorPrimaryDark">#128e1d</color>
     <color name="colorAccent">#6295f4</color>
     <color name="colorDefaultPageBackground">#69f086</color>
+    <color name="colorErrorPageBackground">#ff9e80</color>
     <color name="colorLargeHollowButton">#ffffff</color>
 </resources>

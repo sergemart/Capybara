@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/imageViewBack"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:contentDescription="@string/desc_page_background"
+        android:background="@color/colorErrorPageBackground"
+        android:scaleType="centerCrop"
+        android:src="@drawable/page_background"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="center">
+
+        <ImageView
+            android:id="@+id/imageViewFront"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:contentDescription="@string/desc_front_image"
+            android:scaleType="centerCrop"
+            android:layout_gravity="center"
+            android:src="@mipmap/ic_launcher"/>
+
+        <TextView
+            android:id="@+id/textView_error_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/Widget.App.Button.LargeHollow"
+            android:text="@string/msg_fatal_error"/>
+
+        <TextView
+            android:id="@+id/textView_error_details"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/Widget.App.Button.SmallHollow"
+            android:text="@string/msg_fatal_error"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_exit_application"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/Widget.App.Button.LargeHollow"
+            android:text="@string/action_exit_application"/>
+
+    </LinearLayout>
+</FrameLayout>

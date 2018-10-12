@@ -5,7 +5,10 @@
     <string name="action_update_device_token">Update Device Token</string>
     <string name="action_i_am_major">I am a parent</string>
     <string name="action_i_am_minor">I am a child</string>
-    <string name="desc_welcome_page_background">Background Image</string>
+    <string name="action_exit_application">Exit application</string>
+    <string name="desc_page_background">Background Image</string>
+    <string name="desc_front_image">Front Image</string>
     <string name="msg_google_client_connection_error">Unable to ask Google who are you</string>
     <string name="msg_firebase_client_connection_error">Unable to ask Google who are you</string>
+    <string name="msg_fatal_error">Fatal error</string>
 </resources>

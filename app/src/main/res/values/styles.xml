@@ -20,5 +20,17 @@
         <item name="android:textColor">@color/colorLargeHollowButton</item>
     </style>
 
+    <style name="Widget.App.Button.SmallHollow" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:layout_margin">8dp</item>
+        <item name="android:padding">8dp</item>
+        <item name="strokeColor">@color/colorLargeHollowButton</item>
+        <item name="cornerRadius">24dp</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textSize">10sp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textColor">@color/colorLargeHollowButton</item>
+    </style>
+
 
 </resources>

@@ -9,7 +9,7 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:contentDescription="@string/desc_welcome_page_background"
+        android:contentDescription="@string/desc_page_background"
         android:background="@color/colorDefaultPageBackground"
         android:scaleType="centerCrop"
         android:src="@drawable/page_background"/>

@@ -105,27 +105,25 @@ public class InitialSetupFragment extends Fragment {
 
 
     /**
-     * Set listeners to widgets and containers
+     * Set listeners to widgets, containers and events
      */
     private void setListeners() {
         // Set a listener to the "I Am a Major" button
-        mDisposable.add(
-            RxView.clicks(mIAmMajorButton)
-                .subscribe(event -> {
-                    PreferenceStore.storeAppMode(Constants.APP_MODE_MAJOR);
-                    PreferenceStore.storeIsAppModeSet(true);
-                    this.navigateToNextPage();
-                })
+        mDisposable.add(RxView.clicks(mIAmMajorButton).subscribe(
+            event -> {
+                PreferenceStore.storeAppMode(Constants.APP_MODE_MAJOR);
+                PreferenceStore.storeIsAppModeSet(true);
+                this.navigateToNextPage();
+            })
         );
 
         // Set a listener to the "I Am a Minor" button
-        mDisposable.add(
-            RxView.clicks(mIAmMinorButton)
-                .subscribe(event -> {
-                    PreferenceStore.storeAppMode(Constants.APP_MODE_MINOR);
-                    PreferenceStore.storeIsAppModeSet(true);
-                    this.navigateToNextPage();
-                })
+        mDisposable.add(RxView.clicks(mIAmMinorButton).subscribe(
+            event -> {
+                PreferenceStore.storeAppMode(Constants.APP_MODE_MINOR);
+                PreferenceStore.storeIsAppModeSet(true);
+                this.navigateToNextPage();
+            })
         );
     }
 

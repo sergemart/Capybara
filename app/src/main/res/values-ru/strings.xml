@@ -5,7 +5,10 @@
     <string name="action_update_device_token">Обновить токен устройства</string>
     <string name="action_i_am_major">Я родитель</string>
     <string name="action_i_am_minor">Я ребёнок</string>
-    <string name="desc_welcome_page_background">Фоновый рисунок</string>
+    <string name="action_exit_application">Закрыть</string>
+    <string name="desc_page_background">Фоновый рисунок</string>
+    <string name="desc_front_image">Рисунок</string>
     <string name="msg_google_client_connection_error">Не могу узнать у Google, кто вы</string>
     <string name="msg_firebase_client_connection_error">Не могу узнать у Google, кто вы</string>
+    <string name="msg_fatal_error">Непоправимая ошибка</string>
 </resources>

@@ -22,6 +22,8 @@
         </activity>
         <activity android:name=".ui.MajorActivity" />
         <activity android:name=".ui.MinorActivity" />
+        <activity android:name=".ui.ErrorActivity" />
+
         <service android:name=".service.CloudMessagingService"
             android:stopWithTask="true"
             tools:ignore="ExportedService"><!-- TODO: try to remove when everything is working -->
