@@ -208,7 +208,7 @@ public class CloudRepo {
         data.put(Constants.KEY_LOCATION, Tools.get().getJsonableLocation(location));
 
         mFirebaseFunctions
-            .getHttpsCallable("sendLocationAsync")
+            .getHttpsCallable("sendLocation")
             .call(data)
             .continueWith(task -> {                                                                 // the Continuation
                 String result = null;
@@ -220,6 +220,13 @@ public class CloudRepo {
                 }
                 return result;
             })
+            .addOnSuccessListener(result -> {
+                if (BuildConfig.DEBUG) Log.d(TAG, "Location sent to backend: " + location);
+            })
+            .addOnFailureListener(e -> {
+                String errorMessage = mContext.getString(R.string.exception_firebase_location_not_sent);
+                if (BuildConfig.DEBUG) Log.e(TAG, errorMessage + ": " + e.getMessage());
+            })
             .addOnCompleteListener(task -> {
                 if (!task.isSuccessful() && task.getException() != null) {
                     Exception e = task.getException();
@@ -230,16 +237,12 @@ public class CloudRepo {
                     if (BuildConfig.DEBUG) Log.e(TAG, errorMessage);
                 }
             })
-            .addOnFailureListener(e -> {
-                String errorMessage = mContext.getString(R.string.exception_firebase_location_not_sent);
-                if (BuildConfig.DEBUG) Log.e(TAG, errorMessage + ": " + e.getMessage());
-            })
         ;
     }
 
 
     /**
-     * Update device token
+     * Publish device token on a backend
      */
     public void publishDeviceTokenAsync() {
         if (mToken == null) {
@@ -263,6 +266,13 @@ public class CloudRepo {
                 }
                 return result;
             })
+            .addOnSuccessListener(result -> {
+                if (BuildConfig.DEBUG) Log.d(TAG, "Published Firebase Messaging device token: " + mToken);
+            })
+            .addOnFailureListener(e -> {
+                String errorMessage = mContext.getString(R.string.exception_firebase_device_token_not_published);
+                if (BuildConfig.DEBUG) Log.e(TAG, errorMessage + ": " + e.getMessage());
+            })
             .addOnCompleteListener(task -> {
                 if (!task.isSuccessful() && task.getException() != null) {
                     Exception e = task.getException();
@@ -272,10 +282,6 @@ public class CloudRepo {
                     String errorMessage = mContext.getString(R.string.exception_firebase_device_token_not_published);
                     if (BuildConfig.DEBUG) Log.e(TAG, errorMessage);
                 }
-            })
-            .addOnFailureListener(e -> {
-                String errorMessage = mContext.getString(R.string.exception_firebase_device_token_not_published);
-                if (BuildConfig.DEBUG) Log.e(TAG, errorMessage + ": " + e.getMessage());
             })
         ;
     }

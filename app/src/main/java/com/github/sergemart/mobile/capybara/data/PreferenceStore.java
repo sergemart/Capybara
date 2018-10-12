@@ -4,11 +4,14 @@ import android.preference.PreferenceManager;
 
 import com.github.sergemart.mobile.capybara.App;
 
+import java.util.UUID;
+
 
 public class PreferenceStore {
 
     private static final String PREF_IS_APP_MODE_SET = "isAppModeSet";
     private static final String PREF_APP_MODE = "appMode";
+    private static final String PREF_FAMILY_UUID = "familyUuid";
 
 
     // --------------------------- Public methods
@@ -45,6 +48,22 @@ public class PreferenceStore {
     }
 
 
+    /**
+     * Get a family UUID stored in shared preferences
+     */
+    public static UUID getFamilyUuid() {
+        return UUID.fromString(getStringPreference(PREF_FAMILY_UUID));
+    }
+
+
+    /**
+     * Store a family UUID in shared preferences
+     */
+    public static void storeFamilyUuid(UUID familyUuid) {
+        storePreference(PREF_FAMILY_UUID, familyUuid.toString());
+    }
+
+
     // --------------------------- Subroutines
 
     /**
@@ -58,6 +77,16 @@ public class PreferenceStore {
 
 
     /**
+     * Get a stored string preference
+     */
+    private static String getStringPreference(String preferenceKey) {
+        return PreferenceManager
+            .getDefaultSharedPreferences(App.getContext())
+            .getString(preferenceKey, null);
+    }
+
+
+    /**
      * Store a boolean preference
      */
     private static void storePreference(String preferenceKey, boolean preference) {
@@ -65,6 +94,18 @@ public class PreferenceStore {
             .getDefaultSharedPreferences(App.getContext())
             .edit()
             .putBoolean(preferenceKey, preference)
+            .apply();
+    }
+
+
+    /**
+     * Store a string preference
+     */
+    private static void storePreference(String preferenceKey, String preference) {
+        PreferenceManager
+            .getDefaultSharedPreferences(App.getContext())
+            .edit()
+            .putString(preferenceKey, preference)
             .apply();
     }
 
