@@ -7,8 +7,6 @@ import android.content.Intent;
 import android.location.Location;
 import android.util.Log;
 
-import com.fernandocejas.frodo2.annotation.RxLogCompletable;
-import com.fernandocejas.frodo2.annotation.RxLogObservable;
 import com.github.sergemart.mobile.capybara.App;
 import com.github.sergemart.mobile.capybara.BuildConfig;
 import com.github.sergemart.mobile.capybara.Constants;
@@ -33,7 +31,6 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import java.util.HashMap;
 import java.util.Map;
 
-import io.reactivex.subjects.CompletableSubject;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
 
