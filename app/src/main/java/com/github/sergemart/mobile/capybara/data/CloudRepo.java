@@ -13,6 +13,7 @@ import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
 import com.github.sergemart.mobile.capybara.Tools;
 import com.github.sergemart.mobile.capybara.exceptions.FirebaseConnectionException;
+import com.github.sergemart.mobile.capybara.exceptions.FirebaseDatabaseException;
 import com.github.sergemart.mobile.capybara.exceptions.FirebaseMessagingException;
 import com.github.sergemart.mobile.capybara.exceptions.GoogleSigninException;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -81,6 +82,7 @@ public class CloudRepo {
     private final Subject<Boolean> mSendLocationSubject = PublishSubject.create();
     private final Subject<Boolean> mGetDeviceTokenSubject = PublishSubject.create();
     private final Subject<Boolean> mPublishDeviceTokenSubject = PublishSubject.create();
+    private final Subject<Boolean> mCreateFamilySubject = PublishSubject.create();
 
     private final Context mContext;
     private GoogleSignInClient mGoogleSignInClient;
@@ -116,6 +118,11 @@ public class CloudRepo {
 
     public Subject<Boolean> getPublishDeviceTokenSubject() {
         return mPublishDeviceTokenSubject;
+    }
+
+
+    public Subject<Boolean> getCreateFamilySubject() {
+        return mCreateFamilySubject;
     }
 
 
@@ -289,6 +296,54 @@ public class CloudRepo {
                     mPublishDeviceTokenSubject.onError(new FirebaseMessagingException(errorMessage, e));
                 } else if (!task.isSuccessful()) {
                     String errorMessage = mContext.getString(R.string.exception_firebase_device_token_not_published);
+                    if (BuildConfig.DEBUG) Log.e(TAG, errorMessage);
+                    mPublishDeviceTokenSubject.onError(new FirebaseMessagingException(errorMessage));
+                }
+            })
+        ;
+    }
+
+
+    // --------------------------- Repository interface: Model CRUD
+
+    /**
+     * Create family data on a backend using custom Firebase callable function
+     * Send the "FAMILY DATA CREATED" event
+     */
+    @SuppressWarnings("unchecked")
+    public void createFamilyAsync() {
+        if (mFirebaseUser == null) {
+            if (BuildConfig.DEBUG) Log.e(TAG, "User not authenticated while attempting to create family data on backend; skipping.");
+            return;
+        }
+
+        Map<String, Object> data = new HashMap<>();
+
+        mFirebaseFunctions
+            .getHttpsCallable("createFamily")
+            .call(data)
+            .continueWith(task -> {
+                Map<String, Object> result = null;
+                try {
+                    result = (Map<String, Object>) Objects.requireNonNull(task.getResult()).getData(); // throws an exception on error
+                    // if success:
+                    if (BuildConfig.DEBUG) Log.d(TAG, "Created family data on backend");
+                    mCreateFamilySubject.onNext(Boolean.TRUE);                                      // send "FAMILY DATA CREATED" event
+                } catch (Exception e) {
+                    String errorMessage = mContext.getString(R.string.exception_firebase_family_not_created);
+                    if (BuildConfig.DEBUG) Log.e(TAG, errorMessage + ": " + e.getMessage());
+                    mCreateFamilySubject.onError(new FirebaseDatabaseException(errorMessage, e));
+                }
+                return result;
+            })
+            .addOnCompleteListener(task -> {
+                if (!task.isSuccessful() && task.getException() != null) {
+                    Exception e = task.getException();
+                    String errorMessage = mContext.getString(R.string.exception_firebase_family_not_created);
+                    if (BuildConfig.DEBUG) Log.e(TAG, errorMessage + ": " + e.getMessage());
+                    mPublishDeviceTokenSubject.onError(new FirebaseMessagingException(errorMessage, e));
+                } else if (!task.isSuccessful()) {
+                    String errorMessage = mContext.getString(R.string.exception_firebase_family_not_created);
                     if (BuildConfig.DEBUG) Log.e(TAG, errorMessage);
                     mPublishDeviceTokenSubject.onError(new FirebaseMessagingException(errorMessage));
                 }

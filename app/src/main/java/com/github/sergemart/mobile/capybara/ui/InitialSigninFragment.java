@@ -88,6 +88,7 @@ public class InitialSigninFragment extends Fragment {
      * Set attributes
      */
     private void setAttributes() {
+        super.setRetainInstance(true);
     }
 
 

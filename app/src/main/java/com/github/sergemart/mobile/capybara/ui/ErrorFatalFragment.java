@@ -71,7 +71,7 @@ public class ErrorFatalFragment extends Fragment {
     }
 
 
-    // --------------------------- Widget controls
+    // --------------------------- Fragment controls
 
     /**
      * Init member variables
@@ -89,6 +89,7 @@ public class ErrorFatalFragment extends Fragment {
      * Set attributes
      */
     private void setAttributes() {
+        super.setRetainInstance(true);
     }
 
 

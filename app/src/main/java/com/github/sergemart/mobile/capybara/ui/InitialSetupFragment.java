@@ -101,6 +101,7 @@ public class InitialSetupFragment extends Fragment {
      * Set attributes
      */
     private void setAttributes() {
+        super.setRetainInstance(true);
     }
 
 

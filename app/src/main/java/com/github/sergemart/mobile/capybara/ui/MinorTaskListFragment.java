@@ -91,6 +91,8 @@ public class MinorTaskListFragment extends Fragment {
      * Set attributes
      */
     private void setAttributes() {
+        super.setRetainInstance(true);
+
         mRecyclerView.setLayoutManager(new LinearLayoutManager( this.getActivity() ));              // set up the RecyclerView
         this.setupAdapter();
     }

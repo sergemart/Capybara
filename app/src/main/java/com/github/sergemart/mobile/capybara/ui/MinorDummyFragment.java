@@ -23,7 +23,7 @@ import io.reactivex.disposables.CompositeDisposable;
 
 public class MinorDummyFragment extends Fragment {
 
-    private static final String TAG = InitialSigninFragment.class.getSimpleName();
+    private static final String TAG = MinorDummyFragment.class.getSimpleName();
 
     private MaterialButton mSendMyLocationButton;
     private MaterialButton mUpdateDeviceTokenButton;
@@ -112,6 +112,7 @@ public class MinorDummyFragment extends Fragment {
      * Set attributes
      */
     private void setAttributes() {
+        super.setRetainInstance(true);
     }
 
 

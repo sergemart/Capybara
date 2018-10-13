@@ -111,6 +111,7 @@ public class MajorLocatorFragment extends SupportMapFragment {
      * Set attributes
      */
     private void setAttributes() {
+        super.setRetainInstance(true);
     }
 
 
