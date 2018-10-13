@@ -61,6 +61,9 @@ public class CloudRepo {
         mFirebaseFunctions = FirebaseFunctions.getInstance();
         mFirebaseInstanceId = FirebaseInstanceId.getInstance();
         mDeviceToken = "";
+
+        // App start-up actions
+        this.getTokenAsync();
     }
 
 
