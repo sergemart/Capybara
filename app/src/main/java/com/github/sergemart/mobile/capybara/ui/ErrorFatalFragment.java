@@ -1,6 +1,5 @@
 package com.github.sergemart.mobile.capybara.ui;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -8,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.github.sergemart.mobile.capybara.App;
 import com.github.sergemart.mobile.capybara.BuildConfig;
 import com.github.sergemart.mobile.capybara.R;
 import com.github.sergemart.mobile.capybara.viewmodel.SharedErrorViewModel;
@@ -99,13 +99,26 @@ public class ErrorFatalFragment extends Fragment {
     private void setListeners() {
         // Set a listener to the "Exit Application" button
         mDisposable.add(RxView.clicks(mExitApplicationButton).subscribe(
-            event -> mSharedErrorViewModel.emitExitRequested()
+            event -> mSharedErrorViewModel.emitExitRequested()                                      // send "EXIT REQUESTED" event
         ));
 
         // Set a listener to the "ERROR DETAILS PUBLISHED" event
         mDisposable.add(mSharedErrorViewModel.getErrorDetailsSubject().subscribe(
-            errorDetails -> mErrorDetailsTextView.setText(errorDetails)
+            this::showErrorMessage
         ));
     }
 
+
+    // --------------------------- Use cases
+
+    private void showErrorMessage(String errorDetails) {
+        String messageToShow;
+        Throwable lastFatalException = App.getLastFatalException().get();
+        if (lastFatalException != null) {
+            messageToShow = errorDetails + " caused by:  " + lastFatalException.getCause().getLocalizedMessage();
+        } else {
+            messageToShow = errorDetails;
+        }
+        mErrorDetailsTextView.setText(messageToShow);
+    }
 }

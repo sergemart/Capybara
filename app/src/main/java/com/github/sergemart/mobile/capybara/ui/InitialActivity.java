@@ -12,6 +12,8 @@ import com.github.sergemart.mobile.capybara.data.CloudRepo;
 import com.github.sergemart.mobile.capybara.data.PreferenceStore;
 import com.github.sergemart.mobile.capybara.viewmodel.SharedStartupViewModel;
 
+import java.lang.ref.WeakReference;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProviders;
 import io.reactivex.disposables.CompositeDisposable;
@@ -42,6 +44,24 @@ public class InitialActivity
         mDisposable.add(sharedStartupViewModel.getAppIsInitializedSubject()
             .subscribe(this::leaveInitialGraph)
         );
+
+        // Set local nav graph supplemental error handlers
+        mDisposable.add(CloudRepo.get().getSigninSubject()
+            .subscribe(event -> {}, e -> App.setLastFatalException( new WeakReference<>(e) ))
+        );
+        mDisposable.add(CloudRepo.get().getSignoutSubject()
+            .subscribe(event -> {}, e -> App.setLastFatalException( new WeakReference<>(e) ))
+        );
+        mDisposable.add(CloudRepo.get().getGetDeviceTokenSubject()
+            .subscribe(event -> {}, e -> App.setLastFatalException( new WeakReference<>(e) ))
+        );
+        mDisposable.add(CloudRepo.get().getPublishDeviceTokenSubject()
+            .subscribe(event -> {}, e -> App.setLastFatalException( new WeakReference<>(e) ))
+        );
+        mDisposable.add(CloudRepo.get().getCreateFamilySubject()
+            .subscribe(event -> {}, e -> App.setLastFatalException( new WeakReference<>(e) ))
+        );
+
     }
 
 
