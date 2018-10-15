@@ -10,7 +10,7 @@ import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
 import com.github.sergemart.mobile.capybara.data.CloudRepo;
 import com.github.sergemart.mobile.capybara.data.PreferenceStore;
-import com.github.sergemart.mobile.capybara.viewmodel.SharedStartupViewModel;
+import com.github.sergemart.mobile.capybara.viewmodel.InitialSharedViewModel;
 
 import java.lang.ref.WeakReference;
 
@@ -40,8 +40,8 @@ public class InitialActivity
         mDisposable = new CompositeDisposable();
 
         // Set a listener to the "APP IS COMPLETELY INITIALIZED" event
-        SharedStartupViewModel sharedStartupViewModel = ViewModelProviders.of(this).get(SharedStartupViewModel.class);
-        mDisposable.add(sharedStartupViewModel.getAppIsInitializedSubject()
+        InitialSharedViewModel initialSharedViewModel = ViewModelProviders.of(this).get(InitialSharedViewModel.class);
+        mDisposable.add(initialSharedViewModel.getAppIsInitializedSubject()
             .subscribe(this::leaveInitialGraph)
         );
 

@@ -7,9 +7,7 @@ import android.util.Log;
 
 import com.github.sergemart.mobile.capybara.BuildConfig;
 import com.github.sergemart.mobile.capybara.R;
-import com.github.sergemart.mobile.capybara.viewmodel.SharedErrorViewModel;
-
-import java.util.Objects;
+import com.github.sergemart.mobile.capybara.viewmodel.ErrorSharedViewModel;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProviders;
@@ -39,11 +37,11 @@ public class ErrorActivity
         mDisposable = new CompositeDisposable();
 
         String errorDetails = super.getIntent().getStringExtra(KEY_ERROR_DETAILS);
-        SharedErrorViewModel sharedErrorViewModel = ViewModelProviders.of(this).get(SharedErrorViewModel.class);
-        sharedErrorViewModel.emitErrorDetails(errorDetails);
+        ErrorSharedViewModel errorSharedViewModel = ViewModelProviders.of(this).get(ErrorSharedViewModel.class);
+        errorSharedViewModel.emitErrorDetails(errorDetails);
 
         // Set a listener to the "EXIT REQUESTED" event
-        mDisposable.add(sharedErrorViewModel.getExitRequestedSubject().subscribe(
+        mDisposable.add(errorSharedViewModel.getExitRequestedSubject().subscribe(
             this::exitApplication
         ));
 

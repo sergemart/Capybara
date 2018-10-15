@@ -6,7 +6,7 @@ import io.reactivex.subjects.CompletableSubject;
 import io.reactivex.subjects.Subject;
 
 
-public class SharedErrorViewModel extends ViewModel {
+public class ErrorSharedViewModel extends ViewModel {
 
     private final Subject<String> mErrorDetailsSubject = BehaviorSubject.create();
     private final CompletableSubject mExitRequestedSubject = CompletableSubject.create();

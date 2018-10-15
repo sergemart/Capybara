@@ -10,7 +10,7 @@ import android.widget.TextView;
 import com.github.sergemart.mobile.capybara.App;
 import com.github.sergemart.mobile.capybara.BuildConfig;
 import com.github.sergemart.mobile.capybara.R;
-import com.github.sergemart.mobile.capybara.viewmodel.SharedErrorViewModel;
+import com.github.sergemart.mobile.capybara.viewmodel.ErrorSharedViewModel;
 import com.google.android.material.button.MaterialButton;
 import com.jakewharton.rxbinding2.view.RxView;
 
@@ -30,7 +30,7 @@ public class ErrorFatalFragment extends Fragment {
     private TextView mErrorDetailsTextView;
     private MaterialButton mExitApplicationButton;
 
-    private SharedErrorViewModel mSharedErrorViewModel;
+    private ErrorSharedViewModel mErrorSharedViewModel;
     private CompositeDisposable mDisposable;
 
 
@@ -80,7 +80,7 @@ public class ErrorFatalFragment extends Fragment {
         mErrorDetailsTextView = fragmentView.findViewById(R.id.textView_error_details);
         mExitApplicationButton = fragmentView.findViewById(R.id.button_exit_application);
 
-        mSharedErrorViewModel = ViewModelProviders.of(Objects.requireNonNull( super.getActivity() )).get(SharedErrorViewModel.class);
+        mErrorSharedViewModel = ViewModelProviders.of(Objects.requireNonNull( super.getActivity() )).get(ErrorSharedViewModel.class);
         mDisposable = new CompositeDisposable();
     }
 
@@ -99,11 +99,11 @@ public class ErrorFatalFragment extends Fragment {
     private void setListeners() {
         // Set a listener to the "Exit Application" button
         mDisposable.add(RxView.clicks(mExitApplicationButton).subscribe(
-            event -> mSharedErrorViewModel.emitExitRequested()                                      // send "EXIT REQUESTED" event
+            event -> mErrorSharedViewModel.emitExitRequested()                                      // send "EXIT REQUESTED" event
         ));
 
         // Set a listener to the "ERROR DETAILS PUBLISHED" event
-        mDisposable.add(mSharedErrorViewModel.getErrorDetailsSubject().subscribe(
+        mDisposable.add(mErrorSharedViewModel.getErrorDetailsSubject().subscribe(
             this::showErrorMessage
         ));
     }

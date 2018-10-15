@@ -11,7 +11,7 @@ import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
 import com.github.sergemart.mobile.capybara.data.CloudRepo;
 import com.github.sergemart.mobile.capybara.data.PreferenceStore;
-import com.github.sergemart.mobile.capybara.viewmodel.SharedStartupViewModel;
+import com.github.sergemart.mobile.capybara.viewmodel.InitialSharedViewModel;
 import com.google.android.material.button.MaterialButton;
 import com.jakewharton.rxbinding2.view.RxView;
 
@@ -33,7 +33,7 @@ public class InitialSetupFragment extends Fragment {
     private MaterialButton mIAmMinorButton;
 
     private CompositeDisposable mDisposable;
-    private SharedStartupViewModel mSharedStartupViewModel;
+    private InitialSharedViewModel mInitialSharedViewModel;
 
 
     // --------------------------- Override fragment event handlers
@@ -64,16 +64,6 @@ public class InitialSetupFragment extends Fragment {
     }
 
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        // Auto-navigate to the sign-in page if the APP IS SET UP and the USER IS NOT AUTHENTICATED.
-        if (PreferenceStore.getStoredIsAppModeSet() && !CloudRepo.get().isAuthenticated()) {
-            NavHostFragment.findNavController(this).navigate(R.id.action_initialSetup_to_initialSignin);
-        }
-    }
-
-
     // Instance clean-up
     @Override
     public void onDestroy() {
@@ -92,7 +82,7 @@ public class InitialSetupFragment extends Fragment {
         mIAmMajorButton = fragmentView.findViewById(R.id.button_i_am_major);
         mIAmMinorButton = fragmentView.findViewById(R.id.button_i_am_minor);
 
-        mSharedStartupViewModel = ViewModelProviders.of(Objects.requireNonNull( super.getActivity() )).get(SharedStartupViewModel.class);
+        mInitialSharedViewModel = ViewModelProviders.of(Objects.requireNonNull( super.getActivity() )).get(InitialSharedViewModel.class);
         mDisposable = new CompositeDisposable();
     }
 
@@ -139,7 +129,7 @@ public class InitialSetupFragment extends Fragment {
         if (!CloudRepo.get().isAuthenticated()) {
             NavHostFragment.findNavController(this).navigate(R.id.action_initialSetup_to_initialSignin);
         } else {
-            mSharedStartupViewModel.emitAppIsInitialized();
+            mInitialSharedViewModel.emitAppIsInitialized();
         }
     }
 

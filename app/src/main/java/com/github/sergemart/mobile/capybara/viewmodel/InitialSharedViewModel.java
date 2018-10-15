@@ -8,7 +8,7 @@ import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
 
 
-public class SharedStartupViewModel extends ViewModel {
+public class InitialSharedViewModel extends ViewModel {
 
     private final Subject<FirebaseUser> mFirebaseUserSubject = PublishSubject.create();
     private final CompletableSubject mAppIsInitializedSubject = CompletableSubject.create();

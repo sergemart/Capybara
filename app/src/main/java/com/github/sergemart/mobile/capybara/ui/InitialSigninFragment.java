@@ -10,7 +10,7 @@ import com.github.sergemart.mobile.capybara.BuildConfig;
 import com.github.sergemart.mobile.capybara.R;
 import com.github.sergemart.mobile.capybara.data.CloudRepo;
 import com.github.sergemart.mobile.capybara.data.PreferenceStore;
-import com.github.sergemart.mobile.capybara.viewmodel.SharedStartupViewModel;
+import com.github.sergemart.mobile.capybara.viewmodel.InitialSharedViewModel;
 import com.google.android.material.button.MaterialButton;
 import com.jakewharton.rxbinding2.view.RxView;
 
@@ -31,7 +31,7 @@ public class InitialSigninFragment extends Fragment {
     private MaterialButton mSignInButton;
 
     private CompositeDisposable mDisposable;
-    private SharedStartupViewModel mSharedStartupViewModel;
+    private InitialSharedViewModel mInitialSharedViewModel;
 
 
     // --------------------------- Override fragment event handlers
@@ -80,7 +80,7 @@ public class InitialSigninFragment extends Fragment {
         mSignInButton = fragmentView.findViewById(R.id.button_sign_in);
 
         mDisposable = new CompositeDisposable();
-        mSharedStartupViewModel = ViewModelProviders.of(Objects.requireNonNull(super.getActivity())).get(SharedStartupViewModel.class);
+        mInitialSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(super.getActivity())).get(InitialSharedViewModel.class);
     }
 
 
@@ -155,7 +155,7 @@ public class InitialSigninFragment extends Fragment {
         if (!PreferenceStore.getStoredIsAppModeSet()) {
             NavHostFragment.findNavController(this).popBackStack();
         } else {
-            mSharedStartupViewModel.emitAppIsInitialized();
+            mInitialSharedViewModel.emitAppIsInitialized();
         }
     }
 
