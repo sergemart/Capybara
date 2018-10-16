@@ -42,6 +42,12 @@ public class ErrorFatalFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        super.setRetainInstance(true);
+
+        mErrorSharedViewModel = ViewModelProviders.of(Objects.requireNonNull( super.getActivity() )).get(ErrorSharedViewModel.class);
+        mDisposable = new CompositeDisposable();
+
+        this.setEventListeners();
     }
 
 
@@ -54,15 +60,17 @@ public class ErrorFatalFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View fragmentView = inflater.inflate(R.layout.fragment_error_fatal, container, false);
 
-        this.initMemberVariables(fragmentView);
-        this.setAttributes();
-        this.setListeners();
+        mErrorDetailsTextView = fragmentView.findViewById(R.id.textView_error_details);
+        mExitApplicationButton = fragmentView.findViewById(R.id.button_exit_application);
 
+        this.setWidgetListeners();
         return fragmentView;
     }
 
 
-    // Instance clean-up
+    /**
+     * Instance clean-up
+     */
     @Override
     public void onDestroy() {
         mDisposable.clear();
@@ -71,40 +79,26 @@ public class ErrorFatalFragment extends Fragment {
     }
 
 
-    // --------------------------- Fragment controls
+    // --------------------------- Fragment lifecycle subroutines
 
     /**
-     * Init member variables
+     * Set listeners to events
      */
-    private void initMemberVariables(View fragmentView) {
-        mErrorDetailsTextView = fragmentView.findViewById(R.id.textView_error_details);
-        mExitApplicationButton = fragmentView.findViewById(R.id.button_exit_application);
-
-        mErrorSharedViewModel = ViewModelProviders.of(Objects.requireNonNull( super.getActivity() )).get(ErrorSharedViewModel.class);
-        mDisposable = new CompositeDisposable();
-    }
-
-
-    /**
-     * Set attributes
-     */
-    private void setAttributes() {
-        super.setRetainInstance(true);
-    }
-
-
-    /**
-     * Set listeners to widgets, containers and events
-     */
-    private void setListeners() {
-        // Set a listener to the "Exit Application" button
-        mDisposable.add(RxView.clicks(mExitApplicationButton).subscribe(
-            event -> mErrorSharedViewModel.emitExitRequested()                                      // send "EXIT REQUESTED" event
-        ));
-
+    private void setEventListeners() {
         // Set a listener to the "ERROR DETAILS PUBLISHED" event
         mDisposable.add(mErrorSharedViewModel.getErrorDetailsSubject().subscribe(
             this::showErrorMessage
+        ));
+    }
+
+
+    /**
+     * Set listeners to widgets
+     */
+    private void setWidgetListeners() {
+        // Set a listener to the "Exit Application" button
+        mDisposable.add(RxView.clicks(mExitApplicationButton).subscribe(
+            event -> mErrorSharedViewModel.emitExitRequested()                                      // send "EXIT REQUESTED" event
         ));
     }
 

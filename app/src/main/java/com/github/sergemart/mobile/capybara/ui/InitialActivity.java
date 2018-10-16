@@ -1,5 +1,6 @@
 package com.github.sergemart.mobile.capybara.ui;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -99,26 +100,19 @@ public class InitialActivity
     }
 
 
-    // --------------------------- Subroutines
+    // --------------------------- Use cases
 
     /**
-     * Leave the initial nav graph: into the prod nav graph on startup, or leave for exit on return from the prod graph
+     * Leave the initial nav graph
      */
     private void leaveInitialGraph() {
-        // Finish the app when returning from the prod nav graph
-        if(App.finishOnReturnToInitialGraphEnabled()) {
-            App.setFinishOnReturnToInitialGraphEnabled(false);                                      // explicitly drop the flag, as the app remains in RAM for a while
-            super.finish();
-            return;
-        }
-        // Enter the prod nav graph when launching
         Intent intent;
         if (PreferenceStore.getStoredAppMode() == Constants.APP_MODE_MAJOR) {
             intent = MajorActivity.newIntent(this);
         } else {
             intent = MinorActivity.newIntent(this);
         }
-        App.setFinishOnReturnToInitialGraphEnabled(true);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         super.startActivity(intent);
     }
 

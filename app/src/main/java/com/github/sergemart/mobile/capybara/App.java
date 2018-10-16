@@ -18,7 +18,6 @@ public class App extends Application {
 
     @SuppressLint("StaticFieldLeak")                                                                // ok for the application context
     private static Context sContext;
-    private static boolean sFinishOnReturnToInitialGraphEnabled;
     private static WeakReference<Throwable> sLastFatalException;
 
 
@@ -28,13 +27,12 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
         sContext = super.getApplicationContext();
-        sFinishOnReturnToInitialGraphEnabled = false;
 
         RxJavaPlugins.setErrorHandler(e -> {
             if (e instanceof UndeliverableException) e = e.getCause();
             if (e instanceof IOException) return;                                                   // skip, irrelevant network problem or API that throws on cancellation
             if (e instanceof InterruptedException) return;                                          // skip, some blocking code was interrupted by a dispose call
-            if (BuildConfig.DEBUG) Log.e(TAG, "Undeliverable exception:" + e.getMessage());
+            if (BuildConfig.DEBUG) Log.e(TAG, "Undeliverable exception: " + e.getMessage());
         });
     }
 
@@ -46,22 +44,6 @@ public class App extends Application {
      */
     public static Context getContext() {
         return sContext;
-    }
-
-
-    /**
-     * @return if false, indicates that return to the initial graph is disabled
-     */
-    public static boolean finishOnReturnToInitialGraphEnabled() {
-        return sFinishOnReturnToInitialGraphEnabled;
-    }
-
-
-    /**
-     * @param finishOnReturnToInitialGraphEnabled if false, indicates that return to the initial graph is disabled
-     */
-    public static void setFinishOnReturnToInitialGraphEnabled(boolean finishOnReturnToInitialGraphEnabled) {
-        sFinishOnReturnToInitialGraphEnabled = finishOnReturnToInitialGraphEnabled;
     }
 
 

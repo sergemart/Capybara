@@ -89,7 +89,7 @@ public class GeoRepo {
         } catch (SecurityException e) {
             String errorMessage = mContext.getString(R.string.exception_location_no_permission);
             mLocationSubject.onError(new LocationPermissionException(errorMessage));
-            if (BuildConfig.DEBUG) Log.e(TAG, errorMessage);
+            if (BuildConfig.DEBUG) Log.e(TAG, "LocationSubject emitted an error: " + errorMessage + "caused by: " +  e.getMessage());
         }
     }
 

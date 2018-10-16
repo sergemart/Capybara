@@ -42,6 +42,12 @@ public class MajorLocatorFragment extends SupportMapFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        super.setRetainInstance(true);
+
+        super.getMapAsync(googleMap -> mGoogleMap = googleMap);
+        mDisposable = new CompositeDisposable();
+
+        this.setEventListeners();
     }
 
 
@@ -52,9 +58,6 @@ public class MajorLocatorFragment extends SupportMapFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        this.initMemberVariables();
-        this.setAttributes();
-        this.setListeners();
 
         this.locateMe();
 
@@ -78,7 +81,7 @@ public class MajorLocatorFragment extends SupportMapFragment {
 
 
     /**
-     *
+     * Pause
      */
     @Override
     public void onPause() {
@@ -87,7 +90,9 @@ public class MajorLocatorFragment extends SupportMapFragment {
     }
 
 
-    // Instance clean-up
+    /**
+     * Instance clean-up
+     */
     @Override
     public void onDestroy() {
         mDisposable.clear();
@@ -96,29 +101,12 @@ public class MajorLocatorFragment extends SupportMapFragment {
     }
 
 
-    // --------------------------- Widget controls
+    // --------------------------- Fragment lifecycle subroutines
 
     /**
-     * Init member variables
+     * Set listeners to events
      */
-    private void initMemberVariables() {
-        super.getMapAsync(googleMap -> mGoogleMap = googleMap);
-        mDisposable = new CompositeDisposable();
-    }
-
-
-    /**
-     * Set attributes
-     */
-    private void setAttributes() {
-        super.setRetainInstance(true);
-    }
-
-
-    /**
-     * Set listeners to widgets and containers
-     */
-    private void setListeners() {
+    private void setEventListeners() {
         // Set a listener to the "GOT A LOCATION" event
         mDisposable.add(GeoRepo.get().getLocationSubject()
             .subscribe(location -> {
@@ -130,8 +118,7 @@ public class MajorLocatorFragment extends SupportMapFragment {
     }
 
 
-    // --------------------------- Subroutines
-
+    // --------------------------- Use cases
 
     /**
      * Update the map

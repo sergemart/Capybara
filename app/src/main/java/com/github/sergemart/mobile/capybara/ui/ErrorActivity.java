@@ -82,6 +82,7 @@ public class ErrorActivity
     // Create properly configured intent intended to invoke this activity
     public static Intent newIntent(Context packageContext, String errorDetails) {
         Intent intent = new Intent(packageContext, ErrorActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         intent.putExtra(KEY_ERROR_DETAILS, errorDetails);
         return intent;
     }

@@ -7,8 +7,14 @@
     <string name="action_i_am_major">I am a parent</string>
     <string name="action_i_am_minor">I am a child</string>
     <string name="action_exit_application">Exit application</string>
+    <string name="action_thanks_no">Thanks, No</string>
+    <string name="action_retry">Retry</string>
+    <string name="action_cancel">Cancel</string>
     <string name="desc_page_background">Background Image</string>
     <string name="desc_front_image">Front Image</string>
+    <string name="title_google_signin_canceled">Google Sign-In Canceled</string>
+    <string name="title_google_signin_failed">Google Sign-In Failed</string>
+    <string name="msg_google_signin_canceled_by_user">You have been canceled the Google sign-in. The app cannot proceed.</string>
     <string name="msg_google_client_connection_error">Unable to ask Google who are you</string>
     <string name="msg_firebase_client_connection_error">Unable to ask Google who are you</string>
     <string name="msg_fatal_error">Fatal error</string>

@@ -44,6 +44,10 @@ public class InitialSetupFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        super.setRetainInstance(true);
+
+        mInitialSharedViewModel = ViewModelProviders.of(Objects.requireNonNull( super.getActivity() )).get(InitialSharedViewModel.class);
+        mDisposable = new CompositeDisposable();
     }
 
 
@@ -56,15 +60,17 @@ public class InitialSetupFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View fragmentView = inflater.inflate(R.layout.fragment_initial_setup, container, false);
 
-        this.initMemberVariables(fragmentView);
-        this.setAttributes();
-        this.setListeners();
+        mIAmMajorButton = fragmentView.findViewById(R.id.button_i_am_major);
+        mIAmMinorButton = fragmentView.findViewById(R.id.button_i_am_minor);
 
+        this.setWidgetListeners();
         return fragmentView;
     }
 
 
-    // Instance clean-up
+    /**
+     * Instance clean-up
+     */
     @Override
     public void onDestroy() {
         mDisposable.clear();
@@ -73,32 +79,12 @@ public class InitialSetupFragment extends Fragment {
     }
 
 
-    // --------------------------- Widget controls
+    // --------------------------- Fragment lifecycle subroutines
 
     /**
-     * Init member variables
+     * Set listeners to widgets
      */
-    private void initMemberVariables(View fragmentView) {
-        mIAmMajorButton = fragmentView.findViewById(R.id.button_i_am_major);
-        mIAmMinorButton = fragmentView.findViewById(R.id.button_i_am_minor);
-
-        mInitialSharedViewModel = ViewModelProviders.of(Objects.requireNonNull( super.getActivity() )).get(InitialSharedViewModel.class);
-        mDisposable = new CompositeDisposable();
-    }
-
-
-    /**
-     * Set attributes
-     */
-    private void setAttributes() {
-        super.setRetainInstance(true);
-    }
-
-
-    /**
-     * Set listeners to widgets, containers and events
-     */
-    private void setListeners() {
+    private void setWidgetListeners() {
         // Set a listener to the "I Am a Major" button
         mDisposable.add(RxView.clicks(mIAmMajorButton).subscribe(
             event -> {
