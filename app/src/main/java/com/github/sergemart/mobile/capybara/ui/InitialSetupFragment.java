@@ -63,7 +63,7 @@ public class InitialSetupFragment extends Fragment {
         mIAmMajorButton = fragmentView.findViewById(R.id.button_i_am_major);
         mIAmMinorButton = fragmentView.findViewById(R.id.button_i_am_minor);
 
-        this.setWidgetListeners();
+        this.setListeners();
         return fragmentView;
     }
 
@@ -82,9 +82,9 @@ public class InitialSetupFragment extends Fragment {
     // --------------------------- Fragment lifecycle subroutines
 
     /**
-     * Set listeners to widgets
+     * Set listeners to widgets and events
      */
-    private void setWidgetListeners() {
+    private void setListeners() {
         // Set a listener to the "I Am a Major" button
         mDisposable.add(RxView.clicks(mIAmMajorButton).subscribe(
             event -> {

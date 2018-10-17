@@ -1,14 +1,18 @@
 package com.github.sergemart.mobile.capybara.ui;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.github.sergemart.mobile.capybara.App;
 import com.github.sergemart.mobile.capybara.BuildConfig;
+import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
 import com.github.sergemart.mobile.capybara.data.CloudRepo;
 import com.github.sergemart.mobile.capybara.data.PreferenceStore;
@@ -16,6 +20,7 @@ import com.github.sergemart.mobile.capybara.viewmodel.InitialSharedViewModel;
 import com.google.android.material.button.MaterialButton;
 import com.jakewharton.rxbinding2.view.RxView;
 
+import java.lang.ref.WeakReference;
 import java.util.Objects;
 
 import androidx.annotation.NonNull;
@@ -26,7 +31,6 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.fragment.NavHostFragment;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.functions.Action;
 
 
 public class InitialSigninFragment extends Fragment {
@@ -38,6 +42,7 @@ public class InitialSigninFragment extends Fragment {
 
     private CompositeDisposable mDisposable;
     private InitialSharedViewModel mInitialSharedViewModel;
+    private Throwable mCause;
 
 
     // --------------------------- Override fragment lifecycle event handlers
@@ -52,8 +57,6 @@ public class InitialSigninFragment extends Fragment {
 
         mDisposable = new CompositeDisposable();
         mInitialSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(super.getActivity())).get(InitialSharedViewModel.class);
-
-        this.setEventListeners();
     }
 
 
@@ -67,8 +70,25 @@ public class InitialSigninFragment extends Fragment {
         View fragmentView = inflater.inflate(R.layout.fragment_initial_signin, container, false);
         mSignInButton = fragmentView.findViewById(R.id.button_sign_in);
 
-        this.setWidgetListeners();
+        this.setListeners();
         return fragmentView;
+    }
+
+
+    /**
+     * Used uncommonly as a callback for the embedded dialog fragment
+     */
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch(requestCode) {
+            case Constants.REQUEST_CODE_DIALOG_FRAGMENT:
+                if (resultCode == Activity.RESULT_OK) {                                             // retry
+                    this.signIn();
+                } else if (resultCode == Activity.RESULT_CANCELED) {                                // fatal
+                    this.navigateToFatalErrorPage(mCause);
+                }
+                break;
+        }
     }
 
 
@@ -85,9 +105,15 @@ public class InitialSigninFragment extends Fragment {
     // --------------------------- Fragment lifecycle subroutines
 
     /**
-     * Set listeners to events
+     * Set listeners to widgets and events
      */
-    private void setEventListeners() {
+    private void setListeners() {
+
+        // Set a listener to the "Sign In" button
+        mDisposable.add(RxView.clicks(mSignInButton).subscribe(
+            event -> this.signIn()
+        ));
+
         // Set a listener to the "USER SIGNED IN" event
         mDisposable.add(CloudRepo.get().getSigninSubject().subscribe(event -> {
             if (BuildConfig.DEBUG) Log.d(TAG, "SigninSubject event received in InitialSigninFragment, getting device token");
@@ -97,7 +123,8 @@ public class InitialSigninFragment extends Fragment {
         // Set a listener to the "USER SIGNED IN ERROR" event
         mDisposable.add(CloudRepo.get().getSigninErrorSubject().subscribe(e -> {
             if (BuildConfig.DEBUG) Log.d(TAG, "SigninErrorSubject error received in InitialSigninFragment, invoking retry dialog.");
-            this.showSigninRetryDialog(e);
+            mCause = e;
+            this.showSigninRetryDialog(mCause);
         }));
 
         // Set a listener to the "DEVICE TOKEN RECEIVED" event
@@ -111,17 +138,7 @@ public class InitialSigninFragment extends Fragment {
             event -> this.navigateToNextPage(),
             this::navigateToFatalErrorPage
         ));
-    }
 
-
-    /**
-     * Set listeners to widgets
-     */
-    private void setWidgetListeners() {
-        // Set a listener to the "Sign In" button
-        mDisposable.add(RxView.clicks(mSignInButton).subscribe(
-            event -> this.signIn()
-        ));
     }
 
 
@@ -139,15 +156,7 @@ public class InitialSigninFragment extends Fragment {
      * Show sign-in retry dialog
      */
     private void showSigninRetryDialog(Throwable cause) {
-        RetrySigninDialogFragment.newInstance(cause).show(Objects.requireNonNull(super.getFragmentManager()), TAG_SIGN_IN_RETRY_DIALOG);
-    }
-
-
-    /**
-     * Navigate to the fatal error page
-     */
-    private void navigateToFatalErrorPage(Throwable cause) {
-        super.startActivity(ErrorActivity.newIntent( Objects.requireNonNull(super.getActivity()), cause.getLocalizedMessage() ));
+        RetrySigninDialogFragment.newInstance(cause).show(Objects.requireNonNull(super.getChildFragmentManager()), TAG_SIGN_IN_RETRY_DIALOG);
     }
 
 
@@ -177,6 +186,15 @@ public class InitialSigninFragment extends Fragment {
         } else {
             mInitialSharedViewModel.emitAppIsInitialized();
         }
+    }
+
+
+    /**
+     * Navigate to the fatal error page
+     */
+    private void navigateToFatalErrorPage(Throwable cause) {
+        App.setLastFatalException(new WeakReference<>(cause));
+        super.startActivity(ErrorActivity.newIntent( Objects.requireNonNull(super.getActivity()), cause.getLocalizedMessage() ));
     }
 
 
@@ -216,8 +234,14 @@ public class InitialSigninFragment extends Fragment {
                 .setTitle(R.string.title_google_signin_failed)
                 .setMessage(R.string.msg_google_signin_canceled_by_user)
                 .setIcon(R.mipmap.ic_launcher)
-                .setPositiveButton(R.string.action_retry, (dialog, button) -> this.signIn())
-                .setNegativeButton(R.string.action_thanks_no, (dialog, button) -> this.navigateToFatalErrorPage())
+                .setPositiveButton(R.string.action_retry, (dialog, button) ->
+                    Objects.requireNonNull(super.getParentFragment()).onActivityResult(             // use Fragment#onActivityResult() as a callback
+                        Constants.REQUEST_CODE_DIALOG_FRAGMENT,
+                        Activity.RESULT_OK,
+                        super.getActivity().getIntent()
+                    )
+                )
+                .setNegativeButton(R.string.action_thanks_no, (dialog, button) -> dialog.cancel())
                 .create()
             ;
             alertDialog.setCanceledOnTouchOutside(false);
@@ -231,25 +255,11 @@ public class InitialSigninFragment extends Fragment {
          */
         @Override
         public void onCancel(DialogInterface dialog) {
-            this.navigateToFatalErrorPage();
-        }
-
-
-        // +++++++++++++++++++++++ Use cases
-
-        /**
-         * Sign in with Google account
-         */
-        private void signIn() {
-            CloudRepo.get().sendSignInIntent(Objects.requireNonNull( super.getActivity() ));
-        }
-
-
-        /**
-         * Navigate to the fatal error page
-         */
-        private void navigateToFatalErrorPage() {
-            super.startActivity(ErrorActivity.newIntent( Objects.requireNonNull(super.getActivity()), mCause.getLocalizedMessage() ));
+            Objects.requireNonNull(super.getParentFragment()).onActivityResult(                     // use Fragment#onActivityResult() as a callback
+                Constants.REQUEST_CODE_DIALOG_FRAGMENT,
+                Activity.RESULT_CANCELED,
+                Objects.requireNonNull(super.getActivity()).getIntent()
+            );
         }
 
 

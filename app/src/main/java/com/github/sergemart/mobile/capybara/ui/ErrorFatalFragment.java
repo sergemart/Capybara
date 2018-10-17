@@ -46,8 +46,6 @@ public class ErrorFatalFragment extends Fragment {
 
         mErrorSharedViewModel = ViewModelProviders.of(Objects.requireNonNull( super.getActivity() )).get(ErrorSharedViewModel.class);
         mDisposable = new CompositeDisposable();
-
-        this.setEventListeners();
     }
 
 
@@ -63,7 +61,7 @@ public class ErrorFatalFragment extends Fragment {
         mErrorDetailsTextView = fragmentView.findViewById(R.id.textView_error_details);
         mExitApplicationButton = fragmentView.findViewById(R.id.button_exit_application);
 
-        this.setWidgetListeners();
+        this.setListeners();
         return fragmentView;
     }
 
@@ -82,24 +80,19 @@ public class ErrorFatalFragment extends Fragment {
     // --------------------------- Fragment lifecycle subroutines
 
     /**
-     * Set listeners to events
+     * Set listeners to widgets and events
      */
-    private void setEventListeners() {
-        // Set a listener to the "ERROR DETAILS PUBLISHED" event
-        mDisposable.add(mErrorSharedViewModel.getErrorDetailsSubject().subscribe(
-            this::showErrorMessage
-        ));
-    }
-
-
-    /**
-     * Set listeners to widgets
-     */
-    private void setWidgetListeners() {
+    private void setListeners() {
         // Set a listener to the "Exit Application" button
         mDisposable.add(RxView.clicks(mExitApplicationButton).subscribe(
             event -> mErrorSharedViewModel.emitExitRequested()                                      // send "EXIT REQUESTED" event
         ));
+
+        // Set a listener to the "ERROR DETAILS PUBLISHED" event
+        mDisposable.add(mErrorSharedViewModel.getErrorDetailsSubject().subscribe(
+            this::showErrorMessage
+        ));
+
     }
 
 

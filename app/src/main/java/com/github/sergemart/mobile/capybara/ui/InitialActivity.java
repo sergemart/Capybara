@@ -1,6 +1,5 @@
 package com.github.sergemart.mobile.capybara.ui;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -26,6 +25,7 @@ public class InitialActivity
 
     private static final String TAG = InitialActivity.class.getSimpleName();
 
+    private InitialSharedViewModel mInitialSharedViewModel;
     private CompositeDisposable mDisposable;
 
 
@@ -38,31 +38,11 @@ public class InitialActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_initial);
+
         mDisposable = new CompositeDisposable();
+        mInitialSharedViewModel = ViewModelProviders.of(this).get(InitialSharedViewModel.class);
 
-        // Set a listener to the "APP IS COMPLETELY INITIALIZED" event
-        InitialSharedViewModel initialSharedViewModel = ViewModelProviders.of(this).get(InitialSharedViewModel.class);
-        mDisposable.add(initialSharedViewModel.getAppIsInitializedSubject()
-            .subscribe(this::leaveInitialGraph)
-        );
-
-        // Set local nav graph supplemental error handlers
-        mDisposable.add(CloudRepo.get().getSigninSubject()
-            .subscribe(event -> {}, e -> App.setLastFatalException( new WeakReference<>(e) ))
-        );
-        mDisposable.add(CloudRepo.get().getSignoutSubject()
-            .subscribe(event -> {}, e -> App.setLastFatalException( new WeakReference<>(e) ))
-        );
-        mDisposable.add(CloudRepo.get().getGetDeviceTokenSubject()
-            .subscribe(event -> {}, e -> App.setLastFatalException( new WeakReference<>(e) ))
-        );
-        mDisposable.add(CloudRepo.get().getPublishDeviceTokenSubject()
-            .subscribe(event -> {}, e -> App.setLastFatalException( new WeakReference<>(e) ))
-        );
-        mDisposable.add(CloudRepo.get().getCreateFamilySubject()
-            .subscribe(event -> {}, e -> App.setLastFatalException( new WeakReference<>(e) ))
-        );
-
+        this.setListeners();
     }
 
 
@@ -97,6 +77,34 @@ public class InitialActivity
         mDisposable.clear();
         if (BuildConfig.DEBUG) Log.d(TAG, "Subscriptions are disposed.");
         super.onDestroy();
+    }
+
+
+    // --------------------------- Activity lifecycle subroutines
+
+    private void setListeners() {
+
+        // Set a listener to the "APP IS COMPLETELY INITIALIZED" event
+        mDisposable.add(mInitialSharedViewModel.getAppIsInitializedSubject()
+            .subscribe(this::leaveInitialGraph)
+        );
+
+        // Set local nav graph supplemental error handlers
+        mDisposable.add(CloudRepo.get().getSigninSubject()
+            .subscribe(event -> {}, e -> App.setLastFatalException( new WeakReference<>(e) ))
+        );
+        mDisposable.add(CloudRepo.get().getSignoutSubject()
+            .subscribe(event -> {}, e -> App.setLastFatalException( new WeakReference<>(e) ))
+        );
+        mDisposable.add(CloudRepo.get().getGetDeviceTokenSubject()
+            .subscribe(event -> {}, e -> App.setLastFatalException( new WeakReference<>(e) ))
+        );
+        mDisposable.add(CloudRepo.get().getPublishDeviceTokenSubject()
+            .subscribe(event -> {}, e -> App.setLastFatalException( new WeakReference<>(e) ))
+        );
+        mDisposable.add(CloudRepo.get().getCreateFamilySubject()
+            .subscribe(event -> {}, e -> App.setLastFatalException( new WeakReference<>(e) ))
+        );
     }
 
 

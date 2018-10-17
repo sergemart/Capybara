@@ -46,8 +46,6 @@ public class MajorLocatorFragment extends SupportMapFragment {
 
         super.getMapAsync(googleMap -> mGoogleMap = googleMap);
         mDisposable = new CompositeDisposable();
-
-        this.setEventListeners();
     }
 
 
@@ -59,6 +57,7 @@ public class MajorLocatorFragment extends SupportMapFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
+        this.setListeners();
         this.locateMe();
 
         return super.onCreateView(inflater, container, savedInstanceState);
@@ -104,9 +103,10 @@ public class MajorLocatorFragment extends SupportMapFragment {
     // --------------------------- Fragment lifecycle subroutines
 
     /**
-     * Set listeners to events
+     * Set listeners to widgets and events
      */
-    private void setEventListeners() {
+    private void setListeners() {
+
         // Set a listener to the "GOT A LOCATION" event
         mDisposable.add(GeoRepo.get().getLocationSubject()
             .subscribe(location -> {

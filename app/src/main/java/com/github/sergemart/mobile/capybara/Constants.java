@@ -20,6 +20,7 @@ public final class Constants {
 
     public static final int REQUEST_CODE_SIGN_IN = 7001;
     public static final int REQUEST_CODE_LOCATION_PERMISSIONS = 7002;
+    public static final int REQUEST_CODE_DIALOG_FRAGMENT = 7003;
 
 
     // ----------------------- Data keys
