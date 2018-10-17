@@ -14,8 +14,9 @@
     <string name="desc_front_image">Front Image</string>
     <string name="title_google_signin_canceled">Google Sign-In Canceled</string>
     <string name="title_google_signin_failed">Google Sign-In Failed</string>
-    <string name="msg_google_signin_canceled_by_user">You have been canceled the Google sign-in. The app cannot proceed.</string>
-    <string name="msg_google_client_connection_error">Unable to ask Google who are you</string>
-    <string name="msg_firebase_client_connection_error">Unable to ask Google who are you</string>
+    <string name="msg_google_unknown_error">Unknown error while signing in to Google. The app cannot proceed. Retry?</string>
+    <string name="msg_google_signin_canceled_by_user">You have been canceled the Google sign-in. The app cannot proceed. Retry?</string>
+    <string name="msg_google_client_connection_error">Cannot connect to Google while signing in. The app cannot proceed. Retry?</string>
+    <string name="msg_firebase_client_connection_error">Cannot connect to Google while signing in. The app cannot proceed. Retry?</string>
     <string name="msg_fatal_error">Fatal error</string>
 </resources>

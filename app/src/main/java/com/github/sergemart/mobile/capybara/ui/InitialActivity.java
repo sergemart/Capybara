@@ -90,21 +90,21 @@ public class InitialActivity
         );
 
         // Set local nav graph supplemental error handlers
-        mDisposable.add(CloudRepo.get().getSigninSubject()
-            .subscribe(event -> {}, e -> App.setLastFatalException( new WeakReference<>(e) ))
-        );
-        mDisposable.add(CloudRepo.get().getSignoutSubject()
-            .subscribe(event -> {}, e -> App.setLastFatalException( new WeakReference<>(e) ))
-        );
-        mDisposable.add(CloudRepo.get().getGetDeviceTokenSubject()
-            .subscribe(event -> {}, e -> App.setLastFatalException( new WeakReference<>(e) ))
-        );
-        mDisposable.add(CloudRepo.get().getPublishDeviceTokenSubject()
-            .subscribe(event -> {}, e -> App.setLastFatalException( new WeakReference<>(e) ))
-        );
-        mDisposable.add(CloudRepo.get().getCreateFamilySubject()
-            .subscribe(event -> {}, e -> App.setLastFatalException( new WeakReference<>(e) ))
-        );
+//        mDisposable.add(CloudRepo.get().getSigninSubject()
+//            .subscribe(event -> {}, e -> App.setLastFatalException( new WeakReference<>(e) ))
+//        );
+//        mDisposable.add(CloudRepo.get().getSignoutSubject()
+//            .subscribe(event -> {}, e -> App.setLastFatalException( new WeakReference<>(e) ))
+//        );
+//        mDisposable.add(CloudRepo.get().getGetDeviceTokenSubject()
+//            .subscribe(event -> {}, e -> App.setLastFatalException( new WeakReference<>(e) ))
+//        );
+//        mDisposable.add(CloudRepo.get().getPublishDeviceTokenSubject()
+//            .subscribe(event -> {}, e -> App.setLastFatalException( new WeakReference<>(e) ))
+//        );
+//        mDisposable.add(CloudRepo.get().getCreateFamilySubject()
+//            .subscribe(event -> {}, e -> App.setLastFatalException( new WeakReference<>(e) ))
+//        );
     }
 
 

@@ -14,8 +14,9 @@
     <string name="desc_front_image">Рисунок</string>
     <string name="title_google_signin_canceled">Вход в аккаунт отменён</string>
     <string name="title_google_signin_failed">Не могу войти в ваш аккаунт Google</string>
-    <string name="msg_google_signin_canceled_by_user">Вы отменили вход в свой аккаунт. Без этого ничего не будет работать.</string>
-    <string name="msg_google_client_connection_error">Не могу войти в ваш аккаунт Google</string>
-    <string name="msg_firebase_client_connection_error">Не могу войти в ваш аккаунт Google</string>
+    <string name="msg_google_unknown_error">Непонятно, что произошло. Попробовать ещё раз?</string>
+    <string name="msg_google_signin_canceled_by_user">Вы отменили вход в свой аккаунт. Без этого ничего не будет работать. Попробовать ещё раз?</string>
+    <string name="msg_google_client_connection_error">Не могу войти в ваш аккаунт Google. Без этого ничего не будет работать. Попробовать ещё раз?</string>
+    <string name="msg_firebase_client_connection_error">Не могу войти в ваш аккаунт Google. Без этого ничего не будет работать. Попробовать ещё раз?</string>
     <string name="msg_fatal_error">Непоправимая ошибка</string>
 </resources>

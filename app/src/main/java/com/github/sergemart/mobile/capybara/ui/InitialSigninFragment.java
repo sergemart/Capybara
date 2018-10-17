@@ -16,7 +16,10 @@ import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
 import com.github.sergemart.mobile.capybara.data.CloudRepo;
 import com.github.sergemart.mobile.capybara.data.PreferenceStore;
+import com.github.sergemart.mobile.capybara.exceptions.GoogleSigninException;
 import com.github.sergemart.mobile.capybara.viewmodel.InitialSharedViewModel;
+import com.google.android.gms.auth.api.signin.GoogleSignInStatusCodes;
+import com.google.android.gms.common.api.ApiException;
 import com.google.android.material.button.MaterialButton;
 import com.jakewharton.rxbinding2.view.RxView;
 
@@ -120,7 +123,7 @@ public class InitialSigninFragment extends Fragment {
             this.getDeviceToken();
         }));
 
-        // Set a listener to the "USER SIGNED IN ERROR" event
+        // Set a listener to the "USER SIGN IN ERROR" event
         mDisposable.add(CloudRepo.get().getSigninErrorSubject().subscribe(e -> {
             if (BuildConfig.DEBUG) Log.d(TAG, "SigninErrorSubject error received in InitialSigninFragment, invoking retry dialog.");
             mCause = e;
@@ -203,6 +206,8 @@ public class InitialSigninFragment extends Fragment {
     public static class RetrySigninDialogFragment extends DialogFragment {
 
         private Throwable mCause;
+        private int mTitleId;
+        private int mMessageId;
 
 
         // +++++++++++++++++++++++ Getters/ setters
@@ -221,6 +226,25 @@ public class InitialSigninFragment extends Fragment {
         public void onCreate(@Nullable Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             setRetainInstance(true);
+
+            mTitleId = R.string.title_google_signin_failed;
+            mMessageId = R.string.msg_google_unknown_error;
+            if (mCause.getCause() instanceof ApiException) {
+                ApiException apiException = (ApiException) mCause.getCause();
+                switch (apiException.getStatusCode()) {
+                    case GoogleSignInStatusCodes.SIGN_IN_CANCELLED:
+                        mTitleId = R.string.title_google_signin_canceled;
+                        mMessageId = R.string.msg_google_signin_canceled_by_user;
+                        break;
+                    case GoogleSignInStatusCodes.NETWORK_ERROR:
+                        mTitleId = R.string.title_google_signin_failed;
+                        mMessageId = R.string.msg_google_client_connection_error;
+                        break;
+                    default:
+                        mTitleId = R.string.title_google_signin_failed;
+                        mMessageId = R.string.msg_google_client_connection_error;
+                }
+            }
         }
 
 
@@ -231,8 +255,8 @@ public class InitialSigninFragment extends Fragment {
         @Override
         public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
             AlertDialog alertDialog = new AlertDialog.Builder(Objects.requireNonNull( super.getActivity() ))
-                .setTitle(R.string.title_google_signin_failed)
-                .setMessage(R.string.msg_google_signin_canceled_by_user)
+                .setTitle(mTitleId)
+                .setMessage(mMessageId)
                 .setIcon(R.mipmap.ic_launcher)
                 .setPositiveButton(R.string.action_retry, (dialog, button) ->
                     Objects.requireNonNull(super.getParentFragment()).onActivityResult(             // use Fragment#onActivityResult() as a callback
@@ -260,6 +284,16 @@ public class InitialSigninFragment extends Fragment {
                 Activity.RESULT_CANCELED,
                 Objects.requireNonNull(super.getActivity()).getIntent()
             );
+        }
+
+
+        /**
+         * Fix a compat lib bug causing the dialog dismiss on rotate
+         */
+        @Override
+        public void onDestroyView() {
+            if (super.getDialog() != null && super.getRetainInstance()) super.getDialog().setDismissMessage(null);
+            super.onDestroyView();
         }
 
 
