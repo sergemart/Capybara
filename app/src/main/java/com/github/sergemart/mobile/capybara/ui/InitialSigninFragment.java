@@ -26,6 +26,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.fragment.NavHostFragment;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.functions.Action;
 
 
 public class InitialSigninFragment extends Fragment {
@@ -102,13 +103,13 @@ public class InitialSigninFragment extends Fragment {
         // Set a listener to the "DEVICE TOKEN RECEIVED" event
         mDisposable.add(CloudRepo.get().getGetDeviceTokenSubject().subscribe(
             event -> this.publishDeviceToken(),
-            e -> super.startActivity(ErrorActivity.newIntent( Objects.requireNonNull(super.getActivity()), e.getLocalizedMessage() ))
+            this::navigateToFatalErrorPage
         ));
 
         // Set a listener to the "DEVICE TOKEN PUBLISHED" event
         mDisposable.add(CloudRepo.get().getPublishDeviceTokenSubject().subscribe(
             event -> this.navigateToNextPage(),
-            e -> super.startActivity(ErrorActivity.newIntent( Objects.requireNonNull(super.getActivity()), e.getLocalizedMessage() ))
+            this::navigateToFatalErrorPage
         ));
     }
 
@@ -139,6 +140,14 @@ public class InitialSigninFragment extends Fragment {
      */
     private void showSigninRetryDialog(Throwable cause) {
         RetrySigninDialogFragment.newInstance(cause).show(Objects.requireNonNull(super.getFragmentManager()), TAG_SIGN_IN_RETRY_DIALOG);
+    }
+
+
+    /**
+     * Navigate to the fatal error page
+     */
+    private void navigateToFatalErrorPage(Throwable cause) {
+        super.startActivity(ErrorActivity.newIntent( Objects.requireNonNull(super.getActivity()), cause.getLocalizedMessage() ));
     }
 
 
