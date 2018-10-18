@@ -52,6 +52,10 @@ public class InitialActivity
     @Override
     protected void onStart() {
         super.onStart();
+
+        // App start-up actions
+        CloudRepo.get().getTokenAsync();
+
         // Leave the initial graph if the APP IS SET UP and the USER IS AUTHENTICATED.
         // Otherwise implicitly delegate control to the local nav AAC
         if ( PreferenceStore.getStoredIsAppModeSet() && CloudRepo.get().isAuthenticated() ) this.leaveInitialGraph();
@@ -89,22 +93,6 @@ public class InitialActivity
             .subscribe(this::leaveInitialGraph)
         );
 
-        // Set local nav graph supplemental error handlers
-//        mDisposable.add(CloudRepo.get().getSigninSubject()
-//            .subscribe(event -> {}, e -> App.setLastFatalException( new WeakReference<>(e) ))
-//        );
-//        mDisposable.add(CloudRepo.get().getSignoutSubject()
-//            .subscribe(event -> {}, e -> App.setLastFatalException( new WeakReference<>(e) ))
-//        );
-//        mDisposable.add(CloudRepo.get().getGetDeviceTokenSubject()
-//            .subscribe(event -> {}, e -> App.setLastFatalException( new WeakReference<>(e) ))
-//        );
-//        mDisposable.add(CloudRepo.get().getPublishDeviceTokenSubject()
-//            .subscribe(event -> {}, e -> App.setLastFatalException( new WeakReference<>(e) ))
-//        );
-//        mDisposable.add(CloudRepo.get().getCreateFamilySubject()
-//            .subscribe(event -> {}, e -> App.setLastFatalException( new WeakReference<>(e) ))
-//        );
     }
 
 

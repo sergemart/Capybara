@@ -62,9 +62,6 @@ public class CloudRepo {
         mFirebaseFunctions = FirebaseFunctions.getInstance();
         mFirebaseInstanceId = FirebaseInstanceId.getInstance();
         mDeviceToken = "";
-
-        // App start-up actions
-        this.getTokenAsync();
     }
 
 
@@ -77,12 +74,14 @@ public class CloudRepo {
 
     // --------------------------- Member variables
 
-    private final Subject<FirebaseUser> mSigninSubject = PublishSubject.create();
+    private final Subject<FirebaseUser> mSigninSuccessSubject = PublishSubject.create();
     private final Subject<Throwable> mSigninErrorSubject = PublishSubject.create();
     private final Subject<Boolean> mSignoutSubject = PublishSubject.create();
+    private final Subject<Boolean> mGetDeviceTokenSuccessSubject = PublishSubject.create();
+    private final Subject<Throwable> mGetDeviceTokenErrorSubject = PublishSubject.create();
+    private final Subject<Boolean> mPublishDeviceTokenSuccessSubject = PublishSubject.create();
+    private final Subject<Throwable> mPublishDeviceTokenErrorSubject = PublishSubject.create();
     private final Subject<Boolean> mSendLocationSubject = PublishSubject.create();
-    private final Subject<Boolean> mGetDeviceTokenSubject = PublishSubject.create();
-    private final Subject<Boolean> mPublishDeviceTokenSubject = PublishSubject.create();
     private final Subject<Boolean> mCreateFamilySubject = PublishSubject.create();
 
     private final Context mContext;
@@ -97,8 +96,8 @@ public class CloudRepo {
 
     // --------------------------- Observable getters
 
-    public Subject<FirebaseUser> getSigninSubject() {
-        return mSigninSubject;
+    public Subject<FirebaseUser> getSigninSuccessSubject() {
+        return mSigninSuccessSubject;
     }
 
 
@@ -117,13 +116,23 @@ public class CloudRepo {
     }
 
 
-    public Subject<Boolean> getGetDeviceTokenSubject() {
-        return mGetDeviceTokenSubject;
+    public Subject<Boolean> getGetDeviceTokenSuccessSubject() {
+        return mGetDeviceTokenSuccessSubject;
     }
 
 
-    public Subject<Boolean> getPublishDeviceTokenSubject() {
-        return mPublishDeviceTokenSubject;
+    public Subject<Throwable> getGetDeviceTokenErrorSubject() {
+        return mGetDeviceTokenErrorSubject;
+    }
+
+
+    public Subject<Boolean> getPublishDeviceTokenSuccessSubject() {
+        return mPublishDeviceTokenSuccessSubject;
+    }
+
+
+    public Subject<Throwable> getPublishDeviceTokenErrorSubject() {
+        return mPublishDeviceTokenErrorSubject;
     }
 
 
@@ -173,13 +182,13 @@ public class CloudRepo {
         } catch (ApiException e) {
             String errorMessage = mContext.getString(R.string.exception_google_sign_in_failed);
             mSigninErrorSubject.onNext(new GoogleSigninException(errorMessage, e));                 // send "USER SIGN IN ERROR" event
-            if (BuildConfig.DEBUG) Log.e(TAG, "SigninErrorSubject emitted an error: " + errorMessage + "caused by: " +  e.getMessage());
+            if (BuildConfig.DEBUG) Log.e(TAG, "SigninErrorSubject emitted an event: " + errorMessage + " caused by: " +  e.getMessage());
             return;
         }
         if (googleSignInAccount == null) {
             String errorMessage = mContext.getString(R.string.exception_google_sign_in_account_is_null);
             mSigninErrorSubject.onNext(new GoogleSigninException(errorMessage));                    // send "USER SIGN IN ERROR" event
-            if (BuildConfig.DEBUG) Log.e(TAG, "SigninErrorSubject emitted an error: " + errorMessage);
+            if (BuildConfig.DEBUG) Log.e(TAG, "SigninErrorSubject emitted an event: " + errorMessage);
             return;
         }
 
@@ -191,19 +200,19 @@ public class CloudRepo {
                 if ( !task.isSuccessful() ) {                                                       // error check
                     String errorMessage = mContext.getString(R.string.exception_firebase_client_connection_failed);
                     mSigninErrorSubject.onNext(new FirebaseSigninException(errorMessage));          // send "USER SIGN IN ERROR" event
-                    if (BuildConfig.DEBUG) Log.e(TAG, "SigninErrorSubject emitted an error: " + errorMessage);
+                    if (BuildConfig.DEBUG) Log.e(TAG, "SigninErrorSubject emitted an event: " + errorMessage);
                     return;
                 }
                 mFirebaseUser = mFirebaseAuth.getCurrentUser();
                 if (mFirebaseUser == null) {
                     String errorMessage = mContext.getString(R.string.exception_firebase_user_is_null);
                     mSigninErrorSubject.onNext(new FirebaseSigninException(errorMessage));          // send "USER SIGN IN ERROR" event
-                    if (BuildConfig.DEBUG) Log.e(TAG, "SigninErrorSubject emitted an error: " + errorMessage);
+                    if (BuildConfig.DEBUG) Log.e(TAG, "SigninErrorSubject emitted an event: " + errorMessage);
                     return;
                 }
                 mUsername = mFirebaseUser.getDisplayName();
                 if (BuildConfig.DEBUG) Log.d(TAG, "Firebase sign-in succeeded with username: " + mUsername);
-                mSigninSubject.onNext(mFirebaseUser);                                               // send "USER SIGNED IN" event
+                mSigninSuccessSubject.onNext(mFirebaseUser);                                               // send "USER SIGNED IN" event
                 if (BuildConfig.DEBUG) Log.d(TAG, "SigninSubject emitted an event: " + mUsername);
             })
         ;
@@ -234,12 +243,13 @@ public class CloudRepo {
             .addOnSuccessListener(instanseIdResult -> {
                 mDeviceToken = instanseIdResult.getToken();
                 if (BuildConfig.DEBUG) Log.d(TAG, "Got Firebase Messaging device token: " + mDeviceToken);
-                mGetDeviceTokenSubject.onNext(Boolean.TRUE);                                        // send "DEVICE TOKEN RECEIVED" event
+                mGetDeviceTokenSuccessSubject.onNext(Boolean.TRUE);                                 // send "DEVICE TOKEN RECEIVED" event
+                if (BuildConfig.DEBUG) Log.d(TAG, "GetDeviceTokenSuccessSubject emitted an event");
             })
             .addOnFailureListener(e -> {
                 String errorMessage = mContext.getString(R.string.exception_firebase_device_token_not_received);
-                mGetDeviceTokenSubject.onError(new FirebaseMessagingException(errorMessage, e));
-                if (BuildConfig.DEBUG) Log.e(TAG, "GetDeviceTokenSubject emitted an error: " + errorMessage + "caused by: " +  e.getMessage());
+                mGetDeviceTokenErrorSubject.onNext(new FirebaseMessagingException(errorMessage, e));// send "DEVICE TOKEN RECEIVE ERROR" event
+                if (BuildConfig.DEBUG) Log.e(TAG, "GetDeviceTokenErrorSubject emitted an event: " + errorMessage + " caused by: " +  e.getMessage());
             })
         ;
     }
@@ -250,6 +260,7 @@ public class CloudRepo {
      * Init publishing the token
      */
     public void onTokenReceivedByMessagingService(String deviceToken) {
+        if (BuildConfig.DEBUG) Log.d(TAG, "onTokenReceivedByMessagingService() called");
         if (deviceToken.equals(mDeviceToken)) {                                                     // break the possible loop
             if (BuildConfig.DEBUG) Log.e(TAG, "Token already known; skipping.");
             return;
@@ -286,11 +297,12 @@ public class CloudRepo {
                     result = (Map<String, Object>) Objects.requireNonNull(task.getResult()).getData(); // throws an exception on error
                     // if success:
                     if (BuildConfig.DEBUG) Log.d(TAG, "Published Firebase Messaging device token: " + mDeviceToken);
-                    mPublishDeviceTokenSubject.onNext(Boolean.TRUE);                                // send "DEVICE TOKEN PUBLISHED" event
+                    mPublishDeviceTokenSuccessSubject.onNext(Boolean.TRUE);                         // send "DEVICE TOKEN PUBLISHED" event
+                    if (BuildConfig.DEBUG) Log.d(TAG, "PublishDeviceTokenSuccessSubject emitted an event");
                 } catch (Exception e) {
                     String errorMessage = mContext.getString(R.string.exception_firebase_device_token_not_published);
-                    mPublishDeviceTokenSubject.onError(new FirebaseMessagingException(errorMessage, e));
-                    if (BuildConfig.DEBUG) Log.e(TAG, "PublishDeviceTokenSubject emitted an error: " + errorMessage + "caused by: " +  e.getMessage());
+                    mPublishDeviceTokenErrorSubject.onNext(new FirebaseMessagingException(errorMessage, e)); // send "DEVICE TOKEN PUBLISH ERROR" event
+                    if (BuildConfig.DEBUG) Log.e(TAG, "PublishDeviceTokenErrorSubject emitted an event: " + errorMessage + "caused by: " +  e.getMessage());
                 }
                 return result;
             })
@@ -298,12 +310,12 @@ public class CloudRepo {
                 if (!task.isSuccessful() && task.getException() != null) {
                     Exception e = task.getException();
                     String errorMessage = mContext.getString(R.string.exception_firebase_device_token_not_published);
-                    mPublishDeviceTokenSubject.onError(new FirebaseMessagingException(errorMessage, e));
-                    if (BuildConfig.DEBUG) Log.e(TAG, "PublishDeviceTokenSubject emitted an error: " + errorMessage + "caused by: " +  e.getMessage());
+                    mPublishDeviceTokenErrorSubject.onNext(new FirebaseMessagingException(errorMessage, e)); // send "DEVICE TOKEN PUBLISH ERROR" event
+                    if (BuildConfig.DEBUG) Log.e(TAG, "PublishDeviceTokenErrorSubject emitted an event: " + errorMessage + "caused by: " +  e.getMessage());
                 } else if (!task.isSuccessful()) {
                     String errorMessage = mContext.getString(R.string.exception_firebase_device_token_not_published);
-                    mPublishDeviceTokenSubject.onError(new FirebaseMessagingException(errorMessage));
-                    if (BuildConfig.DEBUG) Log.e(TAG, "PublishDeviceTokenSubject emitted an error: " + errorMessage);
+                    mPublishDeviceTokenErrorSubject.onNext(new FirebaseMessagingException(errorMessage)); // send "DEVICE TOKEN PUBLISH ERROR" event
+                    if (BuildConfig.DEBUG) Log.e(TAG, "PublishDeviceTokenErrorSubject emitted an event: " + errorMessage);
                 }
             })
         ;
@@ -347,11 +359,11 @@ public class CloudRepo {
                     Exception e = task.getException();
                     String errorMessage = mContext.getString(R.string.exception_firebase_family_not_created);
                     if (BuildConfig.DEBUG) Log.e(TAG, errorMessage + ": " + e.getMessage());
-                    mPublishDeviceTokenSubject.onError(new FirebaseMessagingException(errorMessage, e));
+                    mPublishDeviceTokenSuccessSubject.onError(new FirebaseMessagingException(errorMessage, e));
                 } else if (!task.isSuccessful()) {
                     String errorMessage = mContext.getString(R.string.exception_firebase_family_not_created);
                     if (BuildConfig.DEBUG) Log.e(TAG, errorMessage);
-                    mPublishDeviceTokenSubject.onError(new FirebaseMessagingException(errorMessage));
+                    mPublishDeviceTokenSuccessSubject.onError(new FirebaseMessagingException(errorMessage));
                 }
             })
         ;

@@ -5,6 +5,8 @@ import android.app.Application;
 import android.content.Context;
 import android.util.Log;
 
+import com.github.sergemart.mobile.capybara.data.CloudRepo;
+
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 
@@ -34,6 +36,7 @@ public class App extends Application {
             if (e instanceof InterruptedException) return;                                          // skip, some blocking code was interrupted by a dispose call
             if (BuildConfig.DEBUG) Log.e(TAG, "Undeliverable exception: " + e.getMessage());
         });
+
     }
 
 

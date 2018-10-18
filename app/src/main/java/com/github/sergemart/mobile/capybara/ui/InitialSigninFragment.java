@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import com.github.sergemart.mobile.capybara.App;
 import com.github.sergemart.mobile.capybara.BuildConfig;
@@ -40,6 +41,7 @@ public class InitialSigninFragment extends Fragment {
     private static final String TAG_SIGN_IN_RETRY_DIALOG = "sign_in_error_dialog";
 
     private MaterialButton mSignInButton;
+    private ProgressBar mProgressBar;
 
     private CompositeDisposable mDisposable;
     private InitialSharedViewModel mInitialSharedViewModel;
@@ -70,6 +72,7 @@ public class InitialSigninFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View fragmentView = inflater.inflate(R.layout.fragment_initial_signin, container, false);
         mSignInButton = fragmentView.findViewById(R.id.button_sign_in);
+        mProgressBar = fragmentView.findViewById(R.id.progressBar_waiting);
 
         this.setListeners();
         return fragmentView;
@@ -116,29 +119,45 @@ public class InitialSigninFragment extends Fragment {
         ));
 
         // Set a listener to the "USER SIGNED IN" event
-        mDisposable.add(CloudRepo.get().getSigninSubject().subscribe(event -> {
-            if (BuildConfig.DEBUG) Log.d(TAG, "SigninSubject event received in InitialSigninFragment, getting device token");
+        mDisposable.add(CloudRepo.get().getSigninSuccessSubject().subscribe(event -> {
+            if (BuildConfig.DEBUG) Log.d(TAG, "SigninSuccessSubject event received in InitialSigninFragment, getting device token");
             this.getDeviceToken();
         }));
 
         // Set a listener to the "USER SIGN IN ERROR" event
         mDisposable.add(CloudRepo.get().getSigninErrorSubject().subscribe(e -> {
-            if (BuildConfig.DEBUG) Log.d(TAG, "SigninErrorSubject error received in InitialSigninFragment, invoking retry dialog.");
+            if (BuildConfig.DEBUG) Log.d(TAG, "SigninErrorSubject event received in InitialSigninFragment, invoking retry dialog");
             mCause = e;
             this.showSigninRetryDialog(mCause);
         }));
 
         // Set a listener to the "DEVICE TOKEN RECEIVED" event
-        mDisposable.add(CloudRepo.get().getGetDeviceTokenSubject().subscribe(
-            event -> this.publishDeviceToken(),
-            this::navigateToFatalErrorPage
-        ));
+        mDisposable.add(CloudRepo.get().getGetDeviceTokenSuccessSubject().subscribe(event -> {
+            if (BuildConfig.DEBUG) Log.d(TAG, "GetDeviceTokenSuccessSubject event received in InitialSigninFragment, publishing device token");
+            this.publishDeviceToken();
+        }));
+
+        // Set a listener to the "DEVICE TOKEN RECEIVE ERROR" event
+        mDisposable.add(CloudRepo.get().getGetDeviceTokenErrorSubject().subscribe(e -> {
+            if (BuildConfig.DEBUG) Log.d(TAG, "GetDeviceTokenSuccessSubject event received in InitialSigninFragment, invoking retry dialog");
+            mCause = e;
+            this.showSigninRetryDialog(mCause);
+        }));
 
         // Set a listener to the "DEVICE TOKEN PUBLISHED" event
-        mDisposable.add(CloudRepo.get().getPublishDeviceTokenSubject().subscribe(
-            event -> this.navigateToNextPage(),
-            this::navigateToFatalErrorPage
-        ));
+        mDisposable.add(CloudRepo.get().getPublishDeviceTokenSuccessSubject().subscribe(event -> {
+            if (BuildConfig.DEBUG) Log.d(TAG, "PublishDeviceTokenSuccessSubject event received in InitialSigninFragment, notifying that app is initialized");
+//            this.navigateToNextPage();
+            mInitialSharedViewModel.emitAppIsInitialized();
+        }));
+
+
+        // Set a listener to the "DEVICE TOKEN PUBLISH ERROR" event
+        mDisposable.add(CloudRepo.get().getPublishDeviceTokenErrorSubject().subscribe(e -> {
+            if (BuildConfig.DEBUG) Log.d(TAG, "PublishDeviceTokenErrorSubject event received in InitialSigninFragment, invoking retry dialog");
+            mCause = e;
+            this.showSigninRetryDialog(mCause);
+        }));
 
     }
 
@@ -149,6 +168,8 @@ public class InitialSigninFragment extends Fragment {
      * Sign in with Google account
      */
     private void signIn() {
+        mSignInButton.setVisibility(View.INVISIBLE);
+        mProgressBar.setVisibility(View.VISIBLE);
         CloudRepo.get().sendSignInIntent(Objects.requireNonNull( super.getActivity() ));
     }
 
@@ -174,19 +195,6 @@ public class InitialSigninFragment extends Fragment {
      */
     private void publishDeviceToken() {
         CloudRepo.get().publishDeviceTokenAsync();
-    }
-
-
-    /**
-     * Return to the initial setup page, if the app mode is not set.
-     * Otherwise, notify subscribers that the app is completely initialized
-     */
-    private void navigateToNextPage() {
-        if (!PreferenceStore.getStoredIsAppModeSet()) {
-            NavHostFragment.findNavController(this).popBackStack();
-        } else {
-            mInitialSharedViewModel.emitAppIsInitialized();
-        }
     }
 
 
