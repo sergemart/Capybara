@@ -16,10 +16,8 @@ import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
 import com.github.sergemart.mobile.capybara.data.CloudRepo;
 import com.github.sergemart.mobile.capybara.data.PreferenceStore;
-import com.github.sergemart.mobile.capybara.exceptions.GoogleSigninException;
+import com.github.sergemart.mobile.capybara.data.ResRepo;
 import com.github.sergemart.mobile.capybara.viewmodel.InitialSharedViewModel;
-import com.google.android.gms.auth.api.signin.GoogleSignInStatusCodes;
-import com.google.android.gms.common.api.ApiException;
 import com.google.android.material.button.MaterialButton;
 import com.jakewharton.rxbinding2.view.RxView;
 
@@ -159,7 +157,7 @@ public class InitialSigninFragment extends Fragment {
      * Show sign-in retry dialog
      */
     private void showSigninRetryDialog(Throwable cause) {
-        RetrySigninDialogFragment.newInstance(cause).show(Objects.requireNonNull(super.getChildFragmentManager()), TAG_SIGN_IN_RETRY_DIALOG);
+        SigninRetryDialogFragment.newInstance(cause).show(Objects.requireNonNull(super.getChildFragmentManager()), TAG_SIGN_IN_RETRY_DIALOG);
     }
 
 
@@ -203,11 +201,9 @@ public class InitialSigninFragment extends Fragment {
 
     // --------------------------- Inner classes: Sign-in retry dialog fragment
 
-    public static class RetrySigninDialogFragment extends DialogFragment {
+    public static class SigninRetryDialogFragment extends DialogFragment {
 
         private Throwable mCause;
-        private int mTitleId;
-        private int mMessageId;
 
 
         // +++++++++++++++++++++++ Getters/ setters
@@ -226,25 +222,6 @@ public class InitialSigninFragment extends Fragment {
         public void onCreate(@Nullable Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             setRetainInstance(true);
-
-            mTitleId = R.string.title_google_signin_failed;
-            mMessageId = R.string.msg_google_unknown_error;
-            if (mCause.getCause() instanceof ApiException) {
-                ApiException apiException = (ApiException) mCause.getCause();
-                switch (apiException.getStatusCode()) {
-                    case GoogleSignInStatusCodes.SIGN_IN_CANCELLED:
-                        mTitleId = R.string.title_google_signin_canceled;
-                        mMessageId = R.string.msg_google_signin_canceled_by_user;
-                        break;
-                    case GoogleSignInStatusCodes.NETWORK_ERROR:
-                        mTitleId = R.string.title_google_signin_failed;
-                        mMessageId = R.string.msg_google_client_connection_error;
-                        break;
-                    default:
-                        mTitleId = R.string.title_google_signin_failed;
-                        mMessageId = R.string.msg_google_client_connection_error;
-                }
-            }
         }
 
 
@@ -255,9 +232,9 @@ public class InitialSigninFragment extends Fragment {
         @Override
         public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
             AlertDialog alertDialog = new AlertDialog.Builder(Objects.requireNonNull( super.getActivity() ))
-                .setTitle(mTitleId)
-                .setMessage(mMessageId)
-                .setIcon(R.mipmap.ic_launcher)
+                .setTitle(ResRepo.get().getSigninRetryDialogTitleR(mCause))
+                .setMessage(ResRepo.get().getSigninRetryDialogMessageR(mCause))
+                .setIcon(ResRepo.get().getSigninRetryDialogIconR(mCause))
                 .setPositiveButton(R.string.action_retry, (dialog, button) ->
                     Objects.requireNonNull(super.getParentFragment()).onActivityResult(             // use Fragment#onActivityResult() as a callback
                         Constants.REQUEST_CODE_DIALOG_FRAGMENT,
@@ -302,8 +279,8 @@ public class InitialSigninFragment extends Fragment {
         /**
          * The dialog fragment factory
          */
-        static RetrySigninDialogFragment newInstance(Throwable cause) {
-            RetrySigninDialogFragment instance = new RetrySigninDialogFragment();
+        static SigninRetryDialogFragment newInstance(Throwable cause) {
+            SigninRetryDialogFragment instance = new SigninRetryDialogFragment();
             instance.setCause(cause);
             return instance;
         }
