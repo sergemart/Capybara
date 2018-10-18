@@ -1,6 +1,7 @@
 package com.github.sergemart.mobile.capybara.data;
 
 import com.github.sergemart.mobile.capybara.R;
+import com.github.sergemart.mobile.capybara.exceptions.GoogleSigninException;
 import com.google.android.gms.auth.api.signin.GoogleSignInStatusCodes;
 import com.google.android.gms.common.api.ApiException;
 
@@ -39,7 +40,7 @@ public class ResRepo {
     public int getSigninRetryDialogTitleR(Throwable cause) {
         int resId = R.string.title_google_signin_failed;
 
-        if (cause.getCause() instanceof ApiException) {
+        if (cause instanceof GoogleSigninException && cause.getCause() instanceof ApiException) {
             ApiException apiException = (ApiException) cause.getCause();
             switch (apiException.getStatusCode()) {
                 case GoogleSignInStatusCodes.SIGN_IN_CANCELLED:
@@ -58,7 +59,7 @@ public class ResRepo {
      */
     public int getSigninRetryDialogMessageR(Throwable cause) {
         int resId = R.string.msg_google_unknown_error;
-        if (cause.getCause() instanceof ApiException) {
+        if (cause instanceof GoogleSigninException && cause.getCause() instanceof ApiException) {
             ApiException apiException = (ApiException) cause.getCause();
             switch (apiException.getStatusCode()) {
                 case GoogleSignInStatusCodes.SIGN_IN_CANCELLED:

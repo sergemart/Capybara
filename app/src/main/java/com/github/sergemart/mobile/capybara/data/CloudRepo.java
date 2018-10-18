@@ -12,9 +12,9 @@ import com.github.sergemart.mobile.capybara.BuildConfig;
 import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
 import com.github.sergemart.mobile.capybara.Tools;
-import com.github.sergemart.mobile.capybara.exceptions.FirebaseConnectionException;
 import com.github.sergemart.mobile.capybara.exceptions.FirebaseDatabaseException;
 import com.github.sergemart.mobile.capybara.exceptions.FirebaseMessagingException;
+import com.github.sergemart.mobile.capybara.exceptions.FirebaseSigninException;
 import com.github.sergemart.mobile.capybara.exceptions.GoogleSigninException;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -172,13 +172,13 @@ public class CloudRepo {
             googleSignInAccount = completedTask.getResult(ApiException.class);                      // throwa an exception on sign-in error
         } catch (ApiException e) {
             String errorMessage = mContext.getString(R.string.exception_google_sign_in_failed);
-            mSigninErrorSubject.onNext(new GoogleSigninException(errorMessage, e));
+            mSigninErrorSubject.onNext(new GoogleSigninException(errorMessage, e));                 // send "USER SIGN IN ERROR" event
             if (BuildConfig.DEBUG) Log.e(TAG, "SigninErrorSubject emitted an error: " + errorMessage + "caused by: " +  e.getMessage());
             return;
         }
         if (googleSignInAccount == null) {
             String errorMessage = mContext.getString(R.string.exception_google_sign_in_account_is_null);
-            mSigninErrorSubject.onNext(new GoogleSigninException(errorMessage));
+            mSigninErrorSubject.onNext(new GoogleSigninException(errorMessage));                    // send "USER SIGN IN ERROR" event
             if (BuildConfig.DEBUG) Log.e(TAG, "SigninErrorSubject emitted an error: " + errorMessage);
             return;
         }
@@ -190,14 +190,14 @@ public class CloudRepo {
             .addOnCompleteListener(task -> {
                 if ( !task.isSuccessful() ) {                                                       // error check
                     String errorMessage = mContext.getString(R.string.exception_firebase_client_connection_failed);
-                    mSigninErrorSubject.onNext(new FirebaseConnectionException(errorMessage));
+                    mSigninErrorSubject.onNext(new FirebaseSigninException(errorMessage));          // send "USER SIGN IN ERROR" event
                     if (BuildConfig.DEBUG) Log.e(TAG, "SigninErrorSubject emitted an error: " + errorMessage);
                     return;
                 }
                 mFirebaseUser = mFirebaseAuth.getCurrentUser();
                 if (mFirebaseUser == null) {
                     String errorMessage = mContext.getString(R.string.exception_firebase_user_is_null);
-                    mSigninErrorSubject.onNext(new FirebaseConnectionException(errorMessage));
+                    mSigninErrorSubject.onNext(new FirebaseSigninException(errorMessage));          // send "USER SIGN IN ERROR" event
                     if (BuildConfig.DEBUG) Log.e(TAG, "SigninErrorSubject emitted an error: " + errorMessage);
                     return;
                 }
