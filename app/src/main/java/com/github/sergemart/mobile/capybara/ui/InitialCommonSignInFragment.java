@@ -17,7 +17,7 @@ import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
 import com.github.sergemart.mobile.capybara.data.CloudRepo;
 import com.github.sergemart.mobile.capybara.data.ResRepo;
-import com.github.sergemart.mobile.capybara.viewmodel.InitialSharedViewModel;
+import com.github.sergemart.mobile.capybara.viewmodel.InitialCommonSharedViewModel;
 import com.google.android.material.button.MaterialButton;
 import com.jakewharton.rxbinding2.view.RxView;
 
@@ -33,16 +33,16 @@ import androidx.lifecycle.ViewModelProviders;
 import io.reactivex.disposables.CompositeDisposable;
 
 
-public class InitialSignInFragment extends Fragment {
+public class InitialCommonSignInFragment extends Fragment {
 
-    private static final String TAG = InitialSignInFragment.class.getSimpleName();
+    private static final String TAG = InitialCommonSignInFragment.class.getSimpleName();
     private static final String TAG_SIGN_IN_RETRY_DIALOG = "signInRetryDialog";
 
     private MaterialButton mSignInButton;
     private ProgressBar mProgressBar;
 
     private CompositeDisposable mDisposable;
-    private InitialSharedViewModel mInitialSharedViewModel;
+    private InitialCommonSharedViewModel mInitialCommonSharedViewModel;
     private Throwable mCause;
 
 
@@ -57,7 +57,7 @@ public class InitialSignInFragment extends Fragment {
         super.setRetainInstance(true);
 
         mDisposable = new CompositeDisposable();
-        mInitialSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(super.getActivity())).get(InitialSharedViewModel.class);
+        mInitialCommonSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(super.getActivity())).get(InitialCommonSharedViewModel.class);
     }
 
 
@@ -68,7 +68,7 @@ public class InitialSignInFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View fragmentView = inflater.inflate(R.layout.fragment_initial_signin, container, false);
+        View fragmentView = inflater.inflate(R.layout.fragment_initial_common_sign_in, container, false);
         mSignInButton = fragmentView.findViewById(R.id.button_sign_in);
         mProgressBar = fragmentView.findViewById(R.id.progressBar_waiting);
 
@@ -120,11 +120,11 @@ public class InitialSignInFragment extends Fragment {
         mDisposable.add(CloudRepo.get().getSignInSubject().subscribe(event -> {
             switch (event) {
                 case SUCCESS:
-                    if (BuildConfig.DEBUG) Log.d(TAG, "SignInResult.SUCCESS event received in InitialSignInFragment, getting device token");
+                    if (BuildConfig.DEBUG) Log.d(TAG, "SignInResult.SUCCESS event received in InitialCommonSignInFragment, getting device token");
                     this.getDeviceToken();
                     break;
                 case FAILURE:
-                    if (BuildConfig.DEBUG) Log.d(TAG, "SignInResult.FAILURE event received in InitialSignInFragment, invoking retry dialog");
+                    if (BuildConfig.DEBUG) Log.d(TAG, "SignInResult.FAILURE event received in InitialCommonSignInFragment, invoking retry dialog");
                     mCause = event.getException();
                     this.showSigninRetryDialog(mCause);
             }
@@ -134,11 +134,11 @@ public class InitialSignInFragment extends Fragment {
         mDisposable.add(CloudRepo.get().getGetDeviceTokenSubject().subscribe(event -> {
             switch (event) {
                 case SUCCESS:
-                    if (BuildConfig.DEBUG) Log.d(TAG, "GetDeviceTokenResult.SUCCESS event received in InitialSignInFragment, publishing device token");
+                    if (BuildConfig.DEBUG) Log.d(TAG, "GetDeviceTokenResult.SUCCESS event received in InitialCommonSignInFragment, publishing device token");
                     this.publishDeviceToken();
                     break;
                 case FAILURE:
-                    if (BuildConfig.DEBUG) Log.d(TAG, "GetDeviceTokenResult.FAILURE event received in InitialSignInFragment, invoking retry dialog");
+                    if (BuildConfig.DEBUG) Log.d(TAG, "GetDeviceTokenResult.FAILURE event received in InitialCommonSignInFragment, invoking retry dialog");
                     mCause = event.getException();
                     this.showSigninRetryDialog(mCause);
             }
@@ -148,11 +148,11 @@ public class InitialSignInFragment extends Fragment {
         mDisposable.add(CloudRepo.get().getPublishDeviceTokenSubject().subscribe(event -> {
             switch (event) {
                 case SUCCESS:
-                    if (BuildConfig.DEBUG) Log.d(TAG, "PublishDeviceTokenResult.SUCCESS event received in InitialSignInFragment, notifying that app is initialized");
-                    mInitialSharedViewModel.emitCommonSetupFinished();                              // send "COMMON SETUP FINISHED" event
+                    if (BuildConfig.DEBUG) Log.d(TAG, "PublishDeviceTokenResult.SUCCESS event received in InitialCommonSignInFragment, notifying that app is initialized");
+                    mInitialCommonSharedViewModel.emitCommonSetupFinished();                              // send "COMMON SETUP FINISHED" event
                     break;
                 case FAILURE:
-                    if (BuildConfig.DEBUG) Log.d(TAG, "PublishDeviceTokenResult.FAILURE event received in InitialSignInFragment, invoking retry dialog");
+                    if (BuildConfig.DEBUG) Log.d(TAG, "PublishDeviceTokenResult.FAILURE event received in InitialCommonSignInFragment, invoking retry dialog");
                     mCause = event.getException();
                     this.showSigninRetryDialog(mCause);
             }

@@ -5,23 +5,17 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
-import com.github.sergemart.mobile.capybara.App;
-import com.github.sergemart.mobile.capybara.BuildConfig;
 import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
-import com.github.sergemart.mobile.capybara.data.CloudRepo;
 import com.github.sergemart.mobile.capybara.data.ResRepo;
-import com.github.sergemart.mobile.capybara.viewmodel.InitialSharedViewModel;
+import com.github.sergemart.mobile.capybara.viewmodel.InitialCommonSharedViewModel;
 import com.google.android.material.button.MaterialButton;
-import com.jakewharton.rxbinding2.view.RxView;
 
-import java.lang.ref.WeakReference;
 import java.util.Objects;
 
 import androidx.annotation.NonNull;
@@ -42,7 +36,7 @@ public class InitialMajorCreateFamilyFragment extends Fragment {
     private ProgressBar mProgressBar;
 
     private CompositeDisposable mDisposable;
-    private InitialSharedViewModel mInitialSharedViewModel;
+    private InitialCommonSharedViewModel mInitialCommonSharedViewModel;
     private Throwable mCause;
 
 
@@ -57,7 +51,7 @@ public class InitialMajorCreateFamilyFragment extends Fragment {
         super.setRetainInstance(true);
 
         mDisposable = new CompositeDisposable();
-        mInitialSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(super.getActivity())).get(InitialSharedViewModel.class);
+        mInitialCommonSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(super.getActivity())).get(InitialCommonSharedViewModel.class);
     }
 
 
@@ -68,7 +62,7 @@ public class InitialMajorCreateFamilyFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View fragmentView = inflater.inflate(R.layout.fragment_initial_signin, container, false);
+        View fragmentView = inflater.inflate(R.layout.fragment_initial_common_sign_in, container, false);
         mSignInButton = fragmentView.findViewById(R.id.button_sign_in);
         mProgressBar = fragmentView.findViewById(R.id.progressBar_waiting);
 

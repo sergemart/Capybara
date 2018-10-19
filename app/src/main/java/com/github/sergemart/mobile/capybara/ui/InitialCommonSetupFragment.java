@@ -11,7 +11,7 @@ import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
 import com.github.sergemart.mobile.capybara.data.CloudRepo;
 import com.github.sergemart.mobile.capybara.data.PreferenceStore;
-import com.github.sergemart.mobile.capybara.viewmodel.InitialSharedViewModel;
+import com.github.sergemart.mobile.capybara.viewmodel.InitialCommonSharedViewModel;
 import com.google.android.material.button.MaterialButton;
 import com.jakewharton.rxbinding2.view.RxView;
 
@@ -25,15 +25,15 @@ import androidx.navigation.fragment.NavHostFragment;
 import io.reactivex.disposables.CompositeDisposable;
 
 
-public class InitialSetupFragment extends Fragment {
+public class InitialCommonSetupFragment extends Fragment {
 
-    private static final String TAG = InitialSetupFragment.class.getSimpleName();
+    private static final String TAG = InitialCommonSetupFragment.class.getSimpleName();
 
     private MaterialButton mIAmMajorButton;
     private MaterialButton mIAmMinorButton;
 
     private CompositeDisposable mDisposable;
-    private InitialSharedViewModel mInitialSharedViewModel;
+    private InitialCommonSharedViewModel mInitialCommonSharedViewModel;
 
 
     // --------------------------- Override fragment event handlers
@@ -46,7 +46,7 @@ public class InitialSetupFragment extends Fragment {
         super.onCreate(savedInstanceState);
         super.setRetainInstance(true);
 
-        mInitialSharedViewModel = ViewModelProviders.of(Objects.requireNonNull( super.getActivity() )).get(InitialSharedViewModel.class);
+        mInitialCommonSharedViewModel = ViewModelProviders.of(Objects.requireNonNull( super.getActivity() )).get(InitialCommonSharedViewModel.class);
         mDisposable = new CompositeDisposable();
     }
 
@@ -58,7 +58,7 @@ public class InitialSetupFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View fragmentView = inflater.inflate(R.layout.fragment_initial_setup, container, false);
+        View fragmentView = inflater.inflate(R.layout.fragment_initial_common_setup, container, false);
 
         mIAmMajorButton = fragmentView.findViewById(R.id.button_i_am_major);
         mIAmMinorButton = fragmentView.findViewById(R.id.button_i_am_minor);
@@ -115,7 +115,7 @@ public class InitialSetupFragment extends Fragment {
         if (!CloudRepo.get().isAuthenticated()) {
             NavHostFragment.findNavController(this).navigate(R.id.action_initialSetup_to_initialSignin);
         } else {
-            mInitialSharedViewModel.emitCommonSetupFinished();                                      // send "COMMON SETUP FINISHED" event
+            mInitialCommonSharedViewModel.emitCommonSetupFinished();                                      // send "COMMON SETUP FINISHED" event
         }
     }
 

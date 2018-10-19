@@ -9,20 +9,20 @@ import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
 import com.github.sergemart.mobile.capybara.data.CloudRepo;
 import com.github.sergemart.mobile.capybara.data.PreferenceStore;
-import com.github.sergemart.mobile.capybara.viewmodel.InitialSharedViewModel;
+import com.github.sergemart.mobile.capybara.viewmodel.InitialCommonSharedViewModel;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProviders;
 import io.reactivex.disposables.CompositeDisposable;
 
 
-public class InitialActivity
+public class InitialCommonActivity
     extends AppCompatActivity
 {
 
-    private static final String TAG = InitialActivity.class.getSimpleName();
+    private static final String TAG = InitialCommonActivity.class.getSimpleName();
 
-    private InitialSharedViewModel mInitialSharedViewModel;
+    private InitialCommonSharedViewModel mInitialCommonSharedViewModel;
     private CompositeDisposable mDisposable;
 
 
@@ -34,10 +34,10 @@ public class InitialActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_initial);
+        setContentView(R.layout.activity_initial_common);
 
         mDisposable = new CompositeDisposable();
-        mInitialSharedViewModel = ViewModelProviders.of(this).get(InitialSharedViewModel.class);
+        mInitialCommonSharedViewModel = ViewModelProviders.of(this).get(InitialCommonSharedViewModel.class);
 
         this.setListeners();
     }
@@ -86,7 +86,7 @@ public class InitialActivity
     private void setListeners() {
 
         // Set a listener to the "COMMON SETUP FINISHED" event
-        mDisposable.add(mInitialSharedViewModel.getCommonSetupFinishedSubject()
+        mDisposable.add(mInitialCommonSharedViewModel.getCommonSetupFinishedSubject()
             .subscribe(this::leaveNavGraph)
         );
 
