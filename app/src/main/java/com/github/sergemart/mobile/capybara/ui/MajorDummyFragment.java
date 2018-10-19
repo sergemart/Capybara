@@ -4,19 +4,14 @@ import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import com.github.sergemart.mobile.capybara.BuildConfig;
 import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
 import com.github.sergemart.mobile.capybara.data.CloudRepo;
 import com.github.sergemart.mobile.capybara.data.GeoRepo;
-import com.github.sergemart.mobile.capybara.data.Repository;
 import com.google.android.material.button.MaterialButton;
 import com.jakewharton.rxbinding2.view.RxView;
 
@@ -25,9 +20,6 @@ import java.util.Objects;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.fragment.NavHostFragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import io.reactivex.disposables.CompositeDisposable;
 
 
@@ -140,10 +132,9 @@ public class MajorDummyFragment extends Fragment {
             RxView.clicks(mCreateFamilyButton).subscribe(event -> this.createFamily())
         );
 
-        // Set a listener to the "DEVICE TOKEN PUBLISHED" event
+        // Set a listener to the "CreateFamily" result
         mDisposable.add(CloudRepo.get().getCreateFamilySubject().subscribe(
-            event -> {},
-            e -> super.startActivity(ErrorActivity.newIntent( Objects.requireNonNull(super.getActivity()), e.getLocalizedMessage() ))
+            event -> {}
         ));
 
     }

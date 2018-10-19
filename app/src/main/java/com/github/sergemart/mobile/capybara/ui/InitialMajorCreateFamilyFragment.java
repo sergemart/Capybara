@@ -85,9 +85,7 @@ public class InitialMajorCreateFamilyFragment extends Fragment {
         switch(requestCode) {
             case Constants.REQUEST_CODE_DIALOG_FRAGMENT:
                 if (resultCode == Activity.RESULT_OK) {                                             // retry
-                    this.signIn();
                 } else if (resultCode == Activity.RESULT_CANCELED) {                                // fatal
-                    this.navigateToFatalErrorPage(mCause);
                 }
                 break;
         }
@@ -110,98 +108,10 @@ public class InitialMajorCreateFamilyFragment extends Fragment {
      * Set listeners to widgets and events
      */
     private void setListeners() {
-
-        // Set a listener to the "Sign In" button
-        mDisposable.add(RxView.clicks(mSignInButton).subscribe(
-            event -> this.signIn()
-        ));
-
-        // Set a listener to the "USER SIGNED IN" event
-        mDisposable.add(CloudRepo.get().getSigninSuccessSubject().subscribe(event -> {
-            if (BuildConfig.DEBUG) Log.d(TAG, "SigninSuccessSubject event received in InitialSigninFragment, getting device token");
-            this.getDeviceToken();
-        }));
-
-        // Set a listener to the "USER SIGN IN ERROR" event
-        mDisposable.add(CloudRepo.get().getSigninErrorSubject().subscribe(e -> {
-            if (BuildConfig.DEBUG) Log.d(TAG, "SigninErrorSubject event received in InitialSigninFragment, invoking retry dialog");
-            mCause = e;
-            this.showSigninRetryDialog(mCause);
-        }));
-
-        // Set a listener to the "DEVICE TOKEN RECEIVED" event
-        mDisposable.add(CloudRepo.get().getGetDeviceTokenSuccessSubject().subscribe(event -> {
-            if (BuildConfig.DEBUG) Log.d(TAG, "GetDeviceTokenSuccessSubject event received in InitialSigninFragment, publishing device token");
-            this.publishDeviceToken();
-        }));
-
-        // Set a listener to the "DEVICE TOKEN RECEIVE ERROR" event
-        mDisposable.add(CloudRepo.get().getGetDeviceTokenErrorSubject().subscribe(e -> {
-            if (BuildConfig.DEBUG) Log.d(TAG, "GetDeviceTokenSuccessSubject event received in InitialSigninFragment, invoking retry dialog");
-            mCause = e;
-            this.showSigninRetryDialog(mCause);
-        }));
-
-        // Set a listener to the "DEVICE TOKEN PUBLISHED" event
-        mDisposable.add(CloudRepo.get().getPublishDeviceTokenSuccessSubject().subscribe(event -> {
-            if (BuildConfig.DEBUG) Log.d(TAG, "PublishDeviceTokenSuccessSubject event received in InitialSigninFragment, notifying that app is initialized");
-            mInitialSharedViewModel.emitCommonSetupFinished();                                      // send "COMMON SETUP FINISHED" event
-        }));
-
-
-        // Set a listener to the "DEVICE TOKEN PUBLISH ERROR" event
-        mDisposable.add(CloudRepo.get().getPublishDeviceTokenErrorSubject().subscribe(e -> {
-            if (BuildConfig.DEBUG) Log.d(TAG, "PublishDeviceTokenErrorSubject event received in InitialSigninFragment, invoking retry dialog");
-            mCause = e;
-            this.showSigninRetryDialog(mCause);
-        }));
-
     }
-
 
     // --------------------------- Use cases
 
-    /**
-     * Sign in with Google account
-     */
-    private void signIn() {
-        mSignInButton.setVisibility(View.INVISIBLE);
-        mProgressBar.setVisibility(View.VISIBLE);
-        CloudRepo.get().sendSignInIntent(Objects.requireNonNull( super.getActivity() ));
-    }
-
-
-    /**
-     * Show sign-in retry dialog
-     */
-    private void showSigninRetryDialog(Throwable cause) {
-        SigninRetryDialogFragment.newInstance(cause).show(Objects.requireNonNull(super.getChildFragmentManager()), TAG_SIGN_IN_RETRY_DIALOG);
-    }
-
-
-    /**
-     * Get a Firebase Messaging device token
-     */
-    private void getDeviceToken() {
-        CloudRepo.get().getTokenAsync();
-    }
-
-
-    /**
-     * Publish the Firebase Messaging device token
-     */
-    private void publishDeviceToken() {
-        CloudRepo.get().publishDeviceTokenAsync();
-    }
-
-
-    /**
-     * Navigate to the fatal error page
-     */
-    private void navigateToFatalErrorPage(Throwable cause) {
-        App.setLastFatalException(new WeakReference<>(cause));
-        super.startActivity(ErrorActivity.newIntent( Objects.requireNonNull(super.getActivity()), cause.getLocalizedMessage() ));
-    }
 
 
     // --------------------------- Inner classes: Sign-in retry dialog fragment

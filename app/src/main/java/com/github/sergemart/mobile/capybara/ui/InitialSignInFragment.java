@@ -33,9 +33,9 @@ import androidx.lifecycle.ViewModelProviders;
 import io.reactivex.disposables.CompositeDisposable;
 
 
-public class InitialSigninFragment extends Fragment {
+public class InitialSignInFragment extends Fragment {
 
-    private static final String TAG = InitialSigninFragment.class.getSimpleName();
+    private static final String TAG = InitialSignInFragment.class.getSimpleName();
     private static final String TAG_SIGN_IN_RETRY_DIALOG = "signInRetryDialog";
 
     private MaterialButton mSignInButton;
@@ -116,42 +116,43 @@ public class InitialSigninFragment extends Fragment {
             event -> this.signIn()
         ));
 
-        // Set a listener to the "USER SIGNED IN" event
-        mDisposable.add(CloudRepo.get().getSigninSuccessSubject().subscribe(event -> {
-            if (BuildConfig.DEBUG) Log.d(TAG, "SigninSuccessSubject event received in InitialSigninFragment, getting device token");
-            this.getDeviceToken();
-        }));
-
-        // Set a listener to the "USER SIGN IN ERROR" event
-        mDisposable.add(CloudRepo.get().getSigninErrorSubject().subscribe(e -> {
-            if (BuildConfig.DEBUG) Log.d(TAG, "SigninErrorSubject event received in InitialSigninFragment, invoking retry dialog");
-            mCause = e;
-            this.showSigninRetryDialog(mCause);
+        // Set a listener to the "SignInResult" event
+        mDisposable.add(CloudRepo.get().getSignInSubject().subscribe(event -> {
+            switch (event) {
+                case SUCCESS:
+                    if (BuildConfig.DEBUG) Log.d(TAG, "SignInResult.SUCCESS event received in InitialSignInFragment, getting device token");
+                    this.getDeviceToken();
+                    break;
+                case FAILURE:
+                    if (BuildConfig.DEBUG) Log.d(TAG, "SignInResult.FAILURE event received in InitialSignInFragment, invoking retry dialog");
+                    mCause = event.getException();
+                    this.showSigninRetryDialog(mCause);
+            }
         }));
 
         // Set a listener to the "DEVICE TOKEN RECEIVED" event
         mDisposable.add(CloudRepo.get().getGetDeviceTokenSuccessSubject().subscribe(event -> {
-            if (BuildConfig.DEBUG) Log.d(TAG, "GetDeviceTokenSuccessSubject event received in InitialSigninFragment, publishing device token");
+            if (BuildConfig.DEBUG) Log.d(TAG, "GetDeviceTokenSuccessSubject event received in InitialSignInFragment, publishing device token");
             this.publishDeviceToken();
         }));
 
         // Set a listener to the "DEVICE TOKEN RECEIVE ERROR" event
         mDisposable.add(CloudRepo.get().getGetDeviceTokenErrorSubject().subscribe(e -> {
-            if (BuildConfig.DEBUG) Log.d(TAG, "GetDeviceTokenSuccessSubject event received in InitialSigninFragment, invoking retry dialog");
+            if (BuildConfig.DEBUG) Log.d(TAG, "GetDeviceTokenSuccessSubject event received in InitialSignInFragment, invoking retry dialog");
             mCause = e;
             this.showSigninRetryDialog(mCause);
         }));
 
         // Set a listener to the "DEVICE TOKEN PUBLISHED" event
         mDisposable.add(CloudRepo.get().getPublishDeviceTokenSuccessSubject().subscribe(event -> {
-            if (BuildConfig.DEBUG) Log.d(TAG, "PublishDeviceTokenSuccessSubject event received in InitialSigninFragment, notifying that app is initialized");
+            if (BuildConfig.DEBUG) Log.d(TAG, "PublishDeviceTokenSuccessSubject event received in InitialSignInFragment, notifying that app is initialized");
             mInitialSharedViewModel.emitCommonSetupFinished();                                      // send "COMMON SETUP FINISHED" event
         }));
 
 
         // Set a listener to the "DEVICE TOKEN PUBLISH ERROR" event
         mDisposable.add(CloudRepo.get().getPublishDeviceTokenErrorSubject().subscribe(e -> {
-            if (BuildConfig.DEBUG) Log.d(TAG, "PublishDeviceTokenErrorSubject event received in InitialSigninFragment, invoking retry dialog");
+            if (BuildConfig.DEBUG) Log.d(TAG, "PublishDeviceTokenErrorSubject event received in InitialSignInFragment, invoking retry dialog");
             mCause = e;
             this.showSigninRetryDialog(mCause);
         }));
@@ -175,7 +176,7 @@ public class InitialSigninFragment extends Fragment {
      * Show sign-in retry dialog
      */
     private void showSigninRetryDialog(Throwable cause) {
-        SigninRetryDialogFragment.newInstance(cause).show(Objects.requireNonNull(super.getChildFragmentManager()), TAG_SIGN_IN_RETRY_DIALOG);
+        SignInRetryDialogFragment.newInstance(cause).show(Objects.requireNonNull(super.getChildFragmentManager()), TAG_SIGN_IN_RETRY_DIALOG);
     }
 
 
@@ -206,7 +207,7 @@ public class InitialSigninFragment extends Fragment {
 
     // --------------------------- Inner classes: Sign-in retry dialog fragment
 
-    public static class SigninRetryDialogFragment extends DialogFragment {
+    public static class SignInRetryDialogFragment extends DialogFragment {
 
         private Throwable mCause;
 
@@ -284,8 +285,8 @@ public class InitialSigninFragment extends Fragment {
         /**
          * The dialog fragment factory
          */
-        static SigninRetryDialogFragment newInstance(Throwable cause) {
-            SigninRetryDialogFragment instance = new SigninRetryDialogFragment();
+        static SignInRetryDialogFragment newInstance(Throwable cause) {
+            SignInRetryDialogFragment instance = new SignInRetryDialogFragment();
             instance.setCause(cause);
             return instance;
         }

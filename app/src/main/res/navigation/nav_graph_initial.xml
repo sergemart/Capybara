@@ -16,7 +16,7 @@
     </fragment>
     <fragment
         android:id="@+id/initialSigninFragment"
-        android:name="com.github.sergemart.mobile.capybara.ui.InitialSigninFragment"
+        android:name="com.github.sergemart.mobile.capybara.ui.InitialSignInFragment"
         android:label="fragment_initial_signin"
         tools:layout="@layout/fragment_initial_signin" />
 </navigation>

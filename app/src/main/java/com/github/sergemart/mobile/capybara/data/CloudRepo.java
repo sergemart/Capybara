@@ -12,6 +12,8 @@ import com.github.sergemart.mobile.capybara.BuildConfig;
 import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
 import com.github.sergemart.mobile.capybara.Tools;
+import com.github.sergemart.mobile.capybara.events.CreateFamilyResult;
+import com.github.sergemart.mobile.capybara.events.SignInResult;
 import com.github.sergemart.mobile.capybara.exceptions.FirebaseDatabaseException;
 import com.github.sergemart.mobile.capybara.exceptions.FirebaseMessagingException;
 import com.github.sergemart.mobile.capybara.exceptions.FirebaseSigninException;
@@ -74,15 +76,14 @@ public class CloudRepo {
 
     // --------------------------- Member variables
 
-    private final Subject<FirebaseUser> mSigninSuccessSubject = PublishSubject.create();
-    private final Subject<Throwable> mSigninErrorSubject = PublishSubject.create();
-    private final Subject<Boolean> mSignoutSubject = PublishSubject.create();
+    private final Subject<SignInResult> mSignInSubject = PublishSubject.create();
     private final Subject<Boolean> mGetDeviceTokenSuccessSubject = PublishSubject.create();
     private final Subject<Throwable> mGetDeviceTokenErrorSubject = PublishSubject.create();
     private final Subject<Boolean> mPublishDeviceTokenSuccessSubject = PublishSubject.create();
     private final Subject<Throwable> mPublishDeviceTokenErrorSubject = PublishSubject.create();
+    private final Subject<CreateFamilyResult> mCreateFamilySubject = PublishSubject.create();
     private final Subject<Boolean> mSendLocationSubject = PublishSubject.create();
-    private final Subject<Boolean> mCreateFamilySubject = PublishSubject.create();
+    private final Subject<Boolean> mSignOutSubject = PublishSubject.create();
 
     private final Context mContext;
     private GoogleSignInClient mGoogleSignInClient;
@@ -96,13 +97,8 @@ public class CloudRepo {
 
     // --------------------------- Observable getters
 
-    public Subject<FirebaseUser> getSigninSuccessSubject() {
-        return mSigninSuccessSubject;
-    }
-
-
-    public Subject<Throwable> getSigninErrorSubject() {
-        return mSigninErrorSubject;
+    public Subject<SignInResult> getSignInSubject() {
+        return mSignInSubject;
     }
 
 
@@ -126,13 +122,13 @@ public class CloudRepo {
     }
 
 
-    public Subject<Boolean> getCreateFamilySubject() {
+    public Subject<CreateFamilyResult> getCreateFamilySubject() {
         return mCreateFamilySubject;
     }
 
 
-    public Subject<Boolean> getSignoutSubject() {
-        return mSignoutSubject;
+    public Subject<Boolean> getSignOutSubject() {
+        return mSignOutSubject;
     }
 
 
@@ -181,14 +177,14 @@ public class CloudRepo {
             googleSignInAccount = completedTask.getResult(ApiException.class);                      // throwa an exception on sign-in error
         } catch (ApiException e) {
             String errorMessage = mContext.getString(R.string.exception_google_sign_in_failed);
-            mSigninErrorSubject.onNext(new GoogleSigninException(errorMessage, e));                 // send "USER SIGN IN ERROR" event
-            if (BuildConfig.DEBUG) Log.e(TAG, "SigninErrorSubject emitted an event: " + errorMessage + " caused by: " +  e.getMessage());
+            mSignInSubject.onNext(SignInResult.FAILURE.setException( new GoogleSigninException(errorMessage, e)) );
+            if (BuildConfig.DEBUG) Log.e(TAG, "SigninSubject emitted a failure event: " + errorMessage + " caused by: " +  e.getMessage());
             return;
         }
         if (googleSignInAccount == null) {
             String errorMessage = mContext.getString(R.string.exception_google_sign_in_account_is_null);
-            mSigninErrorSubject.onNext(new GoogleSigninException(errorMessage));                    // send "USER SIGN IN ERROR" event
-            if (BuildConfig.DEBUG) Log.e(TAG, "SigninErrorSubject emitted an event: " + errorMessage);
+            mSignInSubject.onNext(SignInResult.FAILURE.setException( new GoogleSigninException(errorMessage)) );
+            if (BuildConfig.DEBUG) Log.e(TAG, "SigninSubject emitted a failure event: " + errorMessage);
             return;
         }
 
@@ -199,21 +195,21 @@ public class CloudRepo {
             .addOnCompleteListener(task -> {
                 if ( !task.isSuccessful() ) {                                                       // error check
                     String errorMessage = mContext.getString(R.string.exception_firebase_client_connection_failed);
-                    mSigninErrorSubject.onNext(new FirebaseSigninException(errorMessage));          // send "USER SIGN IN ERROR" event
-                    if (BuildConfig.DEBUG) Log.e(TAG, "SigninErrorSubject emitted an event: " + errorMessage);
+                    mSignInSubject.onNext(SignInResult.FAILURE.setException( new FirebaseSigninException(errorMessage)) );
+                    if (BuildConfig.DEBUG) Log.e(TAG, "SigninSubject emitted a failure event: " + errorMessage);
                     return;
                 }
                 mFirebaseUser = mFirebaseAuth.getCurrentUser();
                 if (mFirebaseUser == null) {
                     String errorMessage = mContext.getString(R.string.exception_firebase_user_is_null);
-                    mSigninErrorSubject.onNext(new FirebaseSigninException(errorMessage));          // send "USER SIGN IN ERROR" event
-                    if (BuildConfig.DEBUG) Log.e(TAG, "SigninErrorSubject emitted an event: " + errorMessage);
+                    mSignInSubject.onNext(SignInResult.FAILURE.setException( new FirebaseSigninException(errorMessage)) );
+                    if (BuildConfig.DEBUG) Log.e(TAG, "SigninSubject emitted a failure event: " + errorMessage);
                     return;
                 }
                 mUsername = mFirebaseUser.getDisplayName();
                 if (BuildConfig.DEBUG) Log.d(TAG, "Firebase sign-in succeeded with username: " + mUsername);
-                mSigninSuccessSubject.onNext(mFirebaseUser);                                               // send "USER SIGNED IN" event
-                if (BuildConfig.DEBUG) Log.d(TAG, "SigninSubject emitted an event: " + mUsername);
+                mSignInSubject.onNext(SignInResult.SUCCESS.setFirebaseUser(mFirebaseUser));                                               // send "USER SIGNED IN" event
+                if (BuildConfig.DEBUG) Log.d(TAG, "SigninSubject emitted an success event: " + mUsername);
             })
         ;
     }
@@ -227,7 +223,7 @@ public class CloudRepo {
         mGoogleSignInClient.signOut();
         mUsername = Constants.DEFAULT_USERNAME;
 
-        mSignoutSubject.onNext(Boolean.TRUE);                                                       // send "USER SIGNED OUT" event
+        mSignOutSubject.onNext(Boolean.TRUE);                                                       // send "USER SIGNED OUT" event
     }
 
 
@@ -326,7 +322,7 @@ public class CloudRepo {
 
     /**
      * Create family data on a backend using custom Firebase callable function
-     * Send the "FAMILY DATA CREATED" event
+     * Send the "CreateFamily" result
      */
     @SuppressWarnings("unchecked")
     public void createFamilyAsync() {
@@ -345,12 +341,32 @@ public class CloudRepo {
                 try {
                     result = (Map<String, Object>) Objects.requireNonNull(task.getResult()).getData(); // throws an exception on error
                     // if success:
-                    if (BuildConfig.DEBUG) Log.d(TAG, "Created family data on backend");
-                    mCreateFamilySubject.onNext(Boolean.TRUE);                                      // send "FAMILY DATA CREATED" event
+                    String returnCode = (String)Objects.requireNonNull(result.get("returnCode"));
+                    String familyUid;
+                    switch (returnCode) {
+                        case "00":
+                            familyUid = (String)Objects.requireNonNull(result.get("familyUid"));
+                            if (BuildConfig.DEBUG) Log.d(TAG, "Created family data on backend");
+                            mCreateFamilySubject.onNext(CreateFamilyResult.CREATED.setFamilyUid(familyUid));
+                            break;
+                        case "01":
+                            familyUid = (String)Objects.requireNonNull(result.get("familyUid"));
+                            if (BuildConfig.DEBUG) Log.d(TAG, "Family data already exist on backend");
+                            mCreateFamilySubject.onNext(CreateFamilyResult.EXIST.setFamilyUid(familyUid));
+                            break;
+                        case "90":
+                            if (BuildConfig.DEBUG) Log.e(TAG, "The user has more the one family data sets stored on backend");
+                            mCreateFamilySubject.onNext(CreateFamilyResult.EXIST_MORE_THAN_ONE);
+                            break;
+                        default:
+                            String errorMessage = mContext.getString(R.string.exception_firebase_function_unknown_response);
+                            if (BuildConfig.DEBUG) Log.e(TAG, "Unknown return code received from Firebase Function");
+                            mCreateFamilySubject.onNext(CreateFamilyResult.BACKEND_ERROR.setException( new FirebaseDatabaseException(errorMessage) ));
+                    }
                 } catch (Exception e) {
                     String errorMessage = mContext.getString(R.string.exception_firebase_family_not_created);
                     if (BuildConfig.DEBUG) Log.e(TAG, errorMessage + ": " + e.getMessage());
-                    mCreateFamilySubject.onError(new FirebaseDatabaseException(errorMessage, e));
+                    mCreateFamilySubject.onNext(CreateFamilyResult.BACKEND_ERROR.setException( new FirebaseDatabaseException(errorMessage, e) ));
                 }
                 return result;
             })
@@ -359,11 +375,11 @@ public class CloudRepo {
                     Exception e = task.getException();
                     String errorMessage = mContext.getString(R.string.exception_firebase_family_not_created);
                     if (BuildConfig.DEBUG) Log.e(TAG, errorMessage + ": " + e.getMessage());
-                    mPublishDeviceTokenSuccessSubject.onError(new FirebaseMessagingException(errorMessage, e));
+                    mCreateFamilySubject.onNext(CreateFamilyResult.BACKEND_ERROR.setException( new FirebaseMessagingException(errorMessage, e) ));
                 } else if (!task.isSuccessful()) {
                     String errorMessage = mContext.getString(R.string.exception_firebase_family_not_created);
                     if (BuildConfig.DEBUG) Log.e(TAG, errorMessage);
-                    mPublishDeviceTokenSuccessSubject.onError(new FirebaseMessagingException(errorMessage));
+                    mCreateFamilySubject.onNext(CreateFamilyResult.BACKEND_ERROR.setException( new FirebaseMessagingException(errorMessage) ));
                 }
             })
         ;
