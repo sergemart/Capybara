@@ -130,31 +130,32 @@ public class InitialSignInFragment extends Fragment {
             }
         }));
 
-        // Set a listener to the "DEVICE TOKEN RECEIVED" event
-        mDisposable.add(CloudRepo.get().getGetDeviceTokenSuccessSubject().subscribe(event -> {
-            if (BuildConfig.DEBUG) Log.d(TAG, "GetDeviceTokenSuccessSubject event received in InitialSignInFragment, publishing device token");
-            this.publishDeviceToken();
+        // Set a listener to the "GetDeviceTokenResult" event
+        mDisposable.add(CloudRepo.get().getGetDeviceTokenSubject().subscribe(event -> {
+            switch (event) {
+                case SUCCESS:
+                    if (BuildConfig.DEBUG) Log.d(TAG, "GetDeviceTokenResult.SUCCESS event received in InitialSignInFragment, publishing device token");
+                    this.publishDeviceToken();
+                    break;
+                case FAILURE:
+                    if (BuildConfig.DEBUG) Log.d(TAG, "GetDeviceTokenResult.FAILURE event received in InitialSignInFragment, invoking retry dialog");
+                    mCause = event.getException();
+                    this.showSigninRetryDialog(mCause);
+            }
         }));
 
-        // Set a listener to the "DEVICE TOKEN RECEIVE ERROR" event
-        mDisposable.add(CloudRepo.get().getGetDeviceTokenErrorSubject().subscribe(e -> {
-            if (BuildConfig.DEBUG) Log.d(TAG, "GetDeviceTokenSuccessSubject event received in InitialSignInFragment, invoking retry dialog");
-            mCause = e;
-            this.showSigninRetryDialog(mCause);
-        }));
-
-        // Set a listener to the "DEVICE TOKEN PUBLISHED" event
-        mDisposable.add(CloudRepo.get().getPublishDeviceTokenSuccessSubject().subscribe(event -> {
-            if (BuildConfig.DEBUG) Log.d(TAG, "PublishDeviceTokenSuccessSubject event received in InitialSignInFragment, notifying that app is initialized");
-            mInitialSharedViewModel.emitCommonSetupFinished();                                      // send "COMMON SETUP FINISHED" event
-        }));
-
-
-        // Set a listener to the "DEVICE TOKEN PUBLISH ERROR" event
-        mDisposable.add(CloudRepo.get().getPublishDeviceTokenErrorSubject().subscribe(e -> {
-            if (BuildConfig.DEBUG) Log.d(TAG, "PublishDeviceTokenErrorSubject event received in InitialSignInFragment, invoking retry dialog");
-            mCause = e;
-            this.showSigninRetryDialog(mCause);
+        // Set a listener to the "PublishDeviceTokenResult" event
+        mDisposable.add(CloudRepo.get().getPublishDeviceTokenSubject().subscribe(event -> {
+            switch (event) {
+                case SUCCESS:
+                    if (BuildConfig.DEBUG) Log.d(TAG, "PublishDeviceTokenResult.SUCCESS event received in InitialSignInFragment, notifying that app is initialized");
+                    mInitialSharedViewModel.emitCommonSetupFinished();                              // send "COMMON SETUP FINISHED" event
+                    break;
+                case FAILURE:
+                    if (BuildConfig.DEBUG) Log.d(TAG, "PublishDeviceTokenResult.FAILURE event received in InitialSignInFragment, invoking retry dialog");
+                    mCause = event.getException();
+                    this.showSigninRetryDialog(mCause);
+            }
         }));
 
     }
