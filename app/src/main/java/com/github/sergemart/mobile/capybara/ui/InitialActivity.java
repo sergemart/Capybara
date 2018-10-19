@@ -4,15 +4,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.github.sergemart.mobile.capybara.App;
 import com.github.sergemart.mobile.capybara.BuildConfig;
 import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
 import com.github.sergemart.mobile.capybara.data.CloudRepo;
 import com.github.sergemart.mobile.capybara.data.PreferenceStore;
 import com.github.sergemart.mobile.capybara.viewmodel.InitialSharedViewModel;
-
-import java.lang.ref.WeakReference;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProviders;
@@ -58,7 +55,7 @@ public class InitialActivity
 
         // Leave the initial graph if the APP IS SET UP and the USER IS AUTHENTICATED.
         // Otherwise implicitly delegate control to the local nav AAC
-        if ( PreferenceStore.getStoredIsAppModeSet() && CloudRepo.get().isAuthenticated() ) this.leaveInitialGraph();
+        if ( PreferenceStore.getStoredIsAppModeSet() && CloudRepo.get().isAuthenticated() ) this.leaveNavGraph();
     }
 
 
@@ -88,9 +85,9 @@ public class InitialActivity
 
     private void setListeners() {
 
-        // Set a listener to the "APP IS COMPLETELY INITIALIZED" event
-        mDisposable.add(mInitialSharedViewModel.getAppIsInitializedSubject()
-            .subscribe(this::leaveInitialGraph)
+        // Set a listener to the "COMMON SETUP FINISHED" event
+        mDisposable.add(mInitialSharedViewModel.getCommonSetupFinishedSubject()
+            .subscribe(this::leaveNavGraph)
         );
 
     }
@@ -99,9 +96,9 @@ public class InitialActivity
     // --------------------------- Use cases
 
     /**
-     * Leave the initial nav graph
+     * Leave the nav graph
      */
-    private void leaveInitialGraph() {
+    private void leaveNavGraph() {
         Intent intent;
         if (PreferenceStore.getStoredAppMode() == Constants.APP_MODE_MAJOR) {
             intent = MajorActivity.newIntent(this);

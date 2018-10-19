@@ -33,9 +33,9 @@ import androidx.lifecycle.ViewModelProviders;
 import io.reactivex.disposables.CompositeDisposable;
 
 
-public class InitialSigninFragment extends Fragment {
+public class InitialMajorCreateFamilyFragment extends Fragment {
 
-    private static final String TAG = InitialSigninFragment.class.getSimpleName();
+    private static final String TAG = InitialMajorCreateFamilyFragment.class.getSimpleName();
     private static final String TAG_SIGN_IN_RETRY_DIALOG = "signInRetryDialog";
 
     private MaterialButton mSignInButton;

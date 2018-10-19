@@ -11,7 +11,7 @@ import io.reactivex.subjects.Subject;
 public class InitialSharedViewModel extends ViewModel {
 
     private final Subject<FirebaseUser> mFirebaseUserSubject = PublishSubject.create();
-    private final CompletableSubject mAppIsInitializedSubject = CompletableSubject.create();
+    private final CompletableSubject mCommonSetupFinishedSubject = CompletableSubject.create();
 
 
     // --------------------------- Observable getters/ emitters
@@ -26,13 +26,13 @@ public class InitialSharedViewModel extends ViewModel {
     }
 
 
-    public CompletableSubject getAppIsInitializedSubject() {
-        return mAppIsInitializedSubject;
+    public CompletableSubject getCommonSetupFinishedSubject() {
+        return mCommonSetupFinishedSubject;
     }
 
 
-    public void emitAppIsInitialized() {
-        mAppIsInitializedSubject.onComplete();
+    public void emitCommonSetupFinished() {
+        mCommonSetupFinishedSubject.onComplete();
     }
 
 

@@ -106,16 +106,6 @@ public class CloudRepo {
     }
 
 
-    public Subject<Boolean> getSignoutSubject() {
-        return mSignoutSubject;
-    }
-
-
-    public Subject<Boolean> getSendLocationSubject() {
-        return mSendLocationSubject;
-    }
-
-
     public Subject<Boolean> getGetDeviceTokenSuccessSubject() {
         return mGetDeviceTokenSuccessSubject;
     }
@@ -138,6 +128,16 @@ public class CloudRepo {
 
     public Subject<Boolean> getCreateFamilySubject() {
         return mCreateFamilySubject;
+    }
+
+
+    public Subject<Boolean> getSignoutSubject() {
+        return mSignoutSubject;
+    }
+
+
+    public Subject<Boolean> getSendLocationSubject() {
+        return mSendLocationSubject;
     }
 
 

@@ -115,7 +115,7 @@ public class InitialSetupFragment extends Fragment {
         if (!CloudRepo.get().isAuthenticated()) {
             NavHostFragment.findNavController(this).navigate(R.id.action_initialSetup_to_initialSignin);
         } else {
-            mInitialSharedViewModel.emitAppIsInitialized();
+            mInitialSharedViewModel.emitCommonSetupFinished();                                      // send "COMMON SETUP FINISHED" event
         }
     }
 
