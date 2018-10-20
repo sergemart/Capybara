@@ -85,7 +85,7 @@ public class ErrorFatalFragment extends Fragment {
     private void setListeners() {
         // Set a listener to the "Exit Application" button
         mDisposable.add(RxView.clicks(mExitApplicationButton).subscribe(
-            event -> mErrorSharedViewModel.emitExitRequested()                                      // send "EXIT REQUESTED" event
+            event -> mErrorSharedViewModel.getExitRequestedSubject().onComplete()                   // send "ExitRequested" event
         ));
 
         // Set a listener to the "ERROR DETAILS PUBLISHED" event

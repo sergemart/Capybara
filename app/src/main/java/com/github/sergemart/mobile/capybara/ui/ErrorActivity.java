@@ -38,7 +38,7 @@ public class ErrorActivity
 
         String errorDetails = super.getIntent().getStringExtra(KEY_ERROR_DETAILS);
         ErrorSharedViewModel errorSharedViewModel = ViewModelProviders.of(this).get(ErrorSharedViewModel.class);
-        errorSharedViewModel.emitErrorDetails(errorDetails);
+        errorSharedViewModel.getErrorDetailsSubject().onNext(errorDetails);
 
         // Set a listener to the "EXIT REQUESTED" event
         mDisposable.add(errorSharedViewModel.getExitRequestedSubject().subscribe(

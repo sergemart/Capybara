@@ -23,11 +23,4 @@
         android:background="@android:color/transparent"
         android:visibility="gone" />
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/button_create_family"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        style="@style/Widget.App.Button.LargeHollow"
-        android:text="@string/action_create_family"/>
-
 </FrameLayout>

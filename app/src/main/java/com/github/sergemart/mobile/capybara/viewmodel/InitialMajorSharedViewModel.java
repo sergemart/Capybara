@@ -9,15 +9,10 @@ public class InitialMajorSharedViewModel extends ViewModel {
     private final CompletableSubject mMajorSetupFinishedSubject = CompletableSubject.create();
 
 
-    // --------------------------- Observable getters/ emitters
+    // --------------------------- Observable getters
 
     public CompletableSubject getMajorSetupFinishedSubject() {
         return mMajorSetupFinishedSubject;
-    }
-
-
-    public void emitMajorSetupFinished() {
-        mMajorSetupFinishedSubject.onComplete();
     }
 
 

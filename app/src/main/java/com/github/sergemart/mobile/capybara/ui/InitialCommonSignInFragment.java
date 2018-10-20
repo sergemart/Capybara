@@ -149,7 +149,7 @@ public class InitialCommonSignInFragment extends Fragment {
             switch (event) {
                 case SUCCESS:
                     if (BuildConfig.DEBUG) Log.d(TAG, "PublishDeviceTokenResult.SUCCESS event received in InitialCommonSignInFragment, notifying that app is initialized");
-                    mInitialCommonSharedViewModel.emitCommonSetupFinished();                              // send "COMMON SETUP FINISHED" event
+                    mInitialCommonSharedViewModel.getCommonSetupFinishedSubject().onComplete();     // send "CommonSetupFinished" event
                     break;
                 case FAILURE:
                     if (BuildConfig.DEBUG) Log.d(TAG, "PublishDeviceTokenResult.FAILURE event received in InitialCommonSignInFragment, invoking retry dialog");
@@ -239,9 +239,9 @@ public class InitialCommonSignInFragment extends Fragment {
         @Override
         public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
             AlertDialog alertDialog = new AlertDialog.Builder(Objects.requireNonNull( super.getActivity() ))
-                .setTitle(ResRepo.get().getSigninRetryDialogTitleR(mCause))
-                .setMessage(ResRepo.get().getSigninRetryDialogMessageR(mCause))
-                .setIcon(ResRepo.get().getSigninRetryDialogIconR(mCause))
+                .setTitle(ResRepo.get().getSignInRetryDialogTitleR(mCause))
+                .setMessage(ResRepo.get().getSignInRetryDialogMessageR(mCause))
+                .setIcon(ResRepo.get().getSignInRetryDialogIconR(mCause))
                 .setPositiveButton(R.string.action_retry, (dialog, button) ->
                     Objects.requireNonNull(super.getParentFragment()).onActivityResult(             // use Fragment#onActivityResult() as a callback
                         Constants.REQUEST_CODE_DIALOG_FRAGMENT,

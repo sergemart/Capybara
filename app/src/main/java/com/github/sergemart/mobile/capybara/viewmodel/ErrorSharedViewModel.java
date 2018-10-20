@@ -8,7 +8,7 @@ import io.reactivex.subjects.Subject;
 
 public class ErrorSharedViewModel extends ViewModel {
 
-    private final Subject<String> mErrorDetailsSubject = BehaviorSubject.create();
+    private final BehaviorSubject<String> mErrorDetailsSubject = BehaviorSubject.create();
     private final CompletableSubject mExitRequestedSubject = CompletableSubject.create();
 
 
@@ -19,18 +19,8 @@ public class ErrorSharedViewModel extends ViewModel {
     }
 
 
-    public void emitErrorDetails(String errorDetails) {
-        mErrorDetailsSubject.onNext(errorDetails);
-    }
-
-
     public CompletableSubject getExitRequestedSubject() {
         return mExitRequestedSubject;
-    }
-
-
-    public void emitExitRequested() {
-        mExitRequestedSubject.onComplete();
     }
 
 }

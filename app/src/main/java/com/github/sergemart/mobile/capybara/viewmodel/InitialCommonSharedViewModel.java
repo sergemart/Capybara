@@ -9,15 +9,10 @@ public class InitialCommonSharedViewModel extends ViewModel {
     private final CompletableSubject mCommonSetupFinishedSubject = CompletableSubject.create();
 
 
-    // --------------------------- Observable getters/ emitters
+    // --------------------------- Observable getters
 
     public CompletableSubject getCommonSetupFinishedSubject() {
         return mCommonSetupFinishedSubject;
-    }
-
-
-    public void emitCommonSetupFinished() {
-        mCommonSetupFinishedSubject.onComplete();
     }
 
 

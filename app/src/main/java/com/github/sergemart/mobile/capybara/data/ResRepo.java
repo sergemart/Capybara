@@ -25,20 +25,20 @@ public class ResRepo {
     }
 
 
-    // --------------------------- Repository interface
+    // --------------------------- Repository interface: Sign-in retry dialog resources
 
     /**
-     * @return Retry Sign-In Dialog icon resource id
+     * @return Sign-in retry dialog icon resource id
      */
-    public int getSigninRetryDialogIconR(Throwable cause) {
+    public int getSignInRetryDialogIconR(Throwable cause) {
         return R.mipmap.ic_launcher; // TODO: Make dialog icons
     }
 
 
     /**
-     * @return Retry Sign-In Dialog title resource id
+     * @return Sign-in retry dialog title resource id
      */
-    public int getSigninRetryDialogTitleR(Throwable cause) {
+    public int getSignInRetryDialogTitleR(Throwable cause) {
         int resId = R.string.title_google_signin_failed;
 
         if (cause instanceof GoogleSigninException) {
@@ -58,9 +58,9 @@ public class ResRepo {
 
 
     /**
-     * @return Retry Sign-In Dialog message resource id
+     * @return Sign-in retry dialog message resource id
      */
-    public int getSigninRetryDialogMessageR(Throwable cause) {
+    public int getSignInRetryDialogMessageR(Throwable cause) {
         int resId = R.string.msg_google_unknown_error;
         if (cause instanceof GoogleSigninException) {
             if (cause.getCause() instanceof ApiException) {
@@ -77,6 +77,32 @@ public class ResRepo {
             resId = R.string.msg_firebase_client_connection_error;
         }
         return resId;
+    }
+
+
+    // --------------------------- Repository interface: Create family retry dialog resources
+
+    /**
+     * @return  Create family retry dialog icon resource id
+     */
+    public int getCreateFamilyRetryDialogIconR(Throwable cause) {
+        return R.mipmap.ic_launcher; // TODO: Make dialog icons
+    }
+
+
+    /**
+     * @return Create family retry dialog title resource id
+     */
+    public int getCreateFamilyRetryDialogTitleR(Throwable cause) {
+        return R.string.title_google_signin_failed;
+    }
+
+
+    /**
+     * @return Create family retry dialog message resource id
+     */
+    public int getCreateFamilyRetryDialogMessageR(Throwable cause) {
+        return R.string.msg_google_unknown_error;
     }
 
 }

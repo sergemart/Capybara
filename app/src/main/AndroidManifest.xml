@@ -23,6 +23,7 @@
         <activity android:name=".ui.MajorActivity" />
         <activity android:name=".ui.MinorActivity" />
         <activity android:name=".ui.ErrorActivity" />
+        <activity android:name=".ui.InitialMajorActivity" />
 
         <service android:name=".service.CloudMessagingService"
             android:stopWithTask="true"
