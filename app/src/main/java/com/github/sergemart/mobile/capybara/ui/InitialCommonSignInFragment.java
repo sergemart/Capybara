@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
-import com.github.sergemart.mobile.capybara.App;
 import com.github.sergemart.mobile.capybara.BuildConfig;
 import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
@@ -22,7 +21,6 @@ import com.github.sergemart.mobile.capybara.viewmodel.InitialCommonSharedViewMod
 import com.google.android.material.button.MaterialButton;
 import com.jakewharton.rxbinding2.view.RxView;
 
-import java.lang.ref.WeakReference;
 import java.util.Objects;
 
 import androidx.annotation.NonNull;
@@ -46,6 +44,7 @@ public class InitialCommonSignInFragment extends Fragment {
     private CompositeDisposable mEventDisposable;
     private InitialCommonSharedViewModel mInitialCommonSharedViewModel;
     private Throwable mCause;
+    private boolean mSignInStarted;
 
 
     // --------------------------- Override fragment lifecycle event handlers
@@ -62,6 +61,7 @@ public class InitialCommonSignInFragment extends Fragment {
         mWidgetDisposable = new CompositeDisposable();
         mEventDisposable = new CompositeDisposable();
         mInitialCommonSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(super.getActivity())).get(InitialCommonSharedViewModel.class);
+        mSignInStarted = false;
 
         this.setEventListeners();
     }
@@ -77,6 +77,8 @@ public class InitialCommonSignInFragment extends Fragment {
         View fragmentView = inflater.inflate(R.layout.fragment_initial_common_sign_in, container, false);
         mSignInButton = fragmentView.findViewById(R.id.button_sign_in);
         mProgressBar = fragmentView.findViewById(R.id.progressBar_waiting);
+
+        this.indicateSignInInProgress();
 
         this.setWidgetListeners();
         return fragmentView;
@@ -193,9 +195,19 @@ public class InitialCommonSignInFragment extends Fragment {
      * Sign in with Google account
      */
     private void signIn() {
+        mSignInStarted = true;
+        this.indicateSignInInProgress();
+        CloudRepo.get().sendSignInIntent(Objects.requireNonNull( super.getActivity() ));
+    }
+
+
+    /**
+     * Indicate that sign-in process is started and in progress
+     */
+    private void indicateSignInInProgress() {
+        if (!mSignInStarted) return;
         mSignInButton.setVisibility(View.INVISIBLE);
         mProgressBar.setVisibility(View.VISIBLE);
-        CloudRepo.get().sendSignInIntent(Objects.requireNonNull( super.getActivity() ));
     }
 
 
