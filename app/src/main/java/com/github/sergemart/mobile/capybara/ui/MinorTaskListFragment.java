@@ -6,6 +6,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -13,11 +15,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.github.sergemart.mobile.capybara.BuildConfig;
 import com.github.sergemart.mobile.capybara.R;
 import com.github.sergemart.mobile.capybara.data.Repository;
 
 
 public class MinorTaskListFragment extends Fragment {
+
+    private static final String TAG = MinorTaskListFragment.class.getSimpleName();
 
     private RecyclerView mRecyclerView;
 
@@ -30,6 +35,7 @@ public class MinorTaskListFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (BuildConfig.DEBUG) Log.d(TAG, "onCreate() called");
         this.setHasOptionsMenu(true);                                                               // tell the fragment manager that this.onCreateOptionsMenu() should be called
     }
 

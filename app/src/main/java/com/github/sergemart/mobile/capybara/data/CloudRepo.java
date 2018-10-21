@@ -166,14 +166,14 @@ public class CloudRepo {
             googleSignInAccount = completedTask.getResult(ApiException.class);                      // throwa an exception on sign-in error
         } catch (ApiException e) {
             String errorMessage = mContext.getString(R.string.exception_google_sign_in_failed);
+            if (BuildConfig.DEBUG) Log.e(TAG, "SignInResult.FAILURE emitting: " + errorMessage + " caused by: " +  e.getMessage());
             mSignInSubject.onNext(SignInResult.FAILURE.setException( new GoogleSigninException(errorMessage, e)) );
-            if (BuildConfig.DEBUG) Log.e(TAG, "SigninSubject emitted a failure event: " + errorMessage + " caused by: " +  e.getMessage());
             return;
         }
         if (googleSignInAccount == null) {
             String errorMessage = mContext.getString(R.string.exception_google_sign_in_account_is_null);
+            if (BuildConfig.DEBUG) Log.e(TAG, "SignInResult.FAILURE emitting: " + errorMessage);
             mSignInSubject.onNext(SignInResult.FAILURE.setException( new GoogleSigninException(errorMessage)) );
-            if (BuildConfig.DEBUG) Log.e(TAG, "SigninSubject emitted a failure event: " + errorMessage);
             return;
         }
 
@@ -184,21 +184,21 @@ public class CloudRepo {
             .addOnCompleteListener(task -> {
                 if ( !task.isSuccessful() ) {                                                       // error check
                     String errorMessage = mContext.getString(R.string.exception_firebase_client_connection_failed);
+                    if (BuildConfig.DEBUG) Log.e(TAG, "SignInResult.FAILURE emitting: " + errorMessage);
                     mSignInSubject.onNext(SignInResult.FAILURE.setException( new FirebaseSigninException(errorMessage)) );
-                    if (BuildConfig.DEBUG) Log.e(TAG, "SigninSubject emitted a failure event: " + errorMessage);
                     return;
                 }
                 mFirebaseUser = mFirebaseAuth.getCurrentUser();
                 if (mFirebaseUser == null) {
                     String errorMessage = mContext.getString(R.string.exception_firebase_user_is_null);
+                    if (BuildConfig.DEBUG) Log.e(TAG, "SignInResult.FAILURE emitting: " + errorMessage);
                     mSignInSubject.onNext(SignInResult.FAILURE.setException( new FirebaseSigninException(errorMessage)) );
-                    if (BuildConfig.DEBUG) Log.e(TAG, "SigninSubject emitted a failure event: " + errorMessage);
                     return;
                 }
                 mUsername = mFirebaseUser.getDisplayName();
                 if (BuildConfig.DEBUG) Log.d(TAG, "Firebase sign-in succeeded with username: " + mUsername);
-                mSignInSubject.onNext(SignInResult.SUCCESS.setFirebaseUser(mFirebaseUser));                                               // send "USER SIGNED IN" event
-                if (BuildConfig.DEBUG) Log.d(TAG, "SigninSubject emitted a success event: " + mUsername);
+                if (BuildConfig.DEBUG) Log.d(TAG, "SignInResult.SUCCESS emitting: " + mUsername);
+                mSignInSubject.onNext(SignInResult.SUCCESS.setFirebaseUser(mFirebaseUser));
             })
         ;
     }
@@ -228,13 +228,13 @@ public class CloudRepo {
             .addOnSuccessListener(instanseIdResult -> {
                 mDeviceToken = instanseIdResult.getToken();
                 if (BuildConfig.DEBUG) Log.d(TAG, "Got Firebase Messaging device token: " + mDeviceToken);
+                if (BuildConfig.DEBUG) Log.d(TAG, "GetDeviceTokenResult.SUCCESS emitting");
                 mGetDeviceTokenSubject.onNext(GenericResult.SUCCESS);
-                if (BuildConfig.DEBUG) Log.d(TAG, "GetDeviceTokenSubject emitted a success event");
             })
             .addOnFailureListener(e -> {
                 String errorMessage = mContext.getString(R.string.exception_firebase_device_token_not_received);
+                if (BuildConfig.DEBUG) Log.e(TAG, "GetDeviceTokenResult.FAILURE emitting: " + errorMessage + " caused by: " +  e.getMessage());
                 mGetDeviceTokenSubject.onNext(GenericResult.FAILURE.setException( new FirebaseMessagingException(errorMessage, e)) );
-                if (BuildConfig.DEBUG) Log.e(TAG, "GetDeviceTokenSubject emitted a failure event: " + errorMessage + " caused by: " +  e.getMessage());
             })
         ;
     }
@@ -245,9 +245,9 @@ public class CloudRepo {
      * Init publishing the token
      */
     public void onTokenReceivedByMessagingService(String deviceToken) {
-        if (BuildConfig.DEBUG) Log.d(TAG, "onTokenReceivedByMessagingService() called");
+        if (BuildConfig.DEBUG) Log.d(TAG, "Update token method called with the token provided");
         if (deviceToken.equals(mDeviceToken)) {                                                     // break the possible loop
-            if (BuildConfig.DEBUG) Log.e(TAG, "Token already known; skipping.");
+            if (BuildConfig.DEBUG) Log.e(TAG, "Provided token already known; skipping update");
             return;
         }
         mDeviceToken = deviceToken;
@@ -262,11 +262,11 @@ public class CloudRepo {
     @SuppressWarnings("unchecked")
     public void publishDeviceTokenAsync() {
         if (mDeviceToken == null || mDeviceToken.equals("")) {
-            if (BuildConfig.DEBUG) Log.e(TAG, "No device token set while attempting to publish it on backend; skipping.");
+            if (BuildConfig.DEBUG) Log.e(TAG, "No device token set while attempting to publish it on backend; skipping");
             return;
         }
         if (mFirebaseUser == null) {
-            if (BuildConfig.DEBUG) Log.e(TAG, "User not authenticated while attempting to publish device token on backend; skipping.");
+            if (BuildConfig.DEBUG) Log.e(TAG, "User not authenticated while attempting to publish device token on backend; skipping");
             return;
         }
 
@@ -282,12 +282,12 @@ public class CloudRepo {
                     result = (Map<String, Object>) Objects.requireNonNull(task.getResult()).getData(); // throws an exception on error
                     // if success:
                     if (BuildConfig.DEBUG) Log.d(TAG, "Published Firebase Messaging device token: " + mDeviceToken);
+                    if (BuildConfig.DEBUG) Log.d(TAG, "PublishDeviceTokenResult.SUCCESS emitting");
                     mPublishDeviceTokenSubject.onNext(GenericResult.SUCCESS);
-                    if (BuildConfig.DEBUG) Log.d(TAG, "PublishDeviceTokenSubject emitted a success event");
                 } catch (Exception e) {
                     String errorMessage = mContext.getString(R.string.exception_firebase_device_token_not_published);
+                    if (BuildConfig.DEBUG) Log.e(TAG, "PublishDeviceTokenResult.FAILURE emitting: " + errorMessage + " caused by: " +  e.getMessage());
                     mPublishDeviceTokenSubject.onNext(GenericResult.FAILURE.setException( new FirebaseMessagingException(errorMessage, e)) );
-                    if (BuildConfig.DEBUG) Log.e(TAG, "PublishDeviceTokenSubject emitted a failure event: " + errorMessage + "caused by: " +  e.getMessage());
                 }
                 return result;
             })
@@ -295,12 +295,12 @@ public class CloudRepo {
                 if (!task.isSuccessful() && task.getException() != null) {
                     Exception e = task.getException();
                     String errorMessage = mContext.getString(R.string.exception_firebase_device_token_not_published);
+                    if (BuildConfig.DEBUG) Log.e(TAG, "PublishDeviceTokenResult.FAILURE emitting: " + errorMessage + " caused by: " +  e.getMessage());
                     mPublishDeviceTokenSubject.onNext(GenericResult.FAILURE.setException( new FirebaseMessagingException(errorMessage, e)) );
-                    if (BuildConfig.DEBUG) Log.e(TAG, "PublishDeviceTokenSubject emitted a failure event: " + errorMessage + "caused by: " +  e.getMessage());
                 } else if (!task.isSuccessful()) {
                     String errorMessage = mContext.getString(R.string.exception_firebase_device_token_not_published);
+                    if (BuildConfig.DEBUG) Log.e(TAG, "PublishDeviceTokenResult.FAILURE emitting: " + errorMessage + "; no exception provided");
                     mPublishDeviceTokenSubject.onNext(GenericResult.FAILURE.setException( new FirebaseMessagingException(errorMessage)) );
-                    if (BuildConfig.DEBUG) Log.e(TAG, "PublishDeviceTokenSubject emitted a failure event: " + errorMessage);
                 }
             })
         ;
@@ -316,7 +316,7 @@ public class CloudRepo {
     @SuppressWarnings("unchecked")
     public void createFamilyAsync() {
         if (mFirebaseUser == null) {
-            if (BuildConfig.DEBUG) Log.e(TAG, "User not authenticated while attempting to create family data on backend; skipping.");
+            if (BuildConfig.DEBUG) Log.e(TAG, "User not authenticated while attempting to create family data on backend; skipping");
             return;
         }
 
@@ -405,8 +405,7 @@ public class CloudRepo {
                     // if success:
                     if (BuildConfig.DEBUG) Log.d(TAG, "Sent location: " + location);
                 } catch (Exception e) {
-                    String errorMessage = mContext.getString(R.string.exception_firebase_location_not_sent);
-                    if (BuildConfig.DEBUG) Log.e(TAG, errorMessage + ": " + e.getMessage());
+                    if (BuildConfig.DEBUG) Log.e(TAG, "Location not sent with exception: " + e.getMessage());
                 }
                 return result;
             })
@@ -416,8 +415,7 @@ public class CloudRepo {
                     String errorMessage = mContext.getString(R.string.exception_firebase_location_not_sent);
                     if (BuildConfig.DEBUG) Log.e(TAG, errorMessage + ": " + e.getMessage());
                 } else if (!task.isSuccessful()) {
-                    String errorMessage = mContext.getString(R.string.exception_firebase_location_not_sent);
-                    if (BuildConfig.DEBUG) Log.e(TAG, errorMessage);
+                    if (BuildConfig.DEBUG) Log.e(TAG, "Location not sent, no exception provided");
                 }
             })
         ;

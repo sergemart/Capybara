@@ -45,8 +45,8 @@ public class GeoRepo {
             public void onLocationResult(LocationResult locationResult) {
                 if (locationResult == null) return;
                 for (Location location : locationResult.getLocations()) {
+                    if (BuildConfig.DEBUG) Log.d(TAG, "Got a fix: " + location + "; emitting");
                     mLocationSubject.onNext(location);
-                    if (BuildConfig.DEBUG) Log.d(TAG, "Got a fix: " + location);
                 }
             }
         };
@@ -85,11 +85,11 @@ public class GeoRepo {
     public void startLocationUpdates() {
         try {
             mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback,null);
-            if (BuildConfig.DEBUG) Log.d(TAG, "Location updates started.");
+            if (BuildConfig.DEBUG) Log.d(TAG, "Location updates started");
         } catch (SecurityException e) {
             String errorMessage = mContext.getString(R.string.exception_location_no_permission);
+            if (BuildConfig.DEBUG) Log.e(TAG, "LocationSubject emitting an error: " + errorMessage + " caused by: " +  e.getMessage());
             mLocationSubject.onError(new LocationPermissionException(errorMessage));
-            if (BuildConfig.DEBUG) Log.e(TAG, "LocationSubject emitted an error: " + errorMessage + "caused by: " +  e.getMessage());
         }
     }
 
@@ -99,7 +99,7 @@ public class GeoRepo {
      */
     public void stopLocationUpdates() {
         mFusedLocationClient.removeLocationUpdates(mLocationCallback);
-        if (BuildConfig.DEBUG) Log.d(TAG, "Location updates stopped.");
+        if (BuildConfig.DEBUG) Log.d(TAG, "Location updates stopped");
     }
 
 

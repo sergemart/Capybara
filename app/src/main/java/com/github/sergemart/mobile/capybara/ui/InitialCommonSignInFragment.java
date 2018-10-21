@@ -54,6 +54,7 @@ public class InitialCommonSignInFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (BuildConfig.DEBUG) Log.d(TAG, "onCreate() called");
         super.setRetainInstance(true);
 
         mDisposable = new CompositeDisposable();
@@ -148,11 +149,11 @@ public class InitialCommonSignInFragment extends Fragment {
         mDisposable.add(CloudRepo.get().getPublishDeviceTokenSubject().subscribe(event -> {
             switch (event) {
                 case SUCCESS:
-                    if (BuildConfig.DEBUG) Log.d(TAG, "PublishDeviceTokenResult.SUCCESS event received in InitialCommonSignInFragment, notifying that app is initialized");
-                    mInitialCommonSharedViewModel.getCommonSetupFinishedSubject().onComplete();     // send "CommonSetupFinished" event
+                    if (BuildConfig.DEBUG) Log.d(TAG, "PublishDeviceTokenResult.SUCCESS event received in InitialCommonSignInFragment; emmitting CommonSetupFinished event");
+                    mInitialCommonSharedViewModel.getCommonSetupFinishedSubject().onComplete();
                     break;
                 case FAILURE:
-                    if (BuildConfig.DEBUG) Log.d(TAG, "PublishDeviceTokenResult.FAILURE event received in InitialCommonSignInFragment, invoking retry dialog");
+                    if (BuildConfig.DEBUG) Log.d(TAG, "PublishDeviceTokenResult.FAILURE event received in InitialCommonSignInFragment; invoking retry dialog");
                     mCause = event.getException();
                     this.showSigninRetryDialog(mCause);
             }

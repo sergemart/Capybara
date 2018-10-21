@@ -36,7 +36,8 @@ public class InitialMajorActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_initial_common);
+        if (BuildConfig.DEBUG) Log.d(TAG, "onCreate() called");
+        setContentView(R.layout.activity_initial_major);
 
         mDisposable = new CompositeDisposable();
         mInitialMajorSharedViewModel = ViewModelProviders.of(this).get(InitialMajorSharedViewModel.class);
@@ -51,6 +52,7 @@ public class InitialMajorActivity
     @Override
     protected void onStart() {
         super.onStart();
+        if (BuildConfig.DEBUG) Log.d(TAG, "onStart() called");
 
         // App start-up actions
         CloudRepo.get().createFamilyAsync();
@@ -61,7 +63,7 @@ public class InitialMajorActivity
     @Override
     public void onDestroy() {
         mDisposable.clear();
-        if (BuildConfig.DEBUG) Log.d(TAG, "Subscriptions are disposed.");
+        if (BuildConfig.DEBUG) Log.d(TAG, "Subscriptions are disposed");
         super.onDestroy();
     }
 
@@ -84,6 +86,7 @@ public class InitialMajorActivity
      * Leave the nav graph
      */
     private void leaveNavGraph() {
+        if (BuildConfig.DEBUG) Log.d(TAG, "Leaving the nav graph");
         Intent intent = MajorActivity.newIntent(this);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         super.startActivity(intent);

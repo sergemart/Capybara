@@ -51,6 +51,7 @@ public class InitialMajorCreateFamilyFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (BuildConfig.DEBUG) Log.d(TAG, "onCreate() called");
         super.setRetainInstance(true);
 
         mDisposable = new CompositeDisposable();
@@ -65,7 +66,7 @@ public class InitialMajorCreateFamilyFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View fragmentView = inflater.inflate(R.layout.fragment_initial_common_sign_in, container, false);
+        View fragmentView = inflater.inflate(R.layout.fragment_initial_major_create_family, container, false);
         mProgressBar = fragmentView.findViewById(R.id.progressBar_waiting);
 
         this.setListeners();
@@ -111,20 +112,20 @@ public class InitialMajorCreateFamilyFragment extends Fragment {
         mDisposable.add(CloudRepo.get().getCreateFamilySubject().subscribe(event -> {
             switch (event) {
                 case CREATED:
-                    if (BuildConfig.DEBUG) Log.d(TAG, "CreateFamilyResult.CREATED event received in InitialMajorCreateFamilyFragment, notifying that app is initialized");
+                    if (BuildConfig.DEBUG) Log.d(TAG, "CreateFamilyResult.CREATED event received in InitialMajorCreateFamilyFragment; emitting MajorSetupFinished event");
                     mInitialMajorSharedViewModel.getMajorSetupFinishedSubject().onComplete();       // send "MajorSetupFinished" event
                     break;
                 case EXIST:
-                    if (BuildConfig.DEBUG) Log.d(TAG, "CreateFamilyResult.EXIST event received in InitialMajorCreateFamilyFragment, notifying that app is initialized");
+                    if (BuildConfig.DEBUG) Log.d(TAG, "CreateFamilyResult.EXIST event received in InitialMajorCreateFamilyFragment; emitting MajorSetupFinished event");
                     mInitialMajorSharedViewModel.getMajorSetupFinishedSubject().onComplete();       // send "CommonSetupFinished" event
                     break;
                 case EXIST_MORE_THAN_ONE:
-                    if (BuildConfig.DEBUG) Log.d(TAG, "CreateFamilyResult.EXIST_MORE_THAN_ONE event received in InitialMajorCreateFamilyFragment, notifying that app is initialized");
+                    if (BuildConfig.DEBUG) Log.d(TAG, "CreateFamilyResult.EXIST_MORE_THAN_ONE event received in InitialMajorCreateFamilyFragment; emitting MajorSetupFinished event");
                     mCause = event.getException();
                     this.navigateToFatalErrorPage(mCause);
                     break;
                 case BACKEND_ERROR:
-                    if (BuildConfig.DEBUG) Log.d(TAG, "CreateFamilyResult.BACKEND_ERROR event received in InitialMajorCreateFamilyFragment, invoking retry dialog");
+                    if (BuildConfig.DEBUG) Log.d(TAG, "CreateFamilyResult.BACKEND_ERROR event received in InitialMajorCreateFamilyFragment; invoking retry dialog");
                     mCause = event.getException();
                     this.showCreateFamilyRetryDialog(mCause);
             }

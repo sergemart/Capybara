@@ -82,8 +82,8 @@ public class CloudMessagingService
      * Update the Firebase Messaging device token when received from the cloud
      */
     private void updateDeviceToken(String newDeviceToken) {
+        if (BuildConfig.DEBUG) Log.d(TAG, "New device token received, calling repository update method.");
         CloudRepo.get().onTokenReceivedByMessagingService(newDeviceToken);
-        if (BuildConfig.DEBUG) Log.d(TAG, "New device token received, updating.");
     }
 
 

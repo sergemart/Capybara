@@ -40,6 +40,7 @@ public class MinorDummyFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (BuildConfig.DEBUG) Log.d(TAG, "onCreate() called");
     }
 
 
@@ -89,7 +90,7 @@ public class MinorDummyFragment extends Fragment {
     @Override
     public void onDestroy() {
         mDisposable.clear();
-        if (BuildConfig.DEBUG) Log.d(TAG, "Subscriptions are disposed.");
+        if (BuildConfig.DEBUG) Log.d(TAG, "Subscriptions are disposed");
         super.onDestroy();
     }
 

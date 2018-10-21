@@ -34,6 +34,7 @@ public class InitialCommonActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (BuildConfig.DEBUG) Log.d(TAG, "onCreate() called");
         setContentView(R.layout.activity_initial_common);
 
         mDisposable = new CompositeDisposable();
@@ -49,6 +50,7 @@ public class InitialCommonActivity
     @Override
     protected void onStart() {
         super.onStart();
+        if (BuildConfig.DEBUG) Log.d(TAG, "onStart() called");
 
         // App start-up actions
         CloudRepo.get().getTokenAsync();                                                            // for non-initial startups
@@ -76,7 +78,7 @@ public class InitialCommonActivity
     @Override
     public void onDestroy() {
         mDisposable.clear();
-        if (BuildConfig.DEBUG) Log.d(TAG, "Subscriptions are disposed.");
+        if (BuildConfig.DEBUG) Log.d(TAG, "Subscriptions are disposed");
         super.onDestroy();
     }
 
@@ -99,6 +101,7 @@ public class InitialCommonActivity
      * Leave the nav graph
      */
     private void leaveNavGraph() {
+        if (BuildConfig.DEBUG) Log.d(TAG, "Leaving the nav graph");
         Intent intent;
         if (PreferenceStore.getStoredAppMode() == Constants.APP_MODE_MAJOR) {
             intent = InitialMajorActivity.newIntent(this);
