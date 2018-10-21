@@ -29,8 +29,8 @@ public class MinorDummyFragment extends Fragment {
     private MaterialButton mUpdateDeviceTokenButton;
 
     private Location mCurrentLocation;
-    private CompositeDisposable mWidgetDisposable;
-    private CompositeDisposable mEventDisposable;
+    private CompositeDisposable mViewDisposable;
+    private CompositeDisposable mInstanceDisposable;
 
 
 
@@ -44,7 +44,7 @@ public class MinorDummyFragment extends Fragment {
         super.onCreate(savedInstanceState);
         super.setRetainInstance(true);
         if (BuildConfig.DEBUG) Log.d(TAG, "onCreate() called");
-        this.setEventListeners();
+        this.setInstanceListeners();
     }
 
 
@@ -60,7 +60,7 @@ public class MinorDummyFragment extends Fragment {
         mSendMyLocationButton = fragmentView.findViewById(R.id.button_send_my_location);
         mUpdateDeviceTokenButton = fragmentView.findViewById(R.id.button_update_device_token);
 
-        this.setWidgetListeners();
+        this.setViewListeners();
         return fragmentView;
     }
 
@@ -94,8 +94,8 @@ public class MinorDummyFragment extends Fragment {
      */
     @Override
     public void onDestroyView() {
-        mWidgetDisposable.clear();
-        if (BuildConfig.DEBUG) Log.d(TAG, "Widget subscriptions are disposed");
+        mViewDisposable.clear();
+        if (BuildConfig.DEBUG) Log.d(TAG, "View-related subscriptions are disposed");
         super.onDestroyView();
     }
 
@@ -105,8 +105,8 @@ public class MinorDummyFragment extends Fragment {
      */
     @Override
     public void onDestroy() {
-        mEventDisposable.clear();
-        if (BuildConfig.DEBUG) Log.d(TAG, "Event subscriptions are disposed");
+        mInstanceDisposable.clear();
+        if (BuildConfig.DEBUG) Log.d(TAG, "View-unrelated subscriptions are disposed");
         super.onDestroy();
     }
 
@@ -114,17 +114,17 @@ public class MinorDummyFragment extends Fragment {
     // --------------------------- Widget controls
 
     /**
-     * Set listeners to widgets
+     * Set listeners to view-related events
      */
-    private void setWidgetListeners() {
+    private void setViewListeners() {
 
         // Set a listener to the "Send My Location" button
-        mWidgetDisposable.add(
+        mViewDisposable.add(
             RxView.clicks(mSendMyLocationButton).subscribe(event -> this.sendMyLocation())
         );
 
         // Set a listener to the "Update Device Token" button
-        mWidgetDisposable.add(
+        mViewDisposable.add(
             RxView.clicks(mUpdateDeviceTokenButton).subscribe(event -> this.updateDeviceToken())
         );
 
@@ -132,12 +132,12 @@ public class MinorDummyFragment extends Fragment {
 
 
     /**
-     * Set listeners to events
+     * Set listeners to view-unrelated events
      */
-    private void setEventListeners() {
+    private void setInstanceListeners() {
 
         // Set a listener to the "GOT A LOCATION" event
-        mEventDisposable.add(GeoRepo.get().getLocationSubject()
+        mInstanceDisposable.add(GeoRepo.get().getLocationSubject()
             .subscribe(location -> mCurrentLocation = location)
         );
 

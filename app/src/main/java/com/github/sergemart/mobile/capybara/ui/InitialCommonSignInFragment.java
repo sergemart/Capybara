@@ -40,8 +40,8 @@ public class InitialCommonSignInFragment extends Fragment {
     private MaterialButton mSignInButton;
     private ProgressBar mProgressBar;
 
-    private CompositeDisposable mWidgetDisposable;
-    private CompositeDisposable mEventDisposable;
+    private CompositeDisposable mViewDisposable;
+    private CompositeDisposable mInstanceDisposable;
     private InitialCommonSharedViewModel mInitialCommonSharedViewModel;
     private Throwable mCause;
     private boolean mSignInStarted;
@@ -58,12 +58,12 @@ public class InitialCommonSignInFragment extends Fragment {
         if (BuildConfig.DEBUG) Log.d(TAG, "onCreate() called");
         super.setRetainInstance(true);
 
-        mWidgetDisposable = new CompositeDisposable();
-        mEventDisposable = new CompositeDisposable();
+        mViewDisposable = new CompositeDisposable();
+        mInstanceDisposable = new CompositeDisposable();
         mInitialCommonSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(super.getActivity())).get(InitialCommonSharedViewModel.class);
         mSignInStarted = false;
 
-        this.setEventListeners();
+        this.setInstanceListeners();
     }
 
 
@@ -80,7 +80,7 @@ public class InitialCommonSignInFragment extends Fragment {
 
         this.indicateSignInInProgress();
 
-        this.setWidgetListeners();
+        this.setViewListeners();
         return fragmentView;
     }
 
@@ -107,8 +107,8 @@ public class InitialCommonSignInFragment extends Fragment {
      */
     @Override
     public void onDestroyView() {
-        mWidgetDisposable.clear();
-        if (BuildConfig.DEBUG) Log.d(TAG, "Widget subscriptions are disposed");
+        mViewDisposable.clear();
+        if (BuildConfig.DEBUG) Log.d(TAG, "View-related subscriptions are disposed");
         super.onDestroyView();
     }
 
@@ -118,8 +118,8 @@ public class InitialCommonSignInFragment extends Fragment {
      */
     @Override
     public void onDestroy() {
-        mEventDisposable.clear();
-        if (BuildConfig.DEBUG) Log.d(TAG, "Event subscriptions are disposed");
+        mInstanceDisposable.clear();
+        if (BuildConfig.DEBUG) Log.d(TAG, "View-unrelated subscriptions are disposed");
         super.onDestroy();
     }
 
@@ -127,12 +127,12 @@ public class InitialCommonSignInFragment extends Fragment {
     // --------------------------- Fragment lifecycle subroutines
 
     /**
-     * Set listeners to widgets
+     * Set listeners to view-related events
      */
-    private void setWidgetListeners() {
+    private void setViewListeners() {
 
         // Set a listener to the "Sign In" button
-        mWidgetDisposable.add(RxView.clicks(mSignInButton).subscribe(
+        mViewDisposable.add(RxView.clicks(mSignInButton).subscribe(
             event -> this.signIn()
         ));
 
@@ -140,12 +140,12 @@ public class InitialCommonSignInFragment extends Fragment {
 
 
     /**
-     * Set listeners to events
+     * Set listeners to view-unrelated events
      */
-    private void setEventListeners() {
+    private void setInstanceListeners() {
 
         // Set a listener to the "SignInResult" event
-        mEventDisposable.add(CloudRepo.get().getSignInSubject().subscribe(event -> {
+        mInstanceDisposable.add(CloudRepo.get().getSignInSubject().subscribe(event -> {
             switch (event) {
                 case SUCCESS:
                     if (BuildConfig.DEBUG) Log.d(TAG, "SignInResult.SUCCESS event received; getting device token");
@@ -159,7 +159,7 @@ public class InitialCommonSignInFragment extends Fragment {
         }));
 
         // Set a listener to the "GetDeviceTokenResult" event
-        mEventDisposable.add(CloudRepo.get().getGetDeviceTokenSubject().subscribe(event -> {
+        mInstanceDisposable.add(CloudRepo.get().getGetDeviceTokenSubject().subscribe(event -> {
             switch (event) {
                 case SUCCESS:
                     if (BuildConfig.DEBUG) Log.d(TAG, "GetDeviceTokenResult.SUCCESS event received; publishing device token");
@@ -173,7 +173,7 @@ public class InitialCommonSignInFragment extends Fragment {
         }));
 
         // Set a listener to the "PublishDeviceTokenResult" event
-        mEventDisposable.add(CloudRepo.get().getPublishDeviceTokenSubject().subscribe(event -> {
+        mInstanceDisposable.add(CloudRepo.get().getPublishDeviceTokenSubject().subscribe(event -> {
             switch (event) {
                 case SUCCESS:
                     if (BuildConfig.DEBUG) Log.d(TAG, "PublishDeviceTokenResult.SUCCESS event received; emmitting CommonSetupFinished event");

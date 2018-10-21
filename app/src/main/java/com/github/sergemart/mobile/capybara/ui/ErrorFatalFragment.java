@@ -31,7 +31,9 @@ public class ErrorFatalFragment extends Fragment {
     private MaterialButton mExitApplicationButton;
 
     private ErrorSharedViewModel mErrorSharedViewModel;
-    private CompositeDisposable mDisposable;
+    private CompositeDisposable mViewDisposable;
+    private CompositeDisposable mInstanceDisposable;
+
 
 
     // --------------------------- Override fragment event handlers
@@ -45,7 +47,10 @@ public class ErrorFatalFragment extends Fragment {
         super.setRetainInstance(true);
 
         mErrorSharedViewModel = ViewModelProviders.of(Objects.requireNonNull( super.getActivity() )).get(ErrorSharedViewModel.class);
-        mDisposable = new CompositeDisposable();
+        mViewDisposable = new CompositeDisposable();
+        mInstanceDisposable = new CompositeDisposable();
+
+        this.setInstanceListeners();
     }
 
 
@@ -61,8 +66,19 @@ public class ErrorFatalFragment extends Fragment {
         mErrorDetailsTextView = fragmentView.findViewById(R.id.textView_error_details);
         mExitApplicationButton = fragmentView.findViewById(R.id.button_exit_application);
 
-        this.setListeners();
+        this.setViewListeners();
         return fragmentView;
+    }
+
+
+    /**
+     * View clean-up
+     */
+    @Override
+    public void onDestroyView() {
+        mViewDisposable.clear();
+        if (BuildConfig.DEBUG) Log.d(TAG, "View-related subscriptions are disposed");
+        super.onDestroyView();
     }
 
 
@@ -71,8 +87,8 @@ public class ErrorFatalFragment extends Fragment {
      */
     @Override
     public void onDestroy() {
-        mDisposable.clear();
-        if (BuildConfig.DEBUG) Log.d(TAG, "Subscriptions are disposed");
+        mInstanceDisposable.clear();
+        if (BuildConfig.DEBUG) Log.d(TAG, "View-unrelated subscriptions are disposed");
         super.onDestroy();
     }
 
@@ -80,32 +96,36 @@ public class ErrorFatalFragment extends Fragment {
     // --------------------------- Fragment lifecycle subroutines
 
     /**
-     * Set listeners to widgets and events
+     * Set listeners to view-related events
      */
-    private void setListeners() {
+    private void setViewListeners() {
+
         // Set a listener to the "Exit Application" button
-        mDisposable.add(RxView.clicks(mExitApplicationButton).subscribe(
-            event -> mErrorSharedViewModel.getExitRequestedSubject().onComplete()                   // send "ExitRequested" event
+        mViewDisposable.add(RxView.clicks(mExitApplicationButton).subscribe(event ->
+            mErrorSharedViewModel.getExitRequestedSubject().onComplete()                            // send ExitRequested event
         ));
 
-        // Set a listener to the "ERROR DETAILS PUBLISHED" event
-        mDisposable.add(mErrorSharedViewModel.getErrorDetailsSubject().subscribe(
-            this::showErrorMessage
+        // Set a listener to the Cause event
+        mInstanceDisposable.add(mErrorSharedViewModel.getCauseSubject().subscribe(event ->
+            this.showErrorMessage(event.getException())
         ));
+
+    }
+
+
+    /**
+     * Set listeners to view-unrelated events
+     */
+    private void setInstanceListeners() {
+
 
     }
 
 
     // --------------------------- Use cases
 
-    private void showErrorMessage(String errorDetails) {
-        String messageToShow;
-        Throwable lastFatalException = App.getLastFatalException().get();
-        if (lastFatalException != null) {
-            messageToShow = errorDetails + " caused by:  " + lastFatalException.getCause().getLocalizedMessage();
-        } else {
-            messageToShow = errorDetails;
-        }
+    private void showErrorMessage(Throwable cause) {
+        String messageToShow = cause.getLocalizedMessage() + " caused by:  " + cause.getCause().getLocalizedMessage();
         mErrorDetailsTextView.setText(messageToShow);
     }
 }

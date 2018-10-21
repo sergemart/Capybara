@@ -31,8 +31,8 @@ public class MajorDummyFragment extends Fragment {
     private MaterialButton mCreateFamilyButton;
 
     private Location mCurrentLocation;
-    private CompositeDisposable mWidgetDisposable;
-    private CompositeDisposable mEventDisposable;
+    private CompositeDisposable mViewDisposable;
+    private CompositeDisposable mInstanceDisposable;
 
 
 
@@ -47,10 +47,10 @@ public class MajorDummyFragment extends Fragment {
         if (BuildConfig.DEBUG) Log.d(TAG, "onCreate() called");
         super.setRetainInstance(true);
 
-        mWidgetDisposable = new CompositeDisposable();
-        mEventDisposable = new CompositeDisposable();
+        mViewDisposable = new CompositeDisposable();
+        mInstanceDisposable = new CompositeDisposable();
 
-        this.setEventListeners();
+        this.setInstanceListeners();
     }
 
 
@@ -66,7 +66,7 @@ public class MajorDummyFragment extends Fragment {
         mSendMyLocationButton = fragmentView.findViewById(R.id.button_send_my_location);
         mCreateFamilyButton = fragmentView.findViewById(R.id.button_create_family);
 
-        this.setWidgetListeners();
+        this.setViewListeners();
         return fragmentView;
     }
 
@@ -100,8 +100,8 @@ public class MajorDummyFragment extends Fragment {
      */
     @Override
     public void onDestroyView() {
-        mWidgetDisposable.clear();
-        if (BuildConfig.DEBUG) Log.d(TAG, "Widget subscriptions are disposed");
+        mViewDisposable.clear();
+        if (BuildConfig.DEBUG) Log.d(TAG, "View-related subscriptions are disposed");
         super.onDestroyView();
     }
 
@@ -111,8 +111,8 @@ public class MajorDummyFragment extends Fragment {
      */
     @Override
     public void onDestroy() {
-        mEventDisposable.clear();
-        if (BuildConfig.DEBUG) Log.d(TAG, "Event subscriptions are disposed");
+        mInstanceDisposable.clear();
+        if (BuildConfig.DEBUG) Log.d(TAG, "View-unrelated subscriptions are disposed");
         super.onDestroy();
     }
 
@@ -120,22 +120,22 @@ public class MajorDummyFragment extends Fragment {
     // --------------------------- Widget controls
 
     /**
-     * Set listeners to widgets
+     * Set listeners to view-related events
      */
-    private void setWidgetListeners() {
+    private void setViewListeners() {
 
         // Set a listener to the "Send My Location" button
-        mWidgetDisposable.add(
+        mViewDisposable.add(
             RxView.clicks(mSendMyLocationButton).subscribe(event -> this.sendMyLocation())
         );
 
         // Set a listener to the "Create family data" button
-        mWidgetDisposable.add(
+        mViewDisposable.add(
             RxView.clicks(mCreateFamilyButton).subscribe(event -> this.createFamily())
         );
 
         // Set a listener to the "CreateFamily" result
-        mWidgetDisposable.add(CloudRepo.get().getCreateFamilySubject().subscribe(
+        mViewDisposable.add(CloudRepo.get().getCreateFamilySubject().subscribe(
             event -> {}
         ));
 
@@ -143,12 +143,12 @@ public class MajorDummyFragment extends Fragment {
 
 
     /**
-     * Set listeners to events
+     * Set listeners to view-unrelated events
      */
-    private void setEventListeners() {
+    private void setInstanceListeners() {
 
         // Set a listener to the "CreateFamily" result
-        mEventDisposable.add(CloudRepo.get().getCreateFamilySubject().subscribe(
+        mInstanceDisposable.add(CloudRepo.get().getCreateFamilySubject().subscribe(
             event -> {}
         ));
 

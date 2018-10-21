@@ -33,8 +33,8 @@ public class InitialCommonSetupFragment extends Fragment {
     private MaterialButton mIAmMajorButton;
     private MaterialButton mIAmMinorButton;
 
-    private CompositeDisposable mWidgetDisposable;
-    private CompositeDisposable mEventDisposable;
+    private CompositeDisposable mViewDisposable;
+    private CompositeDisposable mInstanceDisposable;
     private InitialCommonSharedViewModel mInitialCommonSharedViewModel;
 
 
@@ -50,10 +50,10 @@ public class InitialCommonSetupFragment extends Fragment {
         super.setRetainInstance(true);
 
         mInitialCommonSharedViewModel = ViewModelProviders.of(Objects.requireNonNull( super.getActivity() )).get(InitialCommonSharedViewModel.class);
-        mWidgetDisposable = new CompositeDisposable();
-        mEventDisposable = new CompositeDisposable();
+        mViewDisposable = new CompositeDisposable();
+        mInstanceDisposable = new CompositeDisposable();
 
-        this.setEventListeners();
+        this.setInstanceListeners();
     }
 
 
@@ -69,7 +69,7 @@ public class InitialCommonSetupFragment extends Fragment {
         mIAmMajorButton = fragmentView.findViewById(R.id.button_i_am_major);
         mIAmMinorButton = fragmentView.findViewById(R.id.button_i_am_minor);
 
-        this.setWidgetListeners();
+        this.setViewListeners();
         return fragmentView;
     }
 
@@ -79,8 +79,8 @@ public class InitialCommonSetupFragment extends Fragment {
      */
     @Override
     public void onDestroyView() {
-        mWidgetDisposable.clear();
-        if (BuildConfig.DEBUG) Log.d(TAG, "Widget subscriptions are disposed");
+        mViewDisposable.clear();
+        if (BuildConfig.DEBUG) Log.d(TAG, "View-related subscriptions are disposed");
         super.onDestroyView();
     }
 
@@ -90,8 +90,8 @@ public class InitialCommonSetupFragment extends Fragment {
      */
     @Override
     public void onDestroy() {
-        mEventDisposable.clear();
-        if (BuildConfig.DEBUG) Log.d(TAG, "Event subscriptions are disposed");
+        mInstanceDisposable.clear();
+        if (BuildConfig.DEBUG) Log.d(TAG, "View-unrelated subscriptions are disposed");
         super.onDestroy();
     }
 
@@ -99,11 +99,11 @@ public class InitialCommonSetupFragment extends Fragment {
     // --------------------------- Fragment lifecycle subroutines
 
     /**
-     * Set listeners to widgets
+     * Set listeners to view-related events
      */
-    private void setWidgetListeners() {
+    private void setViewListeners() {
         // Set a listener to the "I Am a Major" button
-        mWidgetDisposable.add(RxView.clicks(mIAmMajorButton).subscribe(
+        mViewDisposable.add(RxView.clicks(mIAmMajorButton).subscribe(
             event -> {
                 PreferenceStore.storeAppMode(Constants.APP_MODE_MAJOR);
                 PreferenceStore.storeIsAppModeSet(true);
@@ -112,7 +112,7 @@ public class InitialCommonSetupFragment extends Fragment {
         );
 
         // Set a listener to the "I Am a Minor" button
-        mWidgetDisposable.add(RxView.clicks(mIAmMinorButton).subscribe(
+        mViewDisposable.add(RxView.clicks(mIAmMinorButton).subscribe(
             event -> {
                 PreferenceStore.storeAppMode(Constants.APP_MODE_MINOR);
                 PreferenceStore.storeIsAppModeSet(true);
@@ -123,9 +123,9 @@ public class InitialCommonSetupFragment extends Fragment {
 
 
     /**
-     * Set listeners to events
+     * Set listeners to view-unrelated events
      */
-    private void setEventListeners() {
+    private void setInstanceListeners() {
     }
 
 

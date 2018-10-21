@@ -70,7 +70,7 @@ public class CloudMessagingService
 
 
     /**
-     * Set listeners to widgets, containers and events
+     * Set listeners to view-related events, containers and events
      */
     private void setListeners() {
     }

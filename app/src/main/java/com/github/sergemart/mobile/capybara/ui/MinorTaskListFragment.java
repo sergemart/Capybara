@@ -105,7 +105,7 @@ public class MinorTaskListFragment extends Fragment {
 
 
     /**
-     * Set listeners to widgets and containers
+     * Set listeners to view-related events and containers
      */
     private void setListeners() {
     }

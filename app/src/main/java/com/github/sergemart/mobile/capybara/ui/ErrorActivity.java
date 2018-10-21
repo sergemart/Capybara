@@ -5,8 +5,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.github.sergemart.mobile.capybara.App;
 import com.github.sergemart.mobile.capybara.BuildConfig;
 import com.github.sergemart.mobile.capybara.R;
+import com.github.sergemart.mobile.capybara.events.GenericResult;
 import com.github.sergemart.mobile.capybara.viewmodel.ErrorSharedViewModel;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,10 +21,9 @@ public class ErrorActivity
 {
 
     private static final String TAG = ErrorActivity.class.getSimpleName();
-    private static final String KEY_ERROR_DETAILS = "errorDetails";
 
     ErrorSharedViewModel mErrorSharedViewModel;
-    private CompositeDisposable mEventDisposable;
+    private CompositeDisposable mInstanceDisposable;
 
 
     // --------------------------- Override activity event handlers
@@ -35,13 +36,14 @@ public class ErrorActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_error);
-        mEventDisposable = new CompositeDisposable();
+        mInstanceDisposable = new CompositeDisposable();
 
-        String errorDetails = super.getIntent().getStringExtra(KEY_ERROR_DETAILS);
+        // Publish the error cause
         mErrorSharedViewModel = ViewModelProviders.of(this).get(ErrorSharedViewModel.class);
-        mErrorSharedViewModel.getErrorDetailsSubject().onNext(errorDetails);
+        Throwable cause = App.getLastFatalException().get();
+        mErrorSharedViewModel.getCauseSubject().onNext(GenericResult.SUCCESS.setException(cause));
 
-        this.setEventListeners();
+        this.setInstanceListeners();
     }
 
 
@@ -57,18 +59,18 @@ public class ErrorActivity
     // Instance clean-up
     @Override
     public void onDestroy() {
-        mEventDisposable.clear();
-        if (BuildConfig.DEBUG) Log.d(TAG, "Event subscriptions are disposed");
+        mInstanceDisposable.clear();
+        if (BuildConfig.DEBUG) Log.d(TAG, "View-unrelated subscriptions are disposed");
         super.onDestroy();
     }
 
 
     // --------------------------- Activity lifecycle subroutines
 
-    private void setEventListeners() {
+    private void setInstanceListeners() {
 
         // Set a listener to the "EXIT REQUESTED" event
-        mEventDisposable.add(mErrorSharedViewModel.getExitRequestedSubject().subscribe(
+        mInstanceDisposable.add(mErrorSharedViewModel.getExitRequestedSubject().subscribe(
             this::exitApplication
         ));
 
@@ -89,10 +91,9 @@ public class ErrorActivity
     // --------------------------- Static encapsulation-leveraging methods
 
     // Create properly configured intent intended to invoke this activity
-    public static Intent newIntent(Context packageContext, String errorDetails) {
+    public static Intent newIntent(Context packageContext) {
         Intent intent = new Intent(packageContext, ErrorActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        intent.putExtra(KEY_ERROR_DETAILS, errorDetails);
         return intent;
     }
 

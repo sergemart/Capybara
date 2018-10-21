@@ -31,8 +31,8 @@ public class MajorLocatorFragment extends SupportMapFragment {
     private GoogleMap mGoogleMap;
 
     private Location mCurrentLocation;
-    private CompositeDisposable mWidgetDisposable;
-    private CompositeDisposable mEventDisposable;
+    private CompositeDisposable mViewDisposable;
+    private CompositeDisposable mInstanceDisposable;
 
 
 
@@ -48,10 +48,10 @@ public class MajorLocatorFragment extends SupportMapFragment {
         super.setRetainInstance(true);
 
         super.getMapAsync(googleMap -> mGoogleMap = googleMap);
-        mWidgetDisposable = new CompositeDisposable();
-        mEventDisposable = new CompositeDisposable();
+        mViewDisposable = new CompositeDisposable();
+        mInstanceDisposable = new CompositeDisposable();
 
-        this.setEventListeners();
+        this.setInstanceListeners();
     }
 
 
@@ -63,7 +63,7 @@ public class MajorLocatorFragment extends SupportMapFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         this.locateMe();
-        this.setWidgetListeners();
+        this.setViewListeners();
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 
@@ -76,7 +76,7 @@ public class MajorLocatorFragment extends SupportMapFragment {
         switch (requestCode) {
             case Constants.REQUEST_CODE_LOCATION_PERMISSIONS:
                 if ( GeoRepo.get().isLocationPermissionGranted() ) this.locateMe();                 // 2nd try, if granted
-                else {} // TODO: Notify about restricted functionality
+                //else {} // TODO: Notify about restricted functionality
             default:
                 super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
@@ -98,8 +98,8 @@ public class MajorLocatorFragment extends SupportMapFragment {
      */
     @Override
     public void onDestroyView() {
-        mWidgetDisposable.clear();
-        if (BuildConfig.DEBUG) Log.d(TAG, "Widget subscriptions are disposed");
+        mViewDisposable.clear();
+        if (BuildConfig.DEBUG) Log.d(TAG, "View-related subscriptions are disposed");
         super.onDestroyView();
     }
 
@@ -109,8 +109,8 @@ public class MajorLocatorFragment extends SupportMapFragment {
      */
     @Override
     public void onDestroy() {
-        mEventDisposable.clear();
-        if (BuildConfig.DEBUG) Log.d(TAG, "Event subscriptions are disposed");
+        mInstanceDisposable.clear();
+        if (BuildConfig.DEBUG) Log.d(TAG, "View-unrelated subscriptions are disposed");
         super.onDestroy();
     }
 
@@ -118,19 +118,19 @@ public class MajorLocatorFragment extends SupportMapFragment {
     // --------------------------- Fragment lifecycle subroutines
 
     /**
-     * Set listeners to widgets
+     * Set listeners to view-related events
      */
-    private void setWidgetListeners() {
+    private void setViewListeners() {
     }
 
 
     /**
-     * Set listeners to events
+     * Set listeners to view-unrelated events
      */
-    private void setEventListeners() {
+    private void setInstanceListeners() {
 
         // Set a listener to the "GOT A LOCATION" event
-        mEventDisposable.add(GeoRepo.get().getLocationSubject().subscribe(location -> {
+        mInstanceDisposable.add(GeoRepo.get().getLocationSubject().subscribe(location -> {
             mCurrentLocation = location;// TODO: Implement onNext(SUCCESS)
             this.updateMap();
         })); // TODO: Implement onNext(FAILURE)

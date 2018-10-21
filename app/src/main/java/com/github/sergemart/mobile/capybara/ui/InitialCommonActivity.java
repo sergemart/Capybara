@@ -26,7 +26,7 @@ public class InitialCommonActivity
     private static final String TAG = InitialCommonActivity.class.getSimpleName();
 
     private InitialCommonSharedViewModel mInitialCommonSharedViewModel;
-    private CompositeDisposable mEventDisposable;
+    private CompositeDisposable mInstanceDisposable;
 
 
     // --------------------------- Override activity event handlers
@@ -40,10 +40,10 @@ public class InitialCommonActivity
         if (BuildConfig.DEBUG) Log.d(TAG, "onCreate() called");
         setContentView(R.layout.activity_initial_common);
 
-        mEventDisposable = new CompositeDisposable();
+        mInstanceDisposable = new CompositeDisposable();
         mInitialCommonSharedViewModel = ViewModelProviders.of(this).get(InitialCommonSharedViewModel.class);
 
-        this.setEventListeners();
+        this.setInstanceListeners();
     }
 
 
@@ -77,18 +77,18 @@ public class InitialCommonActivity
     // Instance clean-up
     @Override
     public void onDestroy() {
-        mEventDisposable.clear();
-        if (BuildConfig.DEBUG) Log.d(TAG, "Event subscriptions are disposed");
+        mInstanceDisposable.clear();
+        if (BuildConfig.DEBUG) Log.d(TAG, "View-unrelated subscriptions are disposed");
         super.onDestroy();
     }
 
 
     // --------------------------- Activity lifecycle subroutines
 
-    private void setEventListeners() {
+    private void setInstanceListeners() {
 
         // Set a listener to the "CommonSetupFinished" event
-        mEventDisposable.add(mInitialCommonSharedViewModel.getCommonSetupFinishedSubject().subscribe(event -> {
+        mInstanceDisposable.add(mInitialCommonSharedViewModel.getCommonSetupFinishedSubject().subscribe(event -> {
             switch (event) {
                 case SUCCESS:
                     if (BuildConfig.DEBUG) Log.d(TAG, "CommonSetupFinished.SUCCESS event received; leaving nav graph");
@@ -126,7 +126,7 @@ public class InitialCommonActivity
      */
     private void navigateToFatalErrorPage(Throwable cause) {
         App.setLastFatalException(new WeakReference<>(cause));
-        super.startActivity(ErrorActivity.newIntent( this, cause.getLocalizedMessage() ));
+        super.startActivity(ErrorActivity.newIntent( this));
     }
 
 

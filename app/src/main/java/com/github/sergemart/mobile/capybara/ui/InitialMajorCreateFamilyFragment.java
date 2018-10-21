@@ -39,8 +39,8 @@ public class InitialMajorCreateFamilyFragment extends Fragment {
 
     private ProgressBar mProgressBar;
 
-    private CompositeDisposable mWidgetDisposable;
-    private CompositeDisposable mEventDisposable;
+    private CompositeDisposable mViewDisposable;
+    private CompositeDisposable mInstanceDisposable;
     private InitialMajorSharedViewModel mInitialMajorSharedViewModel;
     private Throwable mCause;
 
@@ -56,11 +56,11 @@ public class InitialMajorCreateFamilyFragment extends Fragment {
         if (BuildConfig.DEBUG) Log.d(TAG, "onCreate() called");
         super.setRetainInstance(true);
 
-        mWidgetDisposable = new CompositeDisposable();
-        mEventDisposable = new CompositeDisposable();
+        mViewDisposable = new CompositeDisposable();
+        mInstanceDisposable = new CompositeDisposable();
         mInitialMajorSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(super.getActivity())).get(InitialMajorSharedViewModel.class);
 
-        this.setEventListeners();
+        this.setInstanceListeners();
     }
 
 
@@ -74,7 +74,7 @@ public class InitialMajorCreateFamilyFragment extends Fragment {
         View fragmentView = inflater.inflate(R.layout.fragment_initial_major_create_family, container, false);
         mProgressBar = fragmentView.findViewById(R.id.progressBar_waiting);
 
-        this.setWidgetListeners();
+        this.setViewListeners();
         return fragmentView;
     }
 
@@ -101,8 +101,8 @@ public class InitialMajorCreateFamilyFragment extends Fragment {
      */
     @Override
     public void onDestroyView() {
-        mWidgetDisposable.clear();
-        if (BuildConfig.DEBUG) Log.d(TAG, "Widget subscriptions are disposed");
+        mViewDisposable.clear();
+        if (BuildConfig.DEBUG) Log.d(TAG, "View-related subscriptions are disposed");
         super.onDestroyView();
     }
 
@@ -112,8 +112,8 @@ public class InitialMajorCreateFamilyFragment extends Fragment {
      */
     @Override
     public void onDestroy() {
-        mEventDisposable.clear();
-        if (BuildConfig.DEBUG) Log.d(TAG, "Event subscriptions are disposed");
+        mInstanceDisposable.clear();
+        if (BuildConfig.DEBUG) Log.d(TAG, "View-unrelated subscriptions are disposed");
         super.onDestroy();
     }
 
@@ -121,19 +121,19 @@ public class InitialMajorCreateFamilyFragment extends Fragment {
     // --------------------------- Fragment lifecycle subroutines
 
     /**
-     * Set listeners to widgets
+     * Set listeners to view-related events
      */
-    private void setWidgetListeners() {
+    private void setViewListeners() {
     }
 
 
     /**
-     * Set listeners to events
+     * Set listeners to view-unrelated events
      */
-    private void setEventListeners() {
+    private void setInstanceListeners() {
 
         // Set a listener to the "CreateFamilySubject" event
-        mEventDisposable.add(CloudRepo.get().getCreateFamilySubject().subscribe(event -> {
+        mInstanceDisposable.add(CloudRepo.get().getCreateFamilySubject().subscribe(event -> {
             switch (event) {
                 case CREATED:
                     if (BuildConfig.DEBUG) Log.d(TAG, "CreateFamilyResult.CREATED event received; emitting MajorSetupFinished event");
