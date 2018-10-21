@@ -17,6 +17,7 @@ import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
 import com.github.sergemart.mobile.capybara.data.CloudRepo;
 import com.github.sergemart.mobile.capybara.data.ResRepo;
+import com.github.sergemart.mobile.capybara.events.GenericResult;
 import com.github.sergemart.mobile.capybara.viewmodel.InitialMajorSharedViewModel;
 
 import java.lang.ref.WeakReference;
@@ -84,7 +85,7 @@ public class InitialMajorCreateFamilyFragment extends Fragment {
                 if (resultCode == Activity.RESULT_OK) {                                             // retry
                     this.createFamily();
                 } else if (resultCode == Activity.RESULT_CANCELED) {                                // fatal
-                    this.navigateToFatalErrorPage(mCause);
+                    mInitialMajorSharedViewModel.getMajorSetupFinishedSubject().onNext(GenericResult.FAILURE.setException(mCause));
                 }
                 break;
         }
@@ -113,16 +114,16 @@ public class InitialMajorCreateFamilyFragment extends Fragment {
             switch (event) {
                 case CREATED:
                     if (BuildConfig.DEBUG) Log.d(TAG, "CreateFamilyResult.CREATED event received in InitialMajorCreateFamilyFragment; emitting MajorSetupFinished event");
-                    mInitialMajorSharedViewModel.getMajorSetupFinishedSubject().onComplete();       // send "MajorSetupFinished" event
+                    mInitialMajorSharedViewModel.getMajorSetupFinishedSubject().onNext(GenericResult.SUCCESS);
                     break;
                 case EXIST:
                     if (BuildConfig.DEBUG) Log.d(TAG, "CreateFamilyResult.EXIST event received in InitialMajorCreateFamilyFragment; emitting MajorSetupFinished event");
-                    mInitialMajorSharedViewModel.getMajorSetupFinishedSubject().onComplete();       // send "CommonSetupFinished" event
+                    mInitialMajorSharedViewModel.getMajorSetupFinishedSubject().onNext(GenericResult.SUCCESS);
                     break;
                 case EXIST_MORE_THAN_ONE:
                     if (BuildConfig.DEBUG) Log.d(TAG, "CreateFamilyResult.EXIST_MORE_THAN_ONE event received in InitialMajorCreateFamilyFragment; emitting MajorSetupFinished event");
                     mCause = event.getException();
-                    this.navigateToFatalErrorPage(mCause);
+                    mInitialMajorSharedViewModel.getMajorSetupFinishedSubject().onNext(GenericResult.FAILURE.setException(mCause));
                     break;
                 case BACKEND_ERROR:
                     if (BuildConfig.DEBUG) Log.d(TAG, "CreateFamilyResult.BACKEND_ERROR event received in InitialMajorCreateFamilyFragment; invoking retry dialog");
@@ -149,15 +150,6 @@ public class InitialMajorCreateFamilyFragment extends Fragment {
      */
     private void showCreateFamilyRetryDialog(Throwable cause) {
         CreateFamilyRetryDialogFragment.newInstance(cause).show(Objects.requireNonNull(super.getChildFragmentManager()), TAG_CREATE_FAMILY_RETRY_DIALOG);
-    }
-
-
-    /**
-     * Navigate to the fatal error page
-     */
-    private void navigateToFatalErrorPage(Throwable cause) {
-        App.setLastFatalException(new WeakReference<>(cause));
-        super.startActivity(ErrorActivity.newIntent( Objects.requireNonNull(super.getActivity()), cause.getLocalizedMessage() ));
     }
 
 

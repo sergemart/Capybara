@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.github.sergemart.mobile.capybara.App;
 import com.github.sergemart.mobile.capybara.BuildConfig;
 import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
@@ -12,6 +13,9 @@ import com.github.sergemart.mobile.capybara.data.CloudRepo;
 import com.github.sergemart.mobile.capybara.data.PreferenceStore;
 import com.github.sergemart.mobile.capybara.viewmodel.InitialCommonSharedViewModel;
 import com.github.sergemart.mobile.capybara.viewmodel.InitialMajorSharedViewModel;
+
+import java.lang.ref.WeakReference;
+import java.util.Objects;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProviders;
@@ -73,9 +77,17 @@ public class InitialMajorActivity
     private void setListeners() {
 
         // Set a listener to the "MajorSetupFinished" event
-        mDisposable.add(mInitialMajorSharedViewModel.getMajorSetupFinishedSubject()
-            .subscribe(this::leaveNavGraph)
-        );
+        mDisposable.add(mInitialMajorSharedViewModel.getMajorSetupFinishedSubject().subscribe(event -> {
+            switch (event) {
+                case SUCCESS:
+                    if (BuildConfig.DEBUG) Log.d(TAG, "MajorSetupFinished.SUCCESS event received in InitialMajorActivity, leaving nav graph");
+                    this.leaveNavGraph();
+                    break;
+                case FAILURE:
+                    if (BuildConfig.DEBUG) Log.d(TAG, "MajorSetupFinished.FAILURE event received in InitialMajorActivity, navigating to fatal error page");
+                    this.navigateToFatalErrorPage(event.getException());
+            }
+        }));
 
     }
 
@@ -90,6 +102,15 @@ public class InitialMajorActivity
         Intent intent = MajorActivity.newIntent(this);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         super.startActivity(intent);
+    }
+
+
+    /**
+     * Navigate to the fatal error page
+     */
+    private void navigateToFatalErrorPage(Throwable cause) {
+        App.setLastFatalException(new WeakReference<>(cause));
+        super.startActivity(ErrorActivity.newIntent( this, cause.getLocalizedMessage() ));
     }
 
 

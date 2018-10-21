@@ -62,7 +62,7 @@ public class GeoRepo {
 
     // --------------------------- Member variables
 
-    private final Subject<Location> mLocationSubject = PublishSubject.create();
+    private final PublishSubject<Location> mLocationSubject = PublishSubject.create();
 
     private final Context mContext;
     private FusedLocationProviderClient mFusedLocationClient;
@@ -72,7 +72,7 @@ public class GeoRepo {
 
     // --------------------------- Observable getters
 
-    public Subject<Location> getLocationSubject() {
+    public PublishSubject<Location> getLocationSubject() {
         return mLocationSubject;
     }
 

@@ -17,6 +17,7 @@ import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
 import com.github.sergemart.mobile.capybara.data.CloudRepo;
 import com.github.sergemart.mobile.capybara.data.ResRepo;
+import com.github.sergemart.mobile.capybara.events.GenericResult;
 import com.github.sergemart.mobile.capybara.viewmodel.InitialCommonSharedViewModel;
 import com.google.android.material.button.MaterialButton;
 import com.jakewharton.rxbinding2.view.RxView;
@@ -88,7 +89,7 @@ public class InitialCommonSignInFragment extends Fragment {
                 if (resultCode == Activity.RESULT_OK) {                                             // retry
                     this.signIn();
                 } else if (resultCode == Activity.RESULT_CANCELED) {                                // fatal
-                    this.navigateToFatalErrorPage(mCause);
+                    mInitialCommonSharedViewModel.getCommonSetupFinishedSubject().onNext(GenericResult.FAILURE.setException(mCause));
                 }
                 break;
         }
@@ -150,7 +151,7 @@ public class InitialCommonSignInFragment extends Fragment {
             switch (event) {
                 case SUCCESS:
                     if (BuildConfig.DEBUG) Log.d(TAG, "PublishDeviceTokenResult.SUCCESS event received in InitialCommonSignInFragment; emmitting CommonSetupFinished event");
-                    mInitialCommonSharedViewModel.getCommonSetupFinishedSubject().onComplete();
+                    mInitialCommonSharedViewModel.getCommonSetupFinishedSubject().onNext(GenericResult.SUCCESS);
                     break;
                 case FAILURE:
                     if (BuildConfig.DEBUG) Log.d(TAG, "PublishDeviceTokenResult.FAILURE event received in InitialCommonSignInFragment; invoking retry dialog");
@@ -195,15 +196,6 @@ public class InitialCommonSignInFragment extends Fragment {
      */
     private void publishDeviceToken() {
         CloudRepo.get().publishDeviceTokenAsync();
-    }
-
-
-    /**
-     * Navigate to the fatal error page
-     */
-    private void navigateToFatalErrorPage(Throwable cause) {
-        App.setLastFatalException(new WeakReference<>(cause));
-        super.startActivity(ErrorActivity.newIntent( Objects.requireNonNull(super.getActivity()), cause.getLocalizedMessage() ));
     }
 
 

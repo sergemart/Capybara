@@ -77,12 +77,12 @@ public class CloudRepo {
 
     // --------------------------- Member variables
 
-    private final Subject<SignInResult> mSignInSubject = PublishSubject.create();
-    private final Subject<GenericResult> mGetDeviceTokenSubject = PublishSubject.create();
-    private final Subject<GenericResult> mPublishDeviceTokenSubject = PublishSubject.create();
-    private final Subject<CreateFamilyResult> mCreateFamilySubject = PublishSubject.create();
-    private final Subject<Boolean> mSendLocationSubject = PublishSubject.create();
-    private final Subject<Boolean> mSignOutSubject = PublishSubject.create();
+    private final PublishSubject<SignInResult> mSignInSubject = PublishSubject.create();
+    private final PublishSubject<GenericResult> mGetDeviceTokenSubject = PublishSubject.create();
+    private final PublishSubject<GenericResult> mPublishDeviceTokenSubject = PublishSubject.create();
+    private final PublishSubject<CreateFamilyResult> mCreateFamilySubject = PublishSubject.create();
+    private final PublishSubject<Boolean> mSendLocationSubject = PublishSubject.create();
+    private final PublishSubject<Boolean> mSignOutSubject = PublishSubject.create();
 
     private final Context mContext;
     private GoogleSignInClient mGoogleSignInClient;
@@ -96,32 +96,32 @@ public class CloudRepo {
 
     // --------------------------- Observable getters
 
-    public Subject<SignInResult> getSignInSubject() {
+    public PublishSubject<SignInResult> getSignInSubject() {
         return mSignInSubject;
     }
 
 
-    public Subject<GenericResult> getGetDeviceTokenSubject() {
+    public PublishSubject<GenericResult> getGetDeviceTokenSubject() {
         return mGetDeviceTokenSubject;
     }
 
 
-    public Subject<GenericResult> getPublishDeviceTokenSubject() {
+    public PublishSubject<GenericResult> getPublishDeviceTokenSubject() {
         return mPublishDeviceTokenSubject;
     }
 
 
-    public Subject<CreateFamilyResult> getCreateFamilySubject() {
+    public PublishSubject<CreateFamilyResult> getCreateFamilySubject() {
         return mCreateFamilySubject;
     }
 
 
-    public Subject<Boolean> getSignOutSubject() {
+    public PublishSubject<Boolean> getSignOutSubject() {
         return mSignOutSubject;
     }
 
 
-    public Subject<Boolean> getSendLocationSubject() {
+    public PublishSubject<Boolean> getSendLocationSubject() {
         return mSendLocationSubject;
     }
 
