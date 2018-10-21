@@ -33,7 +33,8 @@ public class InitialCommonSetupFragment extends Fragment {
     private MaterialButton mIAmMajorButton;
     private MaterialButton mIAmMinorButton;
 
-    private CompositeDisposable mDisposable;
+    private CompositeDisposable mWidgetDisposable;
+    private CompositeDisposable mEventDisposable;
     private InitialCommonSharedViewModel mInitialCommonSharedViewModel;
 
 
@@ -49,7 +50,10 @@ public class InitialCommonSetupFragment extends Fragment {
         super.setRetainInstance(true);
 
         mInitialCommonSharedViewModel = ViewModelProviders.of(Objects.requireNonNull( super.getActivity() )).get(InitialCommonSharedViewModel.class);
-        mDisposable = new CompositeDisposable();
+        mWidgetDisposable = new CompositeDisposable();
+        mEventDisposable = new CompositeDisposable();
+
+        this.setEventListeners();
     }
 
 
@@ -65,8 +69,19 @@ public class InitialCommonSetupFragment extends Fragment {
         mIAmMajorButton = fragmentView.findViewById(R.id.button_i_am_major);
         mIAmMinorButton = fragmentView.findViewById(R.id.button_i_am_minor);
 
-        this.setListeners();
+        this.setWidgetListeners();
         return fragmentView;
+    }
+
+
+    /**
+     * View clean-up
+     */
+    @Override
+    public void onDestroyView() {
+        mWidgetDisposable.clear();
+        if (BuildConfig.DEBUG) Log.d(TAG, "Widget subscriptions are disposed");
+        super.onDestroyView();
     }
 
 
@@ -75,8 +90,8 @@ public class InitialCommonSetupFragment extends Fragment {
      */
     @Override
     public void onDestroy() {
-        mDisposable.clear();
-        if (BuildConfig.DEBUG) Log.d(TAG, "Subscriptions are disposed");
+        mEventDisposable.clear();
+        if (BuildConfig.DEBUG) Log.d(TAG, "Event subscriptions are disposed");
         super.onDestroy();
     }
 
@@ -84,11 +99,11 @@ public class InitialCommonSetupFragment extends Fragment {
     // --------------------------- Fragment lifecycle subroutines
 
     /**
-     * Set listeners to widgets and events
+     * Set listeners to widgets
      */
-    private void setListeners() {
+    private void setWidgetListeners() {
         // Set a listener to the "I Am a Major" button
-        mDisposable.add(RxView.clicks(mIAmMajorButton).subscribe(
+        mWidgetDisposable.add(RxView.clicks(mIAmMajorButton).subscribe(
             event -> {
                 PreferenceStore.storeAppMode(Constants.APP_MODE_MAJOR);
                 PreferenceStore.storeIsAppModeSet(true);
@@ -97,13 +112,20 @@ public class InitialCommonSetupFragment extends Fragment {
         );
 
         // Set a listener to the "I Am a Minor" button
-        mDisposable.add(RxView.clicks(mIAmMinorButton).subscribe(
+        mWidgetDisposable.add(RxView.clicks(mIAmMinorButton).subscribe(
             event -> {
                 PreferenceStore.storeAppMode(Constants.APP_MODE_MINOR);
                 PreferenceStore.storeIsAppModeSet(true);
                 this.navigateToNextPage();
             })
         );
+    }
+
+
+    /**
+     * Set listeners to events
+     */
+    private void setEventListeners() {
     }
 
 

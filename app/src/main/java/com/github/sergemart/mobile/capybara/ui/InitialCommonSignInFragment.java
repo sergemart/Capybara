@@ -42,7 +42,8 @@ public class InitialCommonSignInFragment extends Fragment {
     private MaterialButton mSignInButton;
     private ProgressBar mProgressBar;
 
-    private CompositeDisposable mDisposable;
+    private CompositeDisposable mWidgetDisposable;
+    private CompositeDisposable mEventDisposable;
     private InitialCommonSharedViewModel mInitialCommonSharedViewModel;
     private Throwable mCause;
 
@@ -58,8 +59,11 @@ public class InitialCommonSignInFragment extends Fragment {
         if (BuildConfig.DEBUG) Log.d(TAG, "onCreate() called");
         super.setRetainInstance(true);
 
-        mDisposable = new CompositeDisposable();
+        mWidgetDisposable = new CompositeDisposable();
+        mEventDisposable = new CompositeDisposable();
         mInitialCommonSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(super.getActivity())).get(InitialCommonSharedViewModel.class);
+
+        this.setEventListeners();
     }
 
 
@@ -74,7 +78,7 @@ public class InitialCommonSignInFragment extends Fragment {
         mSignInButton = fragmentView.findViewById(R.id.button_sign_in);
         mProgressBar = fragmentView.findViewById(R.id.progressBar_waiting);
 
-        this.setListeners();
+        this.setWidgetListeners();
         return fragmentView;
     }
 
@@ -97,11 +101,23 @@ public class InitialCommonSignInFragment extends Fragment {
 
 
     /**
+     * View clean-up
+     */
+    @Override
+    public void onDestroyView() {
+        mWidgetDisposable.clear();
+        if (BuildConfig.DEBUG) Log.d(TAG, "Widget subscriptions are disposed");
+        super.onDestroyView();
+    }
+
+
+    /**
      * Instance clean-up
      */
     @Override
     public void onDestroy() {
-        mDisposable.clear();
+        mEventDisposable.clear();
+        if (BuildConfig.DEBUG) Log.d(TAG, "Event subscriptions are disposed");
         super.onDestroy();
     }
 
@@ -109,17 +125,25 @@ public class InitialCommonSignInFragment extends Fragment {
     // --------------------------- Fragment lifecycle subroutines
 
     /**
-     * Set listeners to widgets and events
+     * Set listeners to widgets
      */
-    private void setListeners() {
+    private void setWidgetListeners() {
 
         // Set a listener to the "Sign In" button
-        mDisposable.add(RxView.clicks(mSignInButton).subscribe(
+        mWidgetDisposable.add(RxView.clicks(mSignInButton).subscribe(
             event -> this.signIn()
         ));
 
+    }
+
+
+    /**
+     * Set listeners to events
+     */
+    private void setEventListeners() {
+
         // Set a listener to the "SignInResult" event
-        mDisposable.add(CloudRepo.get().getSignInSubject().subscribe(event -> {
+        mEventDisposable.add(CloudRepo.get().getSignInSubject().subscribe(event -> {
             switch (event) {
                 case SUCCESS:
                     if (BuildConfig.DEBUG) Log.d(TAG, "SignInResult.SUCCESS event received in InitialCommonSignInFragment, getting device token");
@@ -133,7 +157,7 @@ public class InitialCommonSignInFragment extends Fragment {
         }));
 
         // Set a listener to the "GetDeviceTokenResult" event
-        mDisposable.add(CloudRepo.get().getGetDeviceTokenSubject().subscribe(event -> {
+        mEventDisposable.add(CloudRepo.get().getGetDeviceTokenSubject().subscribe(event -> {
             switch (event) {
                 case SUCCESS:
                     if (BuildConfig.DEBUG) Log.d(TAG, "GetDeviceTokenResult.SUCCESS event received in InitialCommonSignInFragment, publishing device token");
@@ -147,7 +171,7 @@ public class InitialCommonSignInFragment extends Fragment {
         }));
 
         // Set a listener to the "PublishDeviceTokenResult" event
-        mDisposable.add(CloudRepo.get().getPublishDeviceTokenSubject().subscribe(event -> {
+        mEventDisposable.add(CloudRepo.get().getPublishDeviceTokenSubject().subscribe(event -> {
             switch (event) {
                 case SUCCESS:
                     if (BuildConfig.DEBUG) Log.d(TAG, "PublishDeviceTokenResult.SUCCESS event received in InitialCommonSignInFragment; emmitting CommonSetupFinished event");

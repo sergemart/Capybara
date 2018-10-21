@@ -31,7 +31,9 @@ public class MajorLocatorFragment extends SupportMapFragment {
     private GoogleMap mGoogleMap;
 
     private Location mCurrentLocation;
-    private CompositeDisposable mDisposable;
+    private CompositeDisposable mWidgetDisposable;
+    private CompositeDisposable mEventDisposable;
+
 
 
     // --------------------------- Override fragment event handlers
@@ -46,7 +48,10 @@ public class MajorLocatorFragment extends SupportMapFragment {
         super.setRetainInstance(true);
 
         super.getMapAsync(googleMap -> mGoogleMap = googleMap);
-        mDisposable = new CompositeDisposable();
+        mWidgetDisposable = new CompositeDisposable();
+        mEventDisposable = new CompositeDisposable();
+
+        this.setEventListeners();
     }
 
 
@@ -57,10 +62,8 @@ public class MajorLocatorFragment extends SupportMapFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
-        this.setListeners();
         this.locateMe();
-
+        this.setWidgetListeners();
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 
@@ -91,12 +94,23 @@ public class MajorLocatorFragment extends SupportMapFragment {
 
 
     /**
+     * View clean-up
+     */
+    @Override
+    public void onDestroyView() {
+        mWidgetDisposable.clear();
+        if (BuildConfig.DEBUG) Log.d(TAG, "Widget subscriptions are disposed");
+        super.onDestroyView();
+    }
+
+
+    /**
      * Instance clean-up
      */
     @Override
     public void onDestroy() {
-        mDisposable.clear();
-        if (BuildConfig.DEBUG) Log.d(TAG, "Subscriptions are disposed");
+        mEventDisposable.clear();
+        if (BuildConfig.DEBUG) Log.d(TAG, "Event subscriptions are disposed");
         super.onDestroy();
     }
 
@@ -104,17 +118,22 @@ public class MajorLocatorFragment extends SupportMapFragment {
     // --------------------------- Fragment lifecycle subroutines
 
     /**
-     * Set listeners to widgets and events
+     * Set listeners to widgets
      */
-    private void setListeners() {
+    private void setWidgetListeners() {
+    }
+
+
+    /**
+     * Set listeners to events
+     */
+    private void setEventListeners() {
 
         // Set a listener to the "GOT A LOCATION" event
-        mDisposable.add(GeoRepo.get().getLocationSubject()
-            .subscribe(location -> {
-                mCurrentLocation = location;
-                this.updateMap();
-            }) // TODO: Implement onError
-        );
+        mEventDisposable.add(GeoRepo.get().getLocationSubject().subscribe(location -> {
+            mCurrentLocation = location;// TODO: Implement onNext(SUCCESS)
+            this.updateMap();
+        })); // TODO: Implement onNext(FAILURE)
 
     }
 

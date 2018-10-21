@@ -7,15 +7,11 @@ import android.util.Log;
 
 import com.github.sergemart.mobile.capybara.App;
 import com.github.sergemart.mobile.capybara.BuildConfig;
-import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
 import com.github.sergemart.mobile.capybara.data.CloudRepo;
-import com.github.sergemart.mobile.capybara.data.PreferenceStore;
-import com.github.sergemart.mobile.capybara.viewmodel.InitialCommonSharedViewModel;
 import com.github.sergemart.mobile.capybara.viewmodel.InitialMajorSharedViewModel;
 
 import java.lang.ref.WeakReference;
-import java.util.Objects;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProviders;
@@ -29,7 +25,7 @@ public class InitialMajorActivity
     private static final String TAG = InitialMajorActivity.class.getSimpleName();
 
     private InitialMajorSharedViewModel mInitialMajorSharedViewModel;
-    private CompositeDisposable mDisposable;
+    private CompositeDisposable mEventDisposable;
 
 
     // --------------------------- Override activity event handlers
@@ -43,10 +39,10 @@ public class InitialMajorActivity
         if (BuildConfig.DEBUG) Log.d(TAG, "onCreate() called");
         setContentView(R.layout.activity_initial_major);
 
-        mDisposable = new CompositeDisposable();
+        mEventDisposable = new CompositeDisposable();
         mInitialMajorSharedViewModel = ViewModelProviders.of(this).get(InitialMajorSharedViewModel.class);
 
-        this.setListeners();
+        this.setEventListeners();
     }
 
 
@@ -66,18 +62,18 @@ public class InitialMajorActivity
     // Instance clean-up
     @Override
     public void onDestroy() {
-        mDisposable.clear();
-        if (BuildConfig.DEBUG) Log.d(TAG, "Subscriptions are disposed");
+        mEventDisposable.clear();
+        if (BuildConfig.DEBUG) Log.d(TAG, "Event subscriptions are disposed");
         super.onDestroy();
     }
 
 
     // --------------------------- Activity lifecycle subroutines
 
-    private void setListeners() {
+    private void setEventListeners() {
 
         // Set a listener to the "MajorSetupFinished" event
-        mDisposable.add(mInitialMajorSharedViewModel.getMajorSetupFinishedSubject().subscribe(event -> {
+        mEventDisposable.add(mInitialMajorSharedViewModel.getMajorSetupFinishedSubject().subscribe(event -> {
             switch (event) {
                 case SUCCESS:
                     if (BuildConfig.DEBUG) Log.d(TAG, "MajorSetupFinished.SUCCESS event received in InitialMajorActivity, leaving nav graph");

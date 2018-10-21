@@ -31,7 +31,9 @@ public class MajorDummyFragment extends Fragment {
     private MaterialButton mCreateFamilyButton;
 
     private Location mCurrentLocation;
-    private CompositeDisposable mDisposable;
+    private CompositeDisposable mWidgetDisposable;
+    private CompositeDisposable mEventDisposable;
+
 
 
     // --------------------------- Override fragment event handlers
@@ -43,6 +45,12 @@ public class MajorDummyFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (BuildConfig.DEBUG) Log.d(TAG, "onCreate() called");
+        super.setRetainInstance(true);
+
+        mWidgetDisposable = new CompositeDisposable();
+        mEventDisposable = new CompositeDisposable();
+
+        this.setEventListeners();
     }
 
 
@@ -55,10 +63,10 @@ public class MajorDummyFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View fragmentView = inflater.inflate(R.layout.fragment_major_dummy, container, false);
 
-        this.initMemberVariables(fragmentView);
-        this.setAttributes();
-        this.setListeners();
+        mSendMyLocationButton = fragmentView.findViewById(R.id.button_send_my_location);
+        mCreateFamilyButton = fragmentView.findViewById(R.id.button_create_family);
 
+        this.setWidgetListeners();
         return fragmentView;
     }
 
@@ -71,7 +79,6 @@ public class MajorDummyFragment extends Fragment {
         switch (requestCode) {
             case Constants.REQUEST_CODE_LOCATION_PERMISSIONS:
                 if ( GeoRepo.get().isLocationPermissionGranted() ) this.locateMe();                 // 2nd try, if granted
-                else {} // TODO: Notify about restricted functionality
             default:
                 super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
@@ -88,11 +95,24 @@ public class MajorDummyFragment extends Fragment {
     }
 
 
-    // Instance clean-up
+    /**
+     * View clean-up
+     */
+    @Override
+    public void onDestroyView() {
+        mWidgetDisposable.clear();
+        if (BuildConfig.DEBUG) Log.d(TAG, "Widget subscriptions are disposed");
+        super.onDestroyView();
+    }
+
+
+    /**
+     * Instance clean-up
+     */
     @Override
     public void onDestroy() {
-        mDisposable.clear();
-        if (BuildConfig.DEBUG) Log.d(TAG, "Subscriptions are disposed");
+        mEventDisposable.clear();
+        if (BuildConfig.DEBUG) Log.d(TAG, "Event subscriptions are disposed");
         super.onDestroy();
     }
 
@@ -100,41 +120,35 @@ public class MajorDummyFragment extends Fragment {
     // --------------------------- Widget controls
 
     /**
-     * Init member variables
+     * Set listeners to widgets
      */
-    private void initMemberVariables(View fragmentView) {
-        mSendMyLocationButton = fragmentView.findViewById(R.id.button_send_my_location);
-        mCreateFamilyButton = fragmentView.findViewById(R.id.button_create_family);
+    private void setWidgetListeners() {
 
-        mDisposable = new CompositeDisposable();
-
-    }
-
-
-    /**
-     * Set attributes
-     */
-    private void setAttributes() {
-        super.setRetainInstance(true);
-    }
-
-
-    /**
-     * Set listeners to widgets and containers
-     */
-    private void setListeners() {
         // Set a listener to the "Send My Location" button
-        mDisposable.add(
+        mWidgetDisposable.add(
             RxView.clicks(mSendMyLocationButton).subscribe(event -> this.sendMyLocation())
         );
 
         // Set a listener to the "Create family data" button
-        mDisposable.add(
+        mWidgetDisposable.add(
             RxView.clicks(mCreateFamilyButton).subscribe(event -> this.createFamily())
         );
 
         // Set a listener to the "CreateFamily" result
-        mDisposable.add(CloudRepo.get().getCreateFamilySubject().subscribe(
+        mWidgetDisposable.add(CloudRepo.get().getCreateFamilySubject().subscribe(
+            event -> {}
+        ));
+
+    }
+
+
+    /**
+     * Set listeners to events
+     */
+    private void setEventListeners() {
+
+        // Set a listener to the "CreateFamily" result
+        mEventDisposable.add(CloudRepo.get().getCreateFamilySubject().subscribe(
             event -> {}
         ));
 

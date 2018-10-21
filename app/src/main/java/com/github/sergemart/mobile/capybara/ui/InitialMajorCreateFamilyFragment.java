@@ -39,7 +39,8 @@ public class InitialMajorCreateFamilyFragment extends Fragment {
 
     private ProgressBar mProgressBar;
 
-    private CompositeDisposable mDisposable;
+    private CompositeDisposable mWidgetDisposable;
+    private CompositeDisposable mEventDisposable;
     private InitialMajorSharedViewModel mInitialMajorSharedViewModel;
     private Throwable mCause;
 
@@ -55,8 +56,11 @@ public class InitialMajorCreateFamilyFragment extends Fragment {
         if (BuildConfig.DEBUG) Log.d(TAG, "onCreate() called");
         super.setRetainInstance(true);
 
-        mDisposable = new CompositeDisposable();
+        mWidgetDisposable = new CompositeDisposable();
+        mEventDisposable = new CompositeDisposable();
         mInitialMajorSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(super.getActivity())).get(InitialMajorSharedViewModel.class);
+
+        this.setEventListeners();
     }
 
 
@@ -70,7 +74,7 @@ public class InitialMajorCreateFamilyFragment extends Fragment {
         View fragmentView = inflater.inflate(R.layout.fragment_initial_major_create_family, container, false);
         mProgressBar = fragmentView.findViewById(R.id.progressBar_waiting);
 
-        this.setListeners();
+        this.setWidgetListeners();
         return fragmentView;
     }
 
@@ -93,11 +97,23 @@ public class InitialMajorCreateFamilyFragment extends Fragment {
 
 
     /**
+     * View clean-up
+     */
+    @Override
+    public void onDestroyView() {
+        mWidgetDisposable.clear();
+        if (BuildConfig.DEBUG) Log.d(TAG, "Widget subscriptions are disposed");
+        super.onDestroyView();
+    }
+
+
+    /**
      * Instance clean-up
      */
     @Override
     public void onDestroy() {
-        mDisposable.clear();
+        mEventDisposable.clear();
+        if (BuildConfig.DEBUG) Log.d(TAG, "Event subscriptions are disposed");
         super.onDestroy();
     }
 
@@ -105,12 +121,19 @@ public class InitialMajorCreateFamilyFragment extends Fragment {
     // --------------------------- Fragment lifecycle subroutines
 
     /**
-     * Set listeners to widgets and events
+     * Set listeners to widgets
      */
-    private void setListeners() {
+    private void setWidgetListeners() {
+    }
+
+
+    /**
+     * Set listeners to events
+     */
+    private void setEventListeners() {
 
         // Set a listener to the "CreateFamilySubject" event
-        mDisposable.add(CloudRepo.get().getCreateFamilySubject().subscribe(event -> {
+        mEventDisposable.add(CloudRepo.get().getCreateFamilySubject().subscribe(event -> {
             switch (event) {
                 case CREATED:
                     if (BuildConfig.DEBUG) Log.d(TAG, "CreateFamilyResult.CREATED event received in InitialMajorCreateFamilyFragment; emitting MajorSetupFinished event");
@@ -133,6 +156,7 @@ public class InitialMajorCreateFamilyFragment extends Fragment {
         }));
 
     }
+
 
     // --------------------------- Use cases
 

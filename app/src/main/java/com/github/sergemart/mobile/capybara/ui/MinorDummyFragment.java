@@ -29,7 +29,9 @@ public class MinorDummyFragment extends Fragment {
     private MaterialButton mUpdateDeviceTokenButton;
 
     private Location mCurrentLocation;
-    private CompositeDisposable mDisposable;
+    private CompositeDisposable mWidgetDisposable;
+    private CompositeDisposable mEventDisposable;
+
 
 
     // --------------------------- Override fragment event handlers
@@ -40,7 +42,9 @@ public class MinorDummyFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        super.setRetainInstance(true);
         if (BuildConfig.DEBUG) Log.d(TAG, "onCreate() called");
+        this.setEventListeners();
     }
 
 
@@ -53,10 +57,10 @@ public class MinorDummyFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View fragmentView = inflater.inflate(R.layout.fragment_minor_dummy, container, false);
 
-        this.initMemberVariables(fragmentView);
-        this.setAttributes();
-        this.setListeners();
+        mSendMyLocationButton = fragmentView.findViewById(R.id.button_send_my_location);
+        mUpdateDeviceTokenButton = fragmentView.findViewById(R.id.button_update_device_token);
 
+        this.setWidgetListeners();
         return fragmentView;
     }
 
@@ -69,7 +73,6 @@ public class MinorDummyFragment extends Fragment {
         switch (requestCode) {
             case Constants.REQUEST_CODE_LOCATION_PERMISSIONS:
                 if ( GeoRepo.get().isLocationPermissionGranted() ) this.locateMe();                 // 2nd try, if granted
-                else {} // TODO: Notify about restricted functionality
             default:
                 super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
@@ -86,11 +89,24 @@ public class MinorDummyFragment extends Fragment {
     }
 
 
-    // Instance clean-up
+    /**
+     * View clean-up
+     */
+    @Override
+    public void onDestroyView() {
+        mWidgetDisposable.clear();
+        if (BuildConfig.DEBUG) Log.d(TAG, "Widget subscriptions are disposed");
+        super.onDestroyView();
+    }
+
+
+    /**
+     * Instance clean-up
+     */
     @Override
     public void onDestroy() {
-        mDisposable.clear();
-        if (BuildConfig.DEBUG) Log.d(TAG, "Subscriptions are disposed");
+        mEventDisposable.clear();
+        if (BuildConfig.DEBUG) Log.d(TAG, "Event subscriptions are disposed");
         super.onDestroy();
     }
 
@@ -98,42 +114,31 @@ public class MinorDummyFragment extends Fragment {
     // --------------------------- Widget controls
 
     /**
-     * Init member variables
+     * Set listeners to widgets
      */
-    private void initMemberVariables(View fragmentView) {
-        mSendMyLocationButton = fragmentView.findViewById(R.id.button_send_my_location);
-        mUpdateDeviceTokenButton = fragmentView.findViewById(R.id.button_update_device_token);
+    private void setWidgetListeners() {
 
-        mDisposable = new CompositeDisposable();
-
-    }
-
-
-    /**
-     * Set attributes
-     */
-    private void setAttributes() {
-        super.setRetainInstance(true);
-    }
-
-
-    /**
-     * Set listeners to widgets and containers
-     */
-    private void setListeners() {
         // Set a listener to the "Send My Location" button
-        mDisposable.add(
+        mWidgetDisposable.add(
             RxView.clicks(mSendMyLocationButton).subscribe(event -> this.sendMyLocation())
         );
 
         // Set a listener to the "Update Device Token" button
-        mDisposable.add(
+        mWidgetDisposable.add(
             RxView.clicks(mUpdateDeviceTokenButton).subscribe(event -> this.updateDeviceToken())
         );
 
+    }
+
+
+    /**
+     * Set listeners to events
+     */
+    private void setEventListeners() {
+
         // Set a listener to the "GOT A LOCATION" event
-        mDisposable.add(GeoRepo.get().getLocationSubject()
-            .subscribe(location -> mCurrentLocation = location) // TODO: Implement onError
+        mEventDisposable.add(GeoRepo.get().getLocationSubject()
+            .subscribe(location -> mCurrentLocation = location)
         );
 
     }

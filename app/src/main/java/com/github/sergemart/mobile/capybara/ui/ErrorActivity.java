@@ -21,7 +21,8 @@ public class ErrorActivity
     private static final String TAG = ErrorActivity.class.getSimpleName();
     private static final String KEY_ERROR_DETAILS = "errorDetails";
 
-    private CompositeDisposable mDisposable;
+    ErrorSharedViewModel mErrorSharedViewModel;
+    private CompositeDisposable mEventDisposable;
 
 
     // --------------------------- Override activity event handlers
@@ -34,17 +35,13 @@ public class ErrorActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_error);
-        mDisposable = new CompositeDisposable();
+        mEventDisposable = new CompositeDisposable();
 
         String errorDetails = super.getIntent().getStringExtra(KEY_ERROR_DETAILS);
-        ErrorSharedViewModel errorSharedViewModel = ViewModelProviders.of(this).get(ErrorSharedViewModel.class);
-        errorSharedViewModel.getErrorDetailsSubject().onNext(errorDetails);
+        mErrorSharedViewModel = ViewModelProviders.of(this).get(ErrorSharedViewModel.class);
+        mErrorSharedViewModel.getErrorDetailsSubject().onNext(errorDetails);
 
-        // Set a listener to the "EXIT REQUESTED" event
-        mDisposable.add(errorSharedViewModel.getExitRequestedSubject().subscribe(
-            this::exitApplication
-        ));
-
+        this.setEventListeners();
     }
 
 
@@ -60,9 +57,21 @@ public class ErrorActivity
     // Instance clean-up
     @Override
     public void onDestroy() {
-        mDisposable.clear();
-        if (BuildConfig.DEBUG) Log.d(TAG, "Subscriptions are disposed");
+        mEventDisposable.clear();
+        if (BuildConfig.DEBUG) Log.d(TAG, "Event subscriptions are disposed");
         super.onDestroy();
+    }
+
+
+    // --------------------------- Activity lifecycle subroutines
+
+    private void setEventListeners() {
+
+        // Set a listener to the "EXIT REQUESTED" event
+        mEventDisposable.add(mErrorSharedViewModel.getExitRequestedSubject().subscribe(
+            this::exitApplication
+        ));
+
     }
 
 

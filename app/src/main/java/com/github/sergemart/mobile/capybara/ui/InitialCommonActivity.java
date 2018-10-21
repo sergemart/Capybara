@@ -13,7 +13,6 @@ import com.github.sergemart.mobile.capybara.data.PreferenceStore;
 import com.github.sergemart.mobile.capybara.viewmodel.InitialCommonSharedViewModel;
 
 import java.lang.ref.WeakReference;
-import java.util.Objects;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProviders;
@@ -27,7 +26,7 @@ public class InitialCommonActivity
     private static final String TAG = InitialCommonActivity.class.getSimpleName();
 
     private InitialCommonSharedViewModel mInitialCommonSharedViewModel;
-    private CompositeDisposable mDisposable;
+    private CompositeDisposable mEventDisposable;
 
 
     // --------------------------- Override activity event handlers
@@ -41,10 +40,10 @@ public class InitialCommonActivity
         if (BuildConfig.DEBUG) Log.d(TAG, "onCreate() called");
         setContentView(R.layout.activity_initial_common);
 
-        mDisposable = new CompositeDisposable();
+        mEventDisposable = new CompositeDisposable();
         mInitialCommonSharedViewModel = ViewModelProviders.of(this).get(InitialCommonSharedViewModel.class);
 
-        this.setListeners();
+        this.setEventListeners();
     }
 
 
@@ -55,9 +54,6 @@ public class InitialCommonActivity
     protected void onStart() {
         super.onStart();
         if (BuildConfig.DEBUG) Log.d(TAG, "onStart() called");
-
-        // App start-up actions
-        CloudRepo.get().getTokenAsync();                                                            // for non-initial startups
 
         // Leave the common initial graph if the APP IS SET UP and the USER IS AUTHENTICATED.
         // Otherwise implicitly delegate control to the local nav AAC
@@ -81,18 +77,18 @@ public class InitialCommonActivity
     // Instance clean-up
     @Override
     public void onDestroy() {
-        mDisposable.clear();
-        if (BuildConfig.DEBUG) Log.d(TAG, "Subscriptions are disposed");
+        mEventDisposable.clear();
+        if (BuildConfig.DEBUG) Log.d(TAG, "Event subscriptions are disposed");
         super.onDestroy();
     }
 
 
     // --------------------------- Activity lifecycle subroutines
 
-    private void setListeners() {
+    private void setEventListeners() {
 
         // Set a listener to the "CommonSetupFinished" event
-        mDisposable.add(mInitialCommonSharedViewModel.getCommonSetupFinishedSubject().subscribe(event -> {
+        mEventDisposable.add(mInitialCommonSharedViewModel.getCommonSetupFinishedSubject().subscribe(event -> {
             switch (event) {
                 case SUCCESS:
                     if (BuildConfig.DEBUG) Log.d(TAG, "CommonSetupFinished.SUCCESS event received in InitialCommonActivity, leaving nav graph");

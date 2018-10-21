@@ -28,6 +28,7 @@ public class App extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        if (BuildConfig.DEBUG) Log.d(TAG, "onCreate() called");
         sContext = super.getApplicationContext();
 
         RxJavaPlugins.setErrorHandler(e -> {
@@ -37,6 +38,8 @@ public class App extends Application {
             if (BuildConfig.DEBUG) Log.e(TAG, "Undeliverable exception: " + e.getMessage());
         });
 
+        // App start-up actions
+        CloudRepo.get().getTokenAsync();                                                            // make sense for non-initial startups
     }
 
 
