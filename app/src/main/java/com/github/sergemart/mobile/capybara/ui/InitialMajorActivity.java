@@ -76,11 +76,11 @@ public class InitialMajorActivity
         mEventDisposable.add(mInitialMajorSharedViewModel.getMajorSetupFinishedSubject().subscribe(event -> {
             switch (event) {
                 case SUCCESS:
-                    if (BuildConfig.DEBUG) Log.d(TAG, "MajorSetupFinished.SUCCESS event received in InitialMajorActivity, leaving nav graph");
+                    if (BuildConfig.DEBUG) Log.d(TAG, "MajorSetupFinished.SUCCESS event received; leaving nav graph");
                     this.leaveNavGraph();
                     break;
                 case FAILURE:
-                    if (BuildConfig.DEBUG) Log.d(TAG, "MajorSetupFinished.FAILURE event received in InitialMajorActivity, navigating to fatal error page");
+                    if (BuildConfig.DEBUG) Log.d(TAG, "MajorSetupFinished.FAILURE event received; navigating to fatal error page");
                     this.navigateToFatalErrorPage(event.getException());
             }
         }));

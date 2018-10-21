@@ -148,11 +148,11 @@ public class InitialCommonSignInFragment extends Fragment {
         mEventDisposable.add(CloudRepo.get().getSignInSubject().subscribe(event -> {
             switch (event) {
                 case SUCCESS:
-                    if (BuildConfig.DEBUG) Log.d(TAG, "SignInResult.SUCCESS event received in InitialCommonSignInFragment, getting device token");
+                    if (BuildConfig.DEBUG) Log.d(TAG, "SignInResult.SUCCESS event received; getting device token");
                     this.getDeviceToken();
                     break;
                 case FAILURE:
-                    if (BuildConfig.DEBUG) Log.d(TAG, "SignInResult.FAILURE event received in InitialCommonSignInFragment, invoking retry dialog");
+                    if (BuildConfig.DEBUG) Log.d(TAG, "SignInResult.FAILURE event received; invoking retry dialog");
                     mCause = event.getException();
                     this.showSigninRetryDialog(mCause);
             }
@@ -162,11 +162,11 @@ public class InitialCommonSignInFragment extends Fragment {
         mEventDisposable.add(CloudRepo.get().getGetDeviceTokenSubject().subscribe(event -> {
             switch (event) {
                 case SUCCESS:
-                    if (BuildConfig.DEBUG) Log.d(TAG, "GetDeviceTokenResult.SUCCESS event received in InitialCommonSignInFragment, publishing device token");
+                    if (BuildConfig.DEBUG) Log.d(TAG, "GetDeviceTokenResult.SUCCESS event received; publishing device token");
                     this.publishDeviceToken();
                     break;
                 case FAILURE:
-                    if (BuildConfig.DEBUG) Log.d(TAG, "GetDeviceTokenResult.FAILURE event received in InitialCommonSignInFragment, invoking retry dialog");
+                    if (BuildConfig.DEBUG) Log.d(TAG, "GetDeviceTokenResult.FAILURE event received; invoking retry dialog");
                     mCause = event.getException();
                     this.showSigninRetryDialog(mCause);
             }
@@ -176,11 +176,11 @@ public class InitialCommonSignInFragment extends Fragment {
         mEventDisposable.add(CloudRepo.get().getPublishDeviceTokenSubject().subscribe(event -> {
             switch (event) {
                 case SUCCESS:
-                    if (BuildConfig.DEBUG) Log.d(TAG, "PublishDeviceTokenResult.SUCCESS event received in InitialCommonSignInFragment; emmitting CommonSetupFinished event");
+                    if (BuildConfig.DEBUG) Log.d(TAG, "PublishDeviceTokenResult.SUCCESS event received; emmitting CommonSetupFinished event");
                     mInitialCommonSharedViewModel.getCommonSetupFinishedSubject().onNext(GenericResult.SUCCESS);
                     break;
                 case FAILURE:
-                    if (BuildConfig.DEBUG) Log.d(TAG, "PublishDeviceTokenResult.FAILURE event received in InitialCommonSignInFragment; invoking retry dialog");
+                    if (BuildConfig.DEBUG) Log.d(TAG, "PublishDeviceTokenResult.FAILURE event received; invoking retry dialog");
                     mCause = event.getException();
                     this.showSigninRetryDialog(mCause);
             }

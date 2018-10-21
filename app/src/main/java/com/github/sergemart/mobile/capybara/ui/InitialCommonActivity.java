@@ -91,11 +91,11 @@ public class InitialCommonActivity
         mEventDisposable.add(mInitialCommonSharedViewModel.getCommonSetupFinishedSubject().subscribe(event -> {
             switch (event) {
                 case SUCCESS:
-                    if (BuildConfig.DEBUG) Log.d(TAG, "CommonSetupFinished.SUCCESS event received in InitialCommonActivity, leaving nav graph");
+                    if (BuildConfig.DEBUG) Log.d(TAG, "CommonSetupFinished.SUCCESS event received; leaving nav graph");
                     this.leaveNavGraph();
                     break;
                 case FAILURE:
-                    if (BuildConfig.DEBUG) Log.d(TAG, "CommonSetupFinished.FAILURE event received in InitialCommonActivity, navigating to fatal error page");
+                    if (BuildConfig.DEBUG) Log.d(TAG, "CommonSetupFinished.FAILURE event received; navigating to fatal error page");
                     this.navigateToFatalErrorPage(event.getException());
             }
         }));
