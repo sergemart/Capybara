@@ -21,18 +21,18 @@
         android:layout_gravity="center">
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/button_send_my_location"
+            android:id="@+id/button_create_family_member"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/Widget.App.Button.LargeHollow"
-            android:text="@string/action_send_location"/>
+            android:text="@string/action_create_family_member"/>
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/button_create_family"
+            android:id="@+id/button_delete_family_member"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/Widget.App.Button.LargeHollow"
-            android:text="@string/action_create_family"/>
+            android:text="@string/action_delete_family_member"/>
 
     </LinearLayout>
 

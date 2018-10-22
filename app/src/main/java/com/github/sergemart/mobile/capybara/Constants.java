@@ -30,6 +30,7 @@ public final class Constants {
     static final String KEY_LOCATION_LON = "locationLon";
     static final String KEY_LOCATION_TIME = "locationTime";
     public static final String KEY_DEVICE_TOKEN = "deviceToken";
+    public static final String KEY_FAMILY_MEMBER_EMAIL = "familyMemberEmail";
 
 
     // ----------------------- Permissions

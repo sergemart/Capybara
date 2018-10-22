@@ -15,8 +15,6 @@ import com.github.sergemart.mobile.capybara.data.GeoRepo;
 import com.google.android.material.button.MaterialButton;
 import com.jakewharton.rxbinding2.view.RxView;
 
-import java.util.Objects;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -27,8 +25,8 @@ public class MajorDummyFragment extends Fragment {
 
     private static final String TAG = MajorDummyFragment.class.getSimpleName();
 
-    private MaterialButton mSendMyLocationButton;
-    private MaterialButton mCreateFamilyButton;
+    private MaterialButton mCreateFamilyMemberButton;
+    private MaterialButton mDeleteFamilyMemberButton;
 
     private Location mCurrentLocation;
     private CompositeDisposable mViewDisposable;
@@ -63,8 +61,8 @@ public class MajorDummyFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View fragmentView = inflater.inflate(R.layout.fragment_major_dummy, container, false);
 
-        mSendMyLocationButton = fragmentView.findViewById(R.id.button_send_my_location);
-        mCreateFamilyButton = fragmentView.findViewById(R.id.button_create_family);
+        mDeleteFamilyMemberButton = fragmentView.findViewById(R.id.button_delete_family_member);
+        mCreateFamilyMemberButton = fragmentView.findViewById(R.id.button_create_family_member);
 
         this.setViewListeners();
         return fragmentView;
@@ -124,20 +122,15 @@ public class MajorDummyFragment extends Fragment {
      */
     private void setViewListeners() {
 
-        // Set a listener to the "Send My Location" button
+        // Set a listener to the "Delete family member" button
         mViewDisposable.add(
-            RxView.clicks(mSendMyLocationButton).subscribe(event -> this.sendMyLocation())
+            RxView.clicks(mDeleteFamilyMemberButton).subscribe(event -> this.deleteFamilyMember())
         );
 
-        // Set a listener to the "Create family data" button
+        // Set a listener to the "Create family member" button
         mViewDisposable.add(
-            RxView.clicks(mCreateFamilyButton).subscribe(event -> this.createFamily())
+            RxView.clicks(mCreateFamilyMemberButton).subscribe(event -> this.createFamilyMember())
         );
-
-        // Set a listener to the "CreateFamily" result
-        mViewDisposable.add(CloudRepo.get().getCreateFamilySubject().subscribe(
-            event -> {}
-        ));
 
     }
 
@@ -172,6 +165,22 @@ public class MajorDummyFragment extends Fragment {
      */
     private void createFamily() {
         CloudRepo.get().createFamilyAsync();
+    }
+
+
+    /**
+     * Create family member
+     */
+    private void createFamilyMember() {
+        CloudRepo.get().createFamilyMemberAsync("serge.martynov@gmail.com");
+    }
+
+
+    /**
+     * Create family member
+     */
+    private void deleteFamilyMember() {
+        CloudRepo.get().deleteFamilyMemberAsync("serge.martynov@gmail.com");
     }
 
 

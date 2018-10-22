@@ -3,7 +3,9 @@
     <string name="action_sign_in">Google Sign In</string>
     <string name="action_send_location">Send My Location</string>
     <string name="action_update_device_token">Update Device Token</string>
-    <string name="action_create_family">New Lake</string>
+    <string name="action_create_family">New Family</string>
+    <string name="action_create_family_member">New Family Member</string>
+    <string name="action_delete_family_member">Remove Family Member</string>
     <string name="action_i_am_major">I am a parent</string>
     <string name="action_i_am_minor">I am a child</string>
     <string name="action_exit_application">Exit application</string>

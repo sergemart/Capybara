@@ -14,6 +14,7 @@ import com.github.sergemart.mobile.capybara.R;
 import com.github.sergemart.mobile.capybara.Tools;
 import com.github.sergemart.mobile.capybara.events.CreateFamilyResult;
 import com.github.sergemart.mobile.capybara.events.GenericResult;
+import com.github.sergemart.mobile.capybara.events.ManageFamilyMemberResult;
 import com.github.sergemart.mobile.capybara.events.SignInResult;
 import com.github.sergemart.mobile.capybara.exceptions.FirebaseDatabaseException;
 import com.github.sergemart.mobile.capybara.exceptions.FirebaseMessagingException;
@@ -37,7 +38,6 @@ import java.util.Map;
 import java.util.Objects;
 
 import io.reactivex.subjects.PublishSubject;
-import io.reactivex.subjects.Subject;
 
 
 // Singleton
@@ -81,6 +81,8 @@ public class CloudRepo {
     private final PublishSubject<GenericResult> mGetDeviceTokenSubject = PublishSubject.create();
     private final PublishSubject<GenericResult> mPublishDeviceTokenSubject = PublishSubject.create();
     private final PublishSubject<CreateFamilyResult> mCreateFamilySubject = PublishSubject.create();
+    private final PublishSubject<ManageFamilyMemberResult> mCreateFamilyMemberSubject = PublishSubject.create();
+    private final PublishSubject<ManageFamilyMemberResult> mDeleteFamilyMemberSubject = PublishSubject.create();
     private final PublishSubject<Boolean> mSendLocationSubject = PublishSubject.create();
     private final PublishSubject<Boolean> mSignOutSubject = PublishSubject.create();
 
@@ -113,6 +115,16 @@ public class CloudRepo {
 
     public PublishSubject<CreateFamilyResult> getCreateFamilySubject() {
         return mCreateFamilySubject;
+    }
+
+
+    public PublishSubject<ManageFamilyMemberResult> getCreateFamilyMemberSubject() {
+        return mCreateFamilyMemberSubject;
+    }
+
+
+    public PublishSubject<ManageFamilyMemberResult> getDeleteFamilyMemberSubject() {
+        return mDeleteFamilyMemberSubject;
     }
 
 
@@ -310,8 +322,8 @@ public class CloudRepo {
     // --------------------------- Repository interface: Model CRUD
 
     /**
-     * Create family data on a backend using custom Firebase callable function
-     * Send the "CreateFamily" result
+     * Create family data on a backend using custom Firebase callable function.
+     * Send an event notifying on success or failure
      */
     @SuppressWarnings("unchecked")
     public void createFamilyAsync() {
@@ -335,7 +347,7 @@ public class CloudRepo {
                     switch (returnCode) {
                         case "00":
                             familyUid = (String)Objects.requireNonNull(result.get("familyUid"));
-                            if (BuildConfig.DEBUG) Log.d(TAG, "Created family data on backend");
+                            if (BuildConfig.DEBUG) Log.d(TAG, "Family data created on backend");
                             mCreateFamilySubject.onNext(CreateFamilyResult.CREATED.setFamilyUid(familyUid));
                             break;
                         case "01":
@@ -369,6 +381,142 @@ public class CloudRepo {
                     String errorMessage = mContext.getString(R.string.exception_firebase_family_not_created);
                     if (BuildConfig.DEBUG) Log.e(TAG, errorMessage);
                     mCreateFamilySubject.onNext(CreateFamilyResult.BACKEND_ERROR.setException( new FirebaseMessagingException(errorMessage) ));
+                }
+            })
+        ;
+    }
+
+
+    /**
+     * Insert a family member into family data on a backend using custom Firebase callable function.
+     * Send an event notifying on success or failure
+     */
+    @SuppressWarnings("unchecked")
+    public void createFamilyMemberAsync(String familyMemberEmail) {
+        if (familyMemberEmail == null || familyMemberEmail.equals("")) {
+            if (BuildConfig.DEBUG) Log.e(TAG, "Empty or null family member email provided while attempting to store it on backend; skipping");
+            return;
+        }
+        if (mFirebaseUser == null) {
+            if (BuildConfig.DEBUG) Log.e(TAG, "User not authenticated while attempting to store family member on backend; skipping");
+            return;
+        }
+
+        Map<String, Object> data = new HashMap<>();
+        data.put(Constants.KEY_FAMILY_MEMBER_EMAIL, familyMemberEmail);
+
+        mFirebaseFunctions
+            .getHttpsCallable("createFamilyMember")
+            .call(data)
+            .continueWith(task -> {
+                Map<String, Object> result = null;
+                try {
+                    result = (Map<String, Object>) Objects.requireNonNull(task.getResult()).getData(); // throws an exception on error
+                    // if success:
+                    String returnCode = (String)Objects.requireNonNull(result.get("returnCode"));
+                    switch (returnCode) {
+                        case "00":
+                            if (BuildConfig.DEBUG) Log.d(TAG, "Family member stored on backend");
+                            mCreateFamilyMemberSubject.onNext(ManageFamilyMemberResult.SUCCESS);
+                            break;
+                        case "90":
+                            if (BuildConfig.DEBUG) Log.e(TAG, "The user has more the one family data sets stored on backend");
+                            mCreateFamilyMemberSubject.onNext(ManageFamilyMemberResult.MORE_THAN_ONE_FAMILY);
+                            break;
+                        case "91":
+                            if (BuildConfig.DEBUG) Log.e(TAG, "The user owns no family data sets stored on backend");
+                            mCreateFamilyMemberSubject.onNext(ManageFamilyMemberResult.NO_FAMILY);
+                            break;
+                        default:
+                            String errorMessage = mContext.getString(R.string.exception_firebase_function_unknown_response);
+                            if (BuildConfig.DEBUG) Log.e(TAG, "Unknown return code received from Firebase Function");
+                            mCreateFamilyMemberSubject.onNext(ManageFamilyMemberResult.BACKEND_ERROR.setException( new FirebaseDatabaseException(errorMessage) ));
+                    }
+                } catch (Exception e) {
+                    String errorMessage = mContext.getString(R.string.exception_firebase_family_member_not_created);
+                    if (BuildConfig.DEBUG) Log.e(TAG, errorMessage + ": " + e.getMessage());
+                    mCreateFamilyMemberSubject.onNext(ManageFamilyMemberResult.BACKEND_ERROR.setException( new FirebaseDatabaseException(errorMessage, e) ));
+                }
+                return result;
+            })
+            .addOnCompleteListener(task -> {
+                if (!task.isSuccessful() && task.getException() != null) {
+                    Exception e = task.getException();
+                    String errorMessage = mContext.getString(R.string.exception_firebase_family_member_not_created);
+                    if (BuildConfig.DEBUG) Log.e(TAG, errorMessage + ": " + e.getMessage());
+                    mCreateFamilyMemberSubject.onNext(ManageFamilyMemberResult.BACKEND_ERROR.setException( new FirebaseMessagingException(errorMessage, e) ));
+                } else if (!task.isSuccessful()) {
+                    String errorMessage = mContext.getString(R.string.exception_firebase_family_member_not_created);
+                    if (BuildConfig.DEBUG) Log.e(TAG, errorMessage);
+                    mCreateFamilyMemberSubject.onNext(ManageFamilyMemberResult.BACKEND_ERROR.setException( new FirebaseMessagingException(errorMessage) ));
+                }
+            })
+        ;
+    }
+
+
+    /**
+     * Remove a family member from family data on a backend using custom Firebase callable function.
+     * Send an event notifying on success or failure
+     */
+    @SuppressWarnings("unchecked")
+    public void deleteFamilyMemberAsync(String familyMemberEmail) {
+        if (familyMemberEmail == null || familyMemberEmail.equals("")) {
+            if (BuildConfig.DEBUG) Log.e(TAG, "Empty or null family member email provided while attempting to remove it on backend; skipping");
+            return;
+        }
+        if (mFirebaseUser == null) {
+            if (BuildConfig.DEBUG) Log.e(TAG, "User not authenticated while attempting to remove family member on backend; skipping");
+            return;
+        }
+
+        Map<String, Object> data = new HashMap<>();
+        data.put(Constants.KEY_FAMILY_MEMBER_EMAIL, familyMemberEmail);
+
+        mFirebaseFunctions
+            .getHttpsCallable("deleteFamilyMember")
+            .call(data)
+            .continueWith(task -> {
+                Map<String, Object> result = null;
+                try {
+                    result = (Map<String, Object>) Objects.requireNonNull(task.getResult()).getData(); // throws an exception on error
+                    // if success:
+                    String returnCode = (String)Objects.requireNonNull(result.get("returnCode"));
+                    switch (returnCode) {
+                        case "00":
+                            if (BuildConfig.DEBUG) Log.d(TAG, "Family member removed on backend");
+                            mDeleteFamilyMemberSubject.onNext(ManageFamilyMemberResult.SUCCESS);
+                            break;
+                        case "90":
+                            if (BuildConfig.DEBUG) Log.e(TAG, "The user has more the one family data sets stored on backend");
+                            mDeleteFamilyMemberSubject.onNext(ManageFamilyMemberResult.MORE_THAN_ONE_FAMILY);
+                            break;
+                        case "91":
+                            if (BuildConfig.DEBUG) Log.e(TAG, "The user owns no family data sets stored on backend");
+                            mDeleteFamilyMemberSubject.onNext(ManageFamilyMemberResult.NO_FAMILY);
+                            break;
+                        default:
+                            String errorMessage = mContext.getString(R.string.exception_firebase_function_unknown_response);
+                            if (BuildConfig.DEBUG) Log.e(TAG, "Unknown return code received from Firebase Function");
+                            mDeleteFamilyMemberSubject.onNext(ManageFamilyMemberResult.BACKEND_ERROR.setException( new FirebaseDatabaseException(errorMessage) ));
+                    }
+                } catch (Exception e) {
+                    String errorMessage = mContext.getString(R.string.exception_firebase_family_member_not_deleted);
+                    if (BuildConfig.DEBUG) Log.e(TAG, errorMessage + ": " + e.getMessage());
+                    mDeleteFamilyMemberSubject.onNext(ManageFamilyMemberResult.BACKEND_ERROR.setException( new FirebaseDatabaseException(errorMessage, e) ));
+                }
+                return result;
+            })
+            .addOnCompleteListener(task -> {
+                if (!task.isSuccessful() && task.getException() != null) {
+                    Exception e = task.getException();
+                    String errorMessage = mContext.getString(R.string.exception_firebase_family_member_not_deleted);
+                    if (BuildConfig.DEBUG) Log.e(TAG, errorMessage + ": " + e.getMessage());
+                    mDeleteFamilyMemberSubject.onNext(ManageFamilyMemberResult.BACKEND_ERROR.setException( new FirebaseMessagingException(errorMessage, e) ));
+                } else if (!task.isSuccessful()) {
+                    String errorMessage = mContext.getString(R.string.exception_firebase_family_member_not_deleted);
+                    if (BuildConfig.DEBUG) Log.e(TAG, errorMessage);
+                    mDeleteFamilyMemberSubject.onNext(ManageFamilyMemberResult.BACKEND_ERROR.setException( new FirebaseMessagingException(errorMessage) ));
                 }
             })
         ;
