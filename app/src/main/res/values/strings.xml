@@ -6,6 +6,7 @@
     <string name="action_create_family">New Family</string>
     <string name="action_create_family_member">New Family Member</string>
     <string name="action_delete_family_member">Remove Family Member</string>
+    <string name="action_send_invite">Send Invite</string>
     <string name="action_i_am_major">I am a parent</string>
     <string name="action_i_am_minor">I am a child</string>
     <string name="action_exit_application">Exit application</string>

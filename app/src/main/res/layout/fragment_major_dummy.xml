@@ -34,6 +34,13 @@
             style="@style/Widget.App.Button.LargeHollow"
             android:text="@string/action_delete_family_member"/>
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_send_invite"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/Widget.App.Button.LargeHollow"
+            android:text="@string/action_send_invite"/>
+
     </LinearLayout>
 
 </FrameLayout>

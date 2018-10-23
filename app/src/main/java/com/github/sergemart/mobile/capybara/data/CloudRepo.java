@@ -83,6 +83,7 @@ public class CloudRepo {
     private final PublishSubject<CreateFamilyResult> mCreateFamilySubject = PublishSubject.create();
     private final PublishSubject<ManageFamilyMemberResult> mCreateFamilyMemberSubject = PublishSubject.create();
     private final PublishSubject<ManageFamilyMemberResult> mDeleteFamilyMemberSubject = PublishSubject.create();
+    private final PublishSubject<GenericResult> mSendInviteSubject = PublishSubject.create();
     private final PublishSubject<Boolean> mSendLocationSubject = PublishSubject.create();
     private final PublishSubject<Boolean> mSignOutSubject = PublishSubject.create();
 
@@ -125,6 +126,11 @@ public class CloudRepo {
 
     public PublishSubject<ManageFamilyMemberResult> getDeleteFamilyMemberSubject() {
         return mDeleteFamilyMemberSubject;
+    }
+
+
+    public PublishSubject<GenericResult> getSendInviteSubject() {
+        return mSendInviteSubject;
     }
 
 
@@ -376,11 +382,11 @@ public class CloudRepo {
                     Exception e = task.getException();
                     String errorMessage = mContext.getString(R.string.exception_firebase_family_not_created);
                     if (BuildConfig.DEBUG) Log.e(TAG, errorMessage + ": " + e.getMessage());
-                    mCreateFamilySubject.onNext(CreateFamilyResult.BACKEND_ERROR.setException( new FirebaseMessagingException(errorMessage, e) ));
+                    mCreateFamilySubject.onNext(CreateFamilyResult.BACKEND_ERROR.setException( new FirebaseDatabaseException(errorMessage, e) ));
                 } else if (!task.isSuccessful()) {
                     String errorMessage = mContext.getString(R.string.exception_firebase_family_not_created);
                     if (BuildConfig.DEBUG) Log.e(TAG, errorMessage);
-                    mCreateFamilySubject.onNext(CreateFamilyResult.BACKEND_ERROR.setException( new FirebaseMessagingException(errorMessage) ));
+                    mCreateFamilySubject.onNext(CreateFamilyResult.BACKEND_ERROR.setException( new FirebaseDatabaseException(errorMessage) ));
                 }
             })
         ;
@@ -444,11 +450,11 @@ public class CloudRepo {
                     Exception e = task.getException();
                     String errorMessage = mContext.getString(R.string.exception_firebase_family_member_not_created);
                     if (BuildConfig.DEBUG) Log.e(TAG, errorMessage + ": " + e.getMessage());
-                    mCreateFamilyMemberSubject.onNext(ManageFamilyMemberResult.BACKEND_ERROR.setException( new FirebaseMessagingException(errorMessage, e) ));
+                    mCreateFamilyMemberSubject.onNext(ManageFamilyMemberResult.BACKEND_ERROR.setException( new FirebaseDatabaseException(errorMessage, e) ));
                 } else if (!task.isSuccessful()) {
                     String errorMessage = mContext.getString(R.string.exception_firebase_family_member_not_created);
                     if (BuildConfig.DEBUG) Log.e(TAG, errorMessage);
-                    mCreateFamilyMemberSubject.onNext(ManageFamilyMemberResult.BACKEND_ERROR.setException( new FirebaseMessagingException(errorMessage) ));
+                    mCreateFamilyMemberSubject.onNext(ManageFamilyMemberResult.BACKEND_ERROR.setException( new FirebaseDatabaseException(errorMessage) ));
                 }
             })
         ;
@@ -512,11 +518,11 @@ public class CloudRepo {
                     Exception e = task.getException();
                     String errorMessage = mContext.getString(R.string.exception_firebase_family_member_not_deleted);
                     if (BuildConfig.DEBUG) Log.e(TAG, errorMessage + ": " + e.getMessage());
-                    mDeleteFamilyMemberSubject.onNext(ManageFamilyMemberResult.BACKEND_ERROR.setException( new FirebaseMessagingException(errorMessage, e) ));
+                    mDeleteFamilyMemberSubject.onNext(ManageFamilyMemberResult.BACKEND_ERROR.setException( new FirebaseDatabaseException(errorMessage, e) ));
                 } else if (!task.isSuccessful()) {
                     String errorMessage = mContext.getString(R.string.exception_firebase_family_member_not_deleted);
                     if (BuildConfig.DEBUG) Log.e(TAG, errorMessage);
-                    mDeleteFamilyMemberSubject.onNext(ManageFamilyMemberResult.BACKEND_ERROR.setException( new FirebaseMessagingException(errorMessage) ));
+                    mDeleteFamilyMemberSubject.onNext(ManageFamilyMemberResult.BACKEND_ERROR.setException( new FirebaseDatabaseException(errorMessage) ));
                 }
             })
         ;
@@ -524,6 +530,66 @@ public class CloudRepo {
 
 
     // --------------------------- Repository interface: Firebase messaging
+
+    /**
+     * Send a message inviting to join a family.
+     * Send an event notifying on success or failure
+     */
+    @SuppressWarnings("unchecked")
+    public void sendInviteAsync(String inviteeEmail) {
+        if (inviteeEmail == null || inviteeEmail.equals("")) {
+            if (BuildConfig.DEBUG) Log.e(TAG, "Empty or null invitee email provided while attempting to send an invite; skipping");
+            return;
+        }
+        if (mFirebaseUser == null) {
+            if (BuildConfig.DEBUG) Log.e(TAG, "User not authenticated while attempting to send an invite; skipping");
+            return;
+        }
+
+        Map<String, Object> data = new HashMap<>();
+        data.put(Constants.KEY_INVITEE_EMAIL, inviteeEmail);
+
+        mFirebaseFunctions
+            .getHttpsCallable("sendInvite")
+            .call(data)
+            .continueWith(task -> {
+                Map<String, Object> result = null;
+                try {
+                    result = (Map<String, Object>) Objects.requireNonNull(task.getResult()).getData(); // throws an exception on error
+                    // if success:
+                    String returnCode = (String)Objects.requireNonNull(result.get("returnCode"));
+                    switch (returnCode) {
+                        case "00":
+                            if (BuildConfig.DEBUG) Log.d(TAG, "Invite message sent");
+                            mSendInviteSubject.onNext(GenericResult.SUCCESS);
+                            break;
+                        default:
+                            String errorMessage = mContext.getString(R.string.exception_firebase_function_unknown_response);
+                            if (BuildConfig.DEBUG) Log.e(TAG, "Unknown return code received from Firebase Function");
+                            mSendInviteSubject.onNext(GenericResult.FAILURE.setException( new FirebaseMessagingException(errorMessage) ));
+                    }
+                } catch (Exception e) {
+                    String errorMessage = mContext.getString(R.string.exception_firebase_invite_message_not_sent);
+                    if (BuildConfig.DEBUG) Log.e(TAG, errorMessage + ": " + e.getMessage());
+                    mSendInviteSubject.onNext(GenericResult.FAILURE.setException( new FirebaseMessagingException(errorMessage, e) ));
+                }
+                return result;
+            })
+            .addOnCompleteListener(task -> {
+                if (!task.isSuccessful() && task.getException() != null) {
+                    Exception e = task.getException();
+                    String errorMessage = mContext.getString(R.string.exception_firebase_invite_message_not_sent);
+                    if (BuildConfig.DEBUG) Log.e(TAG, errorMessage + ": " + e.getMessage());
+                    mSendInviteSubject.onNext(GenericResult.FAILURE.setException( new FirebaseMessagingException(errorMessage, e) ));
+                } else if (!task.isSuccessful()) {
+                    String errorMessage = mContext.getString(R.string.exception_firebase_invite_message_not_sent);
+                    if (BuildConfig.DEBUG) Log.e(TAG, errorMessage);
+                    mSendInviteSubject.onNext(GenericResult.FAILURE.setException( new FirebaseMessagingException(errorMessage) ));
+                }
+            })
+        ;
+    }
+
 
     /**
      * Send a location to a backend using custom Firebase callable function

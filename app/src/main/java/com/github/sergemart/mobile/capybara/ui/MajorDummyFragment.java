@@ -27,6 +27,7 @@ public class MajorDummyFragment extends Fragment {
 
     private MaterialButton mCreateFamilyMemberButton;
     private MaterialButton mDeleteFamilyMemberButton;
+    private MaterialButton mSendInviteButton;
 
     private Location mCurrentLocation;
     private CompositeDisposable mViewDisposable;
@@ -63,6 +64,7 @@ public class MajorDummyFragment extends Fragment {
 
         mDeleteFamilyMemberButton = fragmentView.findViewById(R.id.button_delete_family_member);
         mCreateFamilyMemberButton = fragmentView.findViewById(R.id.button_create_family_member);
+        mSendInviteButton = fragmentView.findViewById(R.id.button_send_invite);
 
         this.setViewListeners();
         return fragmentView;
@@ -132,6 +134,11 @@ public class MajorDummyFragment extends Fragment {
             RxView.clicks(mCreateFamilyMemberButton).subscribe(event -> this.createFamilyMember())
         );
 
+        // Set a listener to the "Send invite" button
+        mViewDisposable.add(
+            RxView.clicks(mSendInviteButton).subscribe(event -> this.sendInvite())
+        );
+
     }
 
 
@@ -181,6 +188,14 @@ public class MajorDummyFragment extends Fragment {
      */
     private void deleteFamilyMember() {
         CloudRepo.get().deleteFamilyMemberAsync("serge.martynov@gmail.com");
+    }
+
+
+    /**
+     * Create family member
+     */
+    private void sendInvite() {
+        CloudRepo.get().sendInviteAsync("serge.martynov@gmail.com");
     }
 
 
