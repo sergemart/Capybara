@@ -28,11 +28,11 @@
             android:text="@string/action_send_location"/>
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/button_update_device_token"
+            android:id="@+id/button_join_family"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/Widget.App.Button.LargeHollow"
-            android:text="@string/action_update_device_token"/>
+            android:text="@string/action_join_family"/>
 
     </LinearLayout>
 

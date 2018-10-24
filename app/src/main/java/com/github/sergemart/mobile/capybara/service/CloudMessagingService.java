@@ -3,9 +3,16 @@ package com.github.sergemart.mobile.capybara.service;
 import android.util.Log;
 
 import com.github.sergemart.mobile.capybara.BuildConfig;
+import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.data.CloudRepo;
+import com.github.sergemart.mobile.capybara.data.MessagingServiceRepo;
+import com.github.sergemart.mobile.capybara.data.PreferenceStore;
+import com.github.sergemart.mobile.capybara.events.GenericResult;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+
+import java.util.Map;
+import java.util.Objects;
 
 import io.reactivex.disposables.CompositeDisposable;
 
@@ -28,9 +35,7 @@ public class CloudMessagingService
     public void onCreate() {
         super.onCreate();
 
-        this.initMemberVariables();
-        this.setAttributes();
-        this.setListeners();
+        mDisposable = new CompositeDisposable();
     }
 
 
@@ -40,7 +45,7 @@ public class CloudMessagingService
     @Override
     public void onNewToken(String newDeviceToken) {
         super.onNewToken(newDeviceToken);
-        this.updateDeviceToken(newDeviceToken);
+        this.notifyOnNewDeviceToken(newDeviceToken);
     }
 
 
@@ -49,41 +54,80 @@ public class CloudMessagingService
      */
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
-        super.onMessageReceived(remoteMessage);
-    }
+        if (BuildConfig.DEBUG) Log.d(TAG, "Message received; processing");
+        if (remoteMessage.getData() == null || remoteMessage.getData().size() == 0) {
+            if (BuildConfig.DEBUG) Log.d(TAG, "The message has no data; skipping");
+            return;
+        }
+        Map<String, String> messageData = remoteMessage.getData();
+        if (messageData == null || messageData.size() == 0) {
+            if (BuildConfig.DEBUG) Log.d(TAG, "The message has empty data; skipping");
+            return;
+        }
+        switch (Objects.requireNonNull(messageData.get(Constants.KEY_MESSAGE_TYPE))) {
+            case Constants.MESSAGE_TYPE_INVITE:                                                     // a message is an invite
+                this.notifyOnInvite(messageData.get(Constants.KEY_INVITING_EMAIL));
+                break;
+            case Constants.MESSAGE_TYPE_ACCEPT_INVITE:                                              // a message is an invite acceptance
+                this.notifyOnAcceptInvite(messageData.get(Constants.KEY_INVITEE_EMAIL));
+                break;
+            default:
+                if (BuildConfig.DEBUG) Log.d(TAG, "Unknown message type; skipping");
+        }
 
-    // --------------------------- Service controls
-
-    /**
-     * Init member variables
-     */
-    private void initMemberVariables() {
-        mDisposable = new CompositeDisposable();
-    }
-
-
-    /**
-     * Set attributes
-     */
-    private void setAttributes() {
-    }
-
-
-    /**
-     * Set listeners to view-related events, containers and events
-     */
-    private void setListeners() {
     }
 
 
     // --------------------------- Use cases
 
     /**
-     * Update the Firebase Messaging device token when received from the cloud
+     * Notify the app on the new Firebase Messaging device token when received one from the cloud
      */
-    private void updateDeviceToken(String newDeviceToken) {
+    private void notifyOnNewDeviceToken(String newDeviceToken) {
         if (BuildConfig.DEBUG) Log.d(TAG, "New device token received, calling repository update method.");
-        CloudRepo.get().onTokenReceivedByMessagingService(newDeviceToken);
+        CloudRepo.get().updateDeviceToken(newDeviceToken);
+    }
+
+
+    /**
+     * Notify about a received invite
+     */
+    private void notifyOnInvite(String invitingEmail) {
+        if (invitingEmail == null) {
+            if (BuildConfig.DEBUG) Log.e(TAG, "Inviting email is null; skipping");
+            return;
+        }
+        if (!PreferenceStore.getStoredIsAppModeSet()) {
+            if (BuildConfig.DEBUG) Log.e(TAG, "App mode is not set; skipping");
+            return;
+        }
+        if (PreferenceStore.getStoredAppMode() != Constants.APP_MODE_MINOR) {
+            if (BuildConfig.DEBUG) Log.e(TAG, "App mode should be 'MINOR' to process the message; skipping");
+            return;
+        }
+        if (BuildConfig.DEBUG) Log.d(TAG, "An invite message received, emitting a corresponding event");
+        MessagingServiceRepo.get().getInviteReceivedSubject().onNext(GenericResult.SUCCESS.setData(invitingEmail));
+    }
+
+
+    /**
+     * Notify about a received invite
+     */
+    private void notifyOnAcceptInvite(String inviteeEmail) {
+        if (inviteeEmail == null) {
+            if (BuildConfig.DEBUG) Log.e(TAG, "Invitee email is null; skipping");
+            return;
+        }
+        if (!PreferenceStore.getStoredIsAppModeSet()) {
+            if (BuildConfig.DEBUG) Log.e(TAG, "App mode is not set; skipping");
+            return;
+        }
+        if (PreferenceStore.getStoredAppMode() != Constants.APP_MODE_MAJOR) {
+            if (BuildConfig.DEBUG) Log.e(TAG, "App mode should be 'MAJOR' to process the message; skipping");
+            return;
+        }
+        if (BuildConfig.DEBUG) Log.d(TAG, "An invite acceptance message received, emitting a corresponding event");
+        MessagingServiceRepo.get().getAcceptInviteReceivedSubject().onNext(GenericResult.SUCCESS.setData(inviteeEmail));
     }
 
 

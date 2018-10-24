@@ -8,10 +8,22 @@ public enum GenericResult {
 
     // --------------------------- Member variables
 
+    private Object mData;
     private Throwable mException;
 
 
     // --------------------------- Getters/ setters
+
+    public GenericResult setData(Object data) {
+        mData = data;
+        return this;
+    }
+
+
+    public Object getData() {
+        return mData;
+    }
+
 
     public GenericResult setException(Throwable e) {
         mException = e;

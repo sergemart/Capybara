@@ -7,6 +7,7 @@
     <string name="action_create_family_member">Новый житель пруда</string>
     <string name="action_delete_family_member">Убрать из пруда</string>
     <string name="action_send_invite">Пригласить в пруд</string>
+    <string name="action_join_family">Присоединиться к пруду</string>
     <string name="action_i_am_major">Я родитель</string>
     <string name="action_i_am_minor">Я ребёнок</string>
     <string name="action_exit_application">Закрыть</string>

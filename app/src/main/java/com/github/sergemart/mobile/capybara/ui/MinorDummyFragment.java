@@ -26,7 +26,7 @@ public class MinorDummyFragment extends Fragment {
     private static final String TAG = MinorDummyFragment.class.getSimpleName();
 
     private MaterialButton mSendMyLocationButton;
-    private MaterialButton mUpdateDeviceTokenButton;
+    private MaterialButton mJoinFamilyButton;
 
     private Location mCurrentLocation;
     private CompositeDisposable mViewDisposable;
@@ -44,6 +44,10 @@ public class MinorDummyFragment extends Fragment {
         super.onCreate(savedInstanceState);
         super.setRetainInstance(true);
         if (BuildConfig.DEBUG) Log.d(TAG, "onCreate() called");
+
+        mViewDisposable = new CompositeDisposable();
+        mInstanceDisposable = new CompositeDisposable();
+
         this.setInstanceListeners();
     }
 
@@ -58,7 +62,7 @@ public class MinorDummyFragment extends Fragment {
         View fragmentView = inflater.inflate(R.layout.fragment_minor_dummy, container, false);
 
         mSendMyLocationButton = fragmentView.findViewById(R.id.button_send_my_location);
-        mUpdateDeviceTokenButton = fragmentView.findViewById(R.id.button_update_device_token);
+        mJoinFamilyButton = fragmentView.findViewById(R.id.button_join_family);
 
         this.setViewListeners();
         return fragmentView;
@@ -123,9 +127,9 @@ public class MinorDummyFragment extends Fragment {
             RxView.clicks(mSendMyLocationButton).subscribe(event -> this.sendMyLocation())
         );
 
-        // Set a listener to the "Update Device Token" button
+        // Set a listener to the "Join The Family" button
         mViewDisposable.add(
-            RxView.clicks(mUpdateDeviceTokenButton).subscribe(event -> this.updateDeviceToken())
+            RxView.clicks(mJoinFamilyButton).subscribe(event -> this.joinFamily())
         );
 
     }
@@ -152,7 +156,7 @@ public class MinorDummyFragment extends Fragment {
     private void sendMyLocation() {
         this.locateMe();
         if (mCurrentLocation == null) return;
-        CloudRepo.get().sendLocationAsync(mCurrentLocation);
+        CloudRepo.get().sendLocationFromMinorAsync(mCurrentLocation);
     }
 
 
@@ -161,6 +165,15 @@ public class MinorDummyFragment extends Fragment {
      */
     private void updateDeviceToken() {
         CloudRepo.get().publishDeviceTokenAsync();
+    }
+
+
+
+    /**
+     * Join the family
+     */
+    private void joinFamily() {
+        CloudRepo.get().joinFamilyAsync("serge.martynov@gmail.com");
     }
 
 

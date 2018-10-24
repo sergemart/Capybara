@@ -13,7 +13,7 @@ public class ErrorSharedViewModel extends ViewModel {
     private final CompletableSubject mExitRequestedSubject = CompletableSubject.create();
 
 
-    // --------------------------- Observable getters/ emitters
+    // --------------------------- Observable getters
 
     public BehaviorSubject<GenericResult> getCauseSubject() {
         return mCauseSubject;

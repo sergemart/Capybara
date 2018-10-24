@@ -1,6 +1,6 @@
 package com.github.sergemart.mobile.capybara.events;
 
-public enum ManageFamilyMemberResult {
+public enum FamilyActionResult {
 
     SUCCESS,
     NO_FAMILY,
@@ -15,7 +15,7 @@ public enum ManageFamilyMemberResult {
 
     // --------------------------- Getters/ setters
 
-    public ManageFamilyMemberResult setException(Throwable e) {
+    public FamilyActionResult setException(Throwable e) {
         mException = e;
         return this;
     }

@@ -1,7 +1,7 @@
 package com.github.sergemart.mobile.capybara.data;
 
 import com.github.sergemart.mobile.capybara.R;
-import com.github.sergemart.mobile.capybara.exceptions.FirebaseMessagingException;
+import com.github.sergemart.mobile.capybara.exceptions.FirebaseSigninException;
 import com.github.sergemart.mobile.capybara.exceptions.GoogleSigninException;
 import com.google.android.gms.auth.api.signin.GoogleSignInStatusCodes;
 import com.google.android.gms.common.api.ApiException;
@@ -73,7 +73,7 @@ public class ResRepo {
                         resId = R.string.msg_google_client_connection_error;
                 }
             }
-        } else if (cause instanceof FirebaseMessagingException) {
+        } else if (cause instanceof FirebaseSigninException) {
             resId = R.string.msg_firebase_client_connection_error;
         }
         return resId;
