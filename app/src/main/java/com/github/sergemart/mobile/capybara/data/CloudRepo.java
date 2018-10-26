@@ -671,11 +671,11 @@ public class CloudRepo {
 
 
     /**
-     * Send a location to a backend using custom Firebase callable function
+     * Send a location to family members using custom Firebase callable function
      * Send an event notifying on success or failure
      */
     @SuppressWarnings("unchecked")
-    public void sendLocationFromMinorAsync(Location location) {
+    public void sendLocationAsync(Location location) {
         if (location == null) {
             if (BuildConfig.DEBUG) Log.e(TAG, "Location is null while attempting to send it to a family; skipping");
             return;
@@ -689,7 +689,7 @@ public class CloudRepo {
         data.put(Constants.KEY_LOCATION, Tools.get().getJsonableLocation(location));
 
         mFirebaseFunctions
-            .getHttpsCallable("sendLocationFromMinor")
+            .getHttpsCallable("sendLocation")
             .call(data)
             .continueWith(task -> {
                 Map<String, Object> result = null;
@@ -698,21 +698,21 @@ public class CloudRepo {
                     // if success:
                     String returnCode = (String)Objects.requireNonNull(result.get("returnCode"));
                     switch (returnCode) {
-                        case "00":
+                        case Constants.RETURN_CODE_ALL_SENT: case Constants.RETURN_CODE_SOME_SENT:
                             if (BuildConfig.DEBUG) Log.d(TAG, "Location sent");
                             mSendLocationSubject.onNext(FamilyActionResult.SUCCESS);
                             break;
-                        case "90":
+                        case Constants.RETURN_CODE_MORE_THAN_ONE_FAMILY:
                             if (BuildConfig.DEBUG) Log.e(TAG, "The user has more than one family record");
                             mSendLocationSubject.onNext(FamilyActionResult.MORE_THAN_ONE_FAMILY);
                             break;
-                        case "91":
+                        case Constants.RETURN_CODE_NO_FAMILY:
                             if (BuildConfig.DEBUG) Log.e(TAG, "The user has no family records");
                             mSendLocationSubject.onNext(FamilyActionResult.NO_FAMILY);
                             break;
-                        case "93":
-                            String errorMessage = (String)Objects.requireNonNull(result.get("errorMessage"));
-                            if (BuildConfig.DEBUG) Log.e(TAG, "The location not sent, caused by: " + errorMessage);
+                        case Constants.RETURN_CODE_NONE_SENT:
+                            String errorMessage = mContext.getString(R.string.exception_firebase_location_not_sent);
+                            if (BuildConfig.DEBUG) Log.e(TAG, "The location not sent");
                             mSendLocationSubject.onNext(FamilyActionResult.BACKEND_ERROR.setException( new FirebaseFunctionException(errorMessage) ));
                             break;
                         default:
@@ -741,9 +741,6 @@ public class CloudRepo {
             })
         ;
     }
-
-
-    // --------------------------- Subroutines
 
 
 }

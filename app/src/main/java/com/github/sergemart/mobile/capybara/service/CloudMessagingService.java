@@ -71,6 +71,9 @@ public class CloudMessagingService
             case Constants.MESSAGE_TYPE_ACCEPT_INVITE:                                              // a message is an invite acceptance
                 this.notifyOnAcceptInvite(messageData.get(Constants.KEY_INVITEE_EMAIL));
                 break;
+            case Constants.MESSAGE_TYPE_LOCATION:                                                   // a message is a location notification
+//                this.notifyOnLocation(messageData.get(Constants.KEY_LOCATION));
+                break;
             default:
                 if (BuildConfig.DEBUG) Log.d(TAG, "Unknown message type; skipping");
         }

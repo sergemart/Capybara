@@ -23,6 +23,17 @@ public final class Constants {
     public static final int REQUEST_CODE_DIALOG_FRAGMENT = 7003;
 
 
+    // ----------------------- Return codes
+
+    public static final String RETURN_CODE_NO_FAMILY = "no_family";
+    public static final String RETURN_CODE_MORE_THAN_ONE_FAMILY = "many_families";
+    public static final String RETURN_CODE_SENT = "sent";
+    public static final String RETURN_CODE_NOT_SENT = "not_sent";
+    public static final String RETURN_CODE_ALL_SENT = "all_sent";
+    public static final String RETURN_CODE_SOME_SENT = "some_sent";
+    public static final String RETURN_CODE_NONE_SENT = "none_sent";
+
+
     // ----------------------- Data keys and predefined values
 
     public static final String KEY_LOCATION = "location";
@@ -36,6 +47,7 @@ public final class Constants {
     public static final String KEY_MESSAGE_TYPE = "messageType";
     public static final String MESSAGE_TYPE_INVITE = "invite";
     public static final String MESSAGE_TYPE_ACCEPT_INVITE = "acceptInvite";
+    public static final String MESSAGE_TYPE_LOCATION = "location";
 
 
     // ----------------------- Permissions

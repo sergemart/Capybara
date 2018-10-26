@@ -156,7 +156,7 @@ public class MinorDummyFragment extends Fragment {
     private void sendMyLocation() {
         this.locateMe();
         if (mCurrentLocation == null) return;
-        CloudRepo.get().sendLocationFromMinorAsync(mCurrentLocation);
+        CloudRepo.get().sendLocationAsync(mCurrentLocation);
     }
 
 
