@@ -152,7 +152,7 @@ public class CloudRepo {
     // --------------------------- Repository interface: User authentication
 
     /**
-     * @return true if not authenticated
+     * @return true if authenticated, false if not
      */
     public boolean isAuthenticated() {
         return mFirebaseUser != null;

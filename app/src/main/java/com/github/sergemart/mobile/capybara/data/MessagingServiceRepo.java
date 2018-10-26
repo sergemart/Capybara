@@ -1,6 +1,7 @@
 package com.github.sergemart.mobile.capybara.data;
 
 import com.github.sergemart.mobile.capybara.events.GenericResult;
+import com.github.sergemart.mobile.capybara.events.LocationResult;
 
 import io.reactivex.subjects.BehaviorSubject;
 
@@ -27,7 +28,7 @@ public class MessagingServiceRepo {
 
     private final BehaviorSubject<GenericResult> mInviteReceivedSubject = BehaviorSubject.create();
     private final BehaviorSubject<GenericResult> mAcceptInviteReceivedSubject = BehaviorSubject.create();
-    private final BehaviorSubject<GenericResult> mLocationReceivedSubject = BehaviorSubject.create();
+    private final BehaviorSubject<LocationResult> mLocationReceivedSubject = BehaviorSubject.create();
 
 
     // --------------------------- Observable getters
@@ -42,7 +43,7 @@ public class MessagingServiceRepo {
     }
 
 
-    public BehaviorSubject<GenericResult> getLocationReceivedSubject() {
+    public BehaviorSubject<LocationResult> getLocationReceivedSubject() {
         return mLocationReceivedSubject;
     }
 

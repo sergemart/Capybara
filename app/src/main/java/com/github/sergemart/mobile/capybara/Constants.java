@@ -49,6 +49,7 @@ public final class Constants {
     public static final String KEY_FAMILY_MEMBER_EMAIL = "familyMemberEmail";
     public static final String KEY_INVITEE_EMAIL = "inviteeEmail";
     public static final String KEY_INVITING_EMAIL = "invitingEmail";
+    public static final String KEY_SENDER_EMAIL = "senderEmail";
     public static final String KEY_MESSAGE_TYPE = "messageType";
     public static final String MESSAGE_TYPE_INVITE = "invite";
     public static final String MESSAGE_TYPE_ACCEPT_INVITE = "acceptInvite";

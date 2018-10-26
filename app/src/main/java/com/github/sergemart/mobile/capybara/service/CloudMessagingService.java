@@ -10,6 +10,7 @@ import com.github.sergemart.mobile.capybara.data.CloudRepo;
 import com.github.sergemart.mobile.capybara.data.MessagingServiceRepo;
 import com.github.sergemart.mobile.capybara.data.PreferenceStore;
 import com.github.sergemart.mobile.capybara.events.GenericResult;
+import com.github.sergemart.mobile.capybara.events.LocationResult;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -57,29 +58,31 @@ public class CloudMessagingService
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         if (BuildConfig.DEBUG) Log.d(TAG, "Message received; processing");
-        if (remoteMessage.getData() == null || remoteMessage.getData().size() == 0) {
-            if (BuildConfig.DEBUG) Log.d(TAG, "The message has no data; skipping");
-            return;
-        }
         Map<String, String> messageData = remoteMessage.getData();
         if (messageData == null || messageData.size() == 0) {
-            if (BuildConfig.DEBUG) Log.d(TAG, "The message has empty data; skipping");
+            if (BuildConfig.DEBUG) Log.d(TAG, "The message has no data; skipping");
             return;
         }
         switch (Objects.requireNonNull(messageData.get(Constants.KEY_MESSAGE_TYPE))) {
             case Constants.MESSAGE_TYPE_INVITE:                                                     // a message is an invite
-                this.notifyOnInvite(messageData.get(Constants.KEY_INVITING_EMAIL));
+                this.notifyOnInvite(
+                    messageData.get(Constants.KEY_INVITING_EMAIL)
+                );
                 break;
             case Constants.MESSAGE_TYPE_ACCEPT_INVITE:                                              // a message is an invite acceptance
-                this.notifyOnAcceptInvite(messageData.get(Constants.KEY_INVITEE_EMAIL));
+                this.notifyOnAcceptInvite(
+                    messageData.get(Constants.KEY_INVITEE_EMAIL)
+                );
                 break;
             case Constants.MESSAGE_TYPE_LOCATION:                                                   // a message is a location notification
-                this.notifyOnLocation(messageData.get(Constants.KEY_LOCATION));
+                this.notifyOnLocation(
+                    messageData.get(Constants.KEY_LOCATION),
+                    messageData.get(Constants.KEY_SENDER_EMAIL)
+                );
                 break;
             default:
                 if (BuildConfig.DEBUG) Log.d(TAG, "Unknown message type; skipping");
         }
-
     }
 
 
@@ -98,8 +101,8 @@ public class CloudMessagingService
      * Notify about a received invite
      */
     private void notifyOnInvite(String invitingEmail) {
-        if (invitingEmail == null) {
-            if (BuildConfig.DEBUG) Log.e(TAG, "Inviting email is null; skipping");
+        if (invitingEmail == null || invitingEmail.isEmpty()) {
+            if (BuildConfig.DEBUG) Log.e(TAG, "Message contains no inviting email; skipping");
             return;
         }
         if (!PreferenceStore.getStoredIsAppModeSet()) {
@@ -111,7 +114,10 @@ public class CloudMessagingService
             return;
         }
         if (BuildConfig.DEBUG) Log.d(TAG, "An invite message received, emitting a corresponding event");
-        MessagingServiceRepo.get().getInviteReceivedSubject().onNext(GenericResult.SUCCESS.setData(invitingEmail));
+        MessagingServiceRepo.get().getInviteReceivedSubject().onNext(GenericResult
+            .SUCCESS
+            .setData(invitingEmail)
+        );
     }
 
 
@@ -119,8 +125,8 @@ public class CloudMessagingService
      * Notify about a received invite
      */
     private void notifyOnAcceptInvite(String inviteeEmail) {
-        if (inviteeEmail == null) {
-            if (BuildConfig.DEBUG) Log.e(TAG, "Invitee email is null; skipping");
+        if (inviteeEmail == null || inviteeEmail.isEmpty()) {
+            if (BuildConfig.DEBUG) Log.e(TAG, "Message contains no invitee email; skipping");
             return;
         }
         if (!PreferenceStore.getStoredIsAppModeSet()) {
@@ -132,21 +138,32 @@ public class CloudMessagingService
             return;
         }
         if (BuildConfig.DEBUG) Log.d(TAG, "An invite acceptance message received, emitting a corresponding event");
-        MessagingServiceRepo.get().getAcceptInviteReceivedSubject().onNext(GenericResult.SUCCESS.setData(inviteeEmail));
+        MessagingServiceRepo.get().getAcceptInviteReceivedSubject().onNext(GenericResult
+            .SUCCESS
+            .setData(inviteeEmail)
+        );
     }
 
 
     /**
      * Notify about a received location
      */
-    private void notifyOnLocation(String locationJson) {
-        if (locationJson == null) {
-            if (BuildConfig.DEBUG) Log.e(TAG, "Location JSON is null; skipping");
+    private void notifyOnLocation(String locationJson, String senderEmail) {
+        if (locationJson == null || locationJson.isEmpty()) {
+            if (BuildConfig.DEBUG) Log.e(TAG, "Message contains no location; skipping");
+            return;
+        }
+        if (senderEmail == null || senderEmail.isEmpty()) {
+            if (BuildConfig.DEBUG) Log.e(TAG, "Message contains no sender email; skipping");
             return;
         }
         if (BuildConfig.DEBUG) Log.d(TAG, "A location message received, emitting a corresponding event");
         Location location = Tools.get().getLocationFromJson(locationJson);
-        MessagingServiceRepo.get().getLocationReceivedSubject().onNext(GenericResult.SUCCESS.setData(location));
+        MessagingServiceRepo.get().getLocationReceivedSubject().onNext(LocationResult
+            .SUCCESS
+            .setLocation(location)
+            .setSenderEmail(senderEmail)
+        );
     }
 
 }
