@@ -14,6 +14,7 @@ public final class Constants {
     // ----------------------- Hard-coded strings
 
     public static final String DEFAULT_USERNAME = "anonymous";
+    static final String CLOUD_MESSAGING_LOCATION_PROVIDER = "cloudMessagingProvider";
 
 
     // ----------------------- Request codes
@@ -25,6 +26,10 @@ public final class Constants {
 
     // ----------------------- Return codes
 
+    public static final String RETURN_CODE_OK = "ok";
+    public static final String RETURN_CODE_CREATED = "created";
+    public static final String RETURN_CODE_DELETED = "deleted";
+    public static final String RETURN_CODE_EXIST = "exist";
     public static final String RETURN_CODE_NO_FAMILY = "no_family";
     public static final String RETURN_CODE_MORE_THAN_ONE_FAMILY = "many_families";
     public static final String RETURN_CODE_SENT = "sent";

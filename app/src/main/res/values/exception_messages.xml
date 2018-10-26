@@ -10,6 +10,7 @@
     <string name="exception_firebase_family_member_not_created" translatable="false">Family member not stored on backend</string>
     <string name="exception_firebase_family_member_not_deleted" translatable="false">Family member not removed on backend</string>
     <string name="exception_firebase_invite_message_not_sent" translatable="false">Invite message not sent</string>
+    <string name="exception_firebase_invite_acceptance_message_not_sent" translatable="false">Invite acceptance message not sent</string>
     <string name="exception_firebase_family_not_joined" translatable="false">Family not joined</string>
     <string name="exception_firebase_function_unknown_response" translatable="false">Firebase Function responds with unknown return code</string>
     <string name="exception_location_no_permission" translatable="false">Runtime location permissions are not granted by user</string>

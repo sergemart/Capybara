@@ -27,6 +27,7 @@ public class MessagingServiceRepo {
 
     private final BehaviorSubject<GenericResult> mInviteReceivedSubject = BehaviorSubject.create();
     private final BehaviorSubject<GenericResult> mAcceptInviteReceivedSubject = BehaviorSubject.create();
+    private final BehaviorSubject<GenericResult> mLocationReceivedSubject = BehaviorSubject.create();
 
 
     // --------------------------- Observable getters
@@ -38,6 +39,11 @@ public class MessagingServiceRepo {
 
     public BehaviorSubject<GenericResult> getAcceptInviteReceivedSubject() {
         return mAcceptInviteReceivedSubject;
+    }
+
+
+    public BehaviorSubject<GenericResult> getLocationReceivedSubject() {
+        return mLocationReceivedSubject;
     }
 
 }

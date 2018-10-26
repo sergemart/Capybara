@@ -41,6 +41,9 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    testOptions {
+        unitTests.includeAndroidResources = true                                                    // to use Robolectric
+    }
 }
 
 dependencies {
@@ -58,10 +61,13 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version"
     // Testing
     testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test:runner:1.1.0-beta02'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0-beta02'
+    testImplementation 'androidx.test:core:1.0.0'                                                   // Robolectric
+    testImplementation "org.robolectric:robolectric:4.0"
     testImplementation 'org.mockito:mockito-core:2.20.1'
     testImplementation 'org.hamcrest:hamcrest-junit:2.0.0.0'
+    testImplementation 'commons-io:commons-io:2.5'
+    androidTestImplementation 'androidx.test:runner:1.1.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
     // RxJava
     implementation 'io.reactivex.rxjava2:rxjava:2.1.12'
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
@@ -72,10 +78,12 @@ dependencies {
     implementation 'com.google.android.gms:play-services-auth:16.0.1'
     // Firebase
     implementation 'com.google.firebase:firebase-core:16.0.4'
-    implementation 'com.google.firebase:firebase-auth:16.0.4'
-    implementation 'com.google.firebase:firebase-messaging:17.3.3'
+    implementation 'com.google.firebase:firebase-auth:16.0.5'
+    implementation 'com.google.firebase:firebase-messaging:17.3.4'
     //noinspection GradleDependency
     implementation 'com.google.firebase:firebase-functions:16.1.0'                                  // corresponds to core:16.0.3
+    // Gson
+    implementation 'com.google.code.gson:gson:2.8.5'
 }
 
 apply plugin: 'com.google.gms.google-services'

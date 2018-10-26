@@ -1,9 +1,11 @@
 package com.github.sergemart.mobile.capybara.service;
 
+import android.location.Location;
 import android.util.Log;
 
 import com.github.sergemart.mobile.capybara.BuildConfig;
 import com.github.sergemart.mobile.capybara.Constants;
+import com.github.sergemart.mobile.capybara.Tools;
 import com.github.sergemart.mobile.capybara.data.CloudRepo;
 import com.github.sergemart.mobile.capybara.data.MessagingServiceRepo;
 import com.github.sergemart.mobile.capybara.data.PreferenceStore;
@@ -72,7 +74,7 @@ public class CloudMessagingService
                 this.notifyOnAcceptInvite(messageData.get(Constants.KEY_INVITEE_EMAIL));
                 break;
             case Constants.MESSAGE_TYPE_LOCATION:                                                   // a message is a location notification
-//                this.notifyOnLocation(messageData.get(Constants.KEY_LOCATION));
+                this.notifyOnLocation(messageData.get(Constants.KEY_LOCATION));
                 break;
             default:
                 if (BuildConfig.DEBUG) Log.d(TAG, "Unknown message type; skipping");
@@ -133,5 +135,18 @@ public class CloudMessagingService
         MessagingServiceRepo.get().getAcceptInviteReceivedSubject().onNext(GenericResult.SUCCESS.setData(inviteeEmail));
     }
 
+
+    /**
+     * Notify about a received location
+     */
+    private void notifyOnLocation(String locationJson) {
+        if (locationJson == null) {
+            if (BuildConfig.DEBUG) Log.e(TAG, "Location JSON is null; skipping");
+            return;
+        }
+        if (BuildConfig.DEBUG) Log.d(TAG, "A location message received, emitting a corresponding event");
+        Location location = Tools.get().getLocationFromJson(locationJson);
+        MessagingServiceRepo.get().getLocationReceivedSubject().onNext(GenericResult.SUCCESS.setData(location));
+    }
 
 }
