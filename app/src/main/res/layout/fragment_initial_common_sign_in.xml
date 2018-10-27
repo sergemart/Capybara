@@ -7,12 +7,8 @@
     tools:context=".ui.InitialCommonSignInFragment">
 
     <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:contentDescription="@string/desc_page_background"
-        android:background="@color/colorDefaultPageBackground"
-        android:scaleType="centerCrop"
-        android:src="@drawable/page_background"/>
+        style="@style/App.ImageView.Background"
+        android:contentDescription="@string/desc_page_background"/>
 
     <ProgressBar
         android:id="@+id/progressBar_waiting"
@@ -25,10 +21,8 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/button_sign_in"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        style="@style/App.Button"
         android:layout_gravity="center"
-        style="@style/Widget.App.Button.LargeHollow"
         android:text="@string/action_sign_in"/>
 
 </FrameLayout>

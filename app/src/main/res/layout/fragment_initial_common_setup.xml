@@ -7,12 +7,8 @@
     tools:context=".ui.InitialCommonSetupFragment">
 
     <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:contentDescription="@string/desc_page_background"
-        android:background="@color/colorDefaultPageBackground"
-        android:scaleType="centerCrop"
-        android:src="@drawable/page_background"/>
+        style="@style/App.ImageView.Background"
+        android:contentDescription="@string/desc_page_background"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -22,16 +18,12 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button_i_am_major"
-            style="@style/Widget.App.Button.LargeHollow"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            style="@style/App.Button"
             android:text="@string/action_i_am_major"/>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button_i_am_minor"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/Widget.App.Button.LargeHollow"
+            style="@style/App.Button"
             android:text="@string/action_i_am_minor"/>
 
     </LinearLayout>

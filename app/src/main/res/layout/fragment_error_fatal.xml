@@ -5,13 +5,8 @@
     android:layout_height="match_parent">
 
     <ImageView
-        android:id="@+id/imageViewBack"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:contentDescription="@string/desc_page_background"
-        android:background="@color/colorErrorPageBackground"
-        android:scaleType="centerCrop"
-        android:src="@drawable/page_background"/>
+        style="@style/App.ImageView.Background.ErrorPage"
+        android:contentDescription="@string/desc_page_background"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -30,23 +25,17 @@
 
         <TextView
             android:id="@+id/textView_error_header"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/Widget.App.Button.LargeHollow"
+            style="@style/App.TextView"
             android:text="@string/msg_fatal_error"/>
 
         <TextView
             android:id="@+id/textView_error_details"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/Widget.App.Button.SmallHollow"
+            style="@style/App.TextView.Small"
             android:text="@string/msg_fatal_error"/>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button_exit_application"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/Widget.App.Button.LargeHollow"
+            style="@style/App.Button"
             android:text="@string/action_exit_application"/>
 
     </LinearLayout>
