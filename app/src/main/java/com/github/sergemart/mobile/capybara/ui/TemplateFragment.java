@@ -86,16 +86,16 @@ public class TemplateFragment extends Fragment {
     // --------------------------- Fragment lifecycle subroutines
 
     /**
-     * Set listeners to view-related events
+     * Set listeners to view-unrelated events
      */
-    private void setViewListeners() {
+    private void setInstanceListeners() {
     }
 
 
     /**
-     * Set listeners to view-unrelated events
+     * Set listeners to view-related events
      */
-    private void setInstanceListeners() {
+    private void setViewListeners() {
     }
 
 

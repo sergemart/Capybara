@@ -127,19 +127,6 @@ public class InitialCommonSignInFragment extends Fragment {
     // --------------------------- Fragment lifecycle subroutines
 
     /**
-     * Set listeners to view-related events
-     */
-    private void setViewListeners() {
-
-        // Set a listener to the "Sign In" button
-        mViewDisposable.add(RxView.clicks(mSignInButton).subscribe(
-            event -> this.signIn()
-        ));
-
-    }
-
-
-    /**
      * Set listeners to view-unrelated events
      */
     private void setInstanceListeners() {
@@ -185,6 +172,19 @@ public class InitialCommonSignInFragment extends Fragment {
                     this.showSigninRetryDialog(mCause);
             }
         }));
+
+    }
+
+
+    /**
+     * Set listeners to view-related events
+     */
+    private void setViewListeners() {
+
+        // Set a listener to the "Sign In" button
+        mViewDisposable.add(RxView.clicks(mSignInButton).subscribe(
+            event -> this.signIn()
+        ));
 
     }
 

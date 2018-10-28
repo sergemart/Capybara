@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import androidx.core.content.ContextCompat;
+import io.reactivex.Observable;
 
 
 // Singleton
@@ -63,17 +64,23 @@ public class ContactsRepo {
 
     // --------------------------- Repository interface
 
-    public List<ContactsRepo.Contact> getContacts() {
-        if (mContacts.isEmpty()) {
-            try {
-                this.readContacts();
-                if (BuildConfig.DEBUG) Log.d(TAG, "Contacts loaded");
-            } catch (SecurityException e) {
-                String errorMessage = mContext.getString(R.string.exception_contacts_no_permission);
-                if (BuildConfig.DEBUG) Log.e(TAG, errorMessage + ": " + e.getMessage());
+
+    /**
+     * @return An observable emitting a contact list
+     */
+    public Observable<List<ContactsRepo.Contact>> getContactsObservable() {
+        return Observable.fromCallable(() -> {
+            if (mContacts.isEmpty()) {
+                try {
+                    this.readContacts();
+                    if (BuildConfig.DEBUG) Log.d(TAG, "Contacts loaded");
+                } catch (SecurityException e) {
+                    String errorMessage = mContext.getString(R.string.exception_contacts_no_permission);
+                    if (BuildConfig.DEBUG) Log.e(TAG, errorMessage + ": " + e.getMessage());
+                }
             }
-        }
-        return mContacts;
+            return mContacts;
+        });
     }
 
 
@@ -103,12 +110,11 @@ public class ContactsRepo {
                 while (contactsCursor.moveToNext()) {
                     String contactId = contactsCursor.getString(contactsCursor.getColumnIndex(ContactsContract.Contacts._ID));
                     String contactName = contactsCursor.getString(contactsCursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
-
                     try (Cursor emailCursor = mContentResolver.query(
-                        ContactsContract.CommonDataKinds.Email.CONTENT_URI,                             // URI of the CommonDataKinds.Email table of ContactsContract database
-                        null,                                                                  // SELECTed column
-                        ContactsContract.CommonDataKinds.Email.CONTACT_ID + " = ?",             // WHERE
-                        new String[]{contactId},                                                       // WHERE parameter
+                        ContactsContract.CommonDataKinds.Email.CONTENT_URI,                         // URI of the CommonDataKinds.Email table of ContactsContract database
+                        null,                                                              // SELECTed column
+                        ContactsContract.CommonDataKinds.Email.CONTACT_ID + " = ?",         // WHERE
+                        new String[]{contactId},                                                    // WHERE parameter
                         null
                     )) {
                         if (emailCursor != null && emailCursor.getCount() > 0) {

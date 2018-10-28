@@ -23,7 +23,9 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.schedulers.Schedulers;
 
 
 public class MajorInviteFragment extends Fragment {
@@ -121,16 +123,16 @@ public class MajorInviteFragment extends Fragment {
     // --------------------------- Fragment lifecycle subroutines
 
     /**
-     * Set listeners to view-related events
+     * Set listeners to view-unrelated events
      */
-    private void setViewListeners() {
+    private void setInstanceListeners() {
     }
 
 
     /**
-     * Set listeners to view-unrelated events
+     * Set listeners to view-related events
      */
-    private void setInstanceListeners() {
+    private void setViewListeners() {
     }
 
 
@@ -138,12 +140,15 @@ public class MajorInviteFragment extends Fragment {
 
     private void getContacts() {
         if (ContactsRepo.get().isPermissionGranted() ) {
-            mContacts.clear();
-            mContacts.addAll(ContactsRepo.get().getContacts());
-            mContactsAdapter.notifyDataSetChanged();
+            mInstanceDisposable.add(ContactsRepo.get().getContactsObservable()
+                .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(result -> {
+                    mContacts.clear();
+                    mContacts.addAll(result);
+                    mContactsAdapter.notifyDataSetChanged();
+                })
+            );
         } else {
             super.requestPermissions(Constants.CONTACTS_PERMISSIONS, Constants.REQUEST_CODE_READ_CONTACTS_PERMISSIONS);
         }
-
     }
 }
