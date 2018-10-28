@@ -10,7 +10,7 @@ import com.github.sergemart.mobile.capybara.App;
 import com.github.sergemart.mobile.capybara.BuildConfig;
 import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
-import com.github.sergemart.mobile.capybara.exceptions.LocationPermissionException;
+import com.github.sergemart.mobile.capybara.exceptions.PermissionException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -19,7 +19,6 @@ import com.google.android.gms.location.LocationServices;
 
 import androidx.core.content.ContextCompat;
 import io.reactivex.subjects.PublishSubject;
-import io.reactivex.subjects.Subject;
 
 
 // Singleton
@@ -88,8 +87,8 @@ public class GeoRepo {
             if (BuildConfig.DEBUG) Log.d(TAG, "Location updates started");
         } catch (SecurityException e) {
             String errorMessage = mContext.getString(R.string.exception_location_no_permission);
-            if (BuildConfig.DEBUG) Log.e(TAG, "LocationSubject emitting an error: " + errorMessage + " caused by: " +  e.getMessage());
-            mLocationSubject.onError(new LocationPermissionException(errorMessage));
+            if (BuildConfig.DEBUG) Log.e(TAG, errorMessage + ": " +  e.getMessage());
+            mLocationSubject.onError(new PermissionException(errorMessage));
         }
     }
 
@@ -106,7 +105,7 @@ public class GeoRepo {
     /**
      * Check if the required runtime permissions have been granted
      */
-    public boolean isLocationPermissionGranted() {
+    public boolean isPermissionGranted() {
         int result = ContextCompat.checkSelfPermission(
             mContext,
             Constants.LOCATION_PERMISSIONS[0]                                                       // it is enough to check one permission from the group

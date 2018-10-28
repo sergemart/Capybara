@@ -17,7 +17,8 @@ import android.view.ViewGroup;
 
 import com.github.sergemart.mobile.capybara.BuildConfig;
 import com.github.sergemart.mobile.capybara.R;
-import com.github.sergemart.mobile.capybara.data.Repository;
+import com.github.sergemart.mobile.capybara.data.TemplateRepo;
+import com.github.sergemart.mobile.capybara.ui.adapters.MainItemAdapter;
 
 
 public class MinorTaskListFragment extends Fragment {
@@ -117,7 +118,7 @@ public class MinorTaskListFragment extends Fragment {
      * Set a new Adapter instance loaded with a displayed collection into the member Recycler View
      */
     private void setupAdapter() {
-        mRecyclerView.setAdapter(new MainItemAdapter( this.getActivity(), Repository.get().getItems() ));
+        mRecyclerView.setAdapter(new MainItemAdapter( this.getActivity(), TemplateRepo.get().getItems() ));
     }
 
 

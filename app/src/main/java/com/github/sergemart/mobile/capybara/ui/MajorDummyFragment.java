@@ -78,7 +78,7 @@ public class MajorDummyFragment extends Fragment {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
             case Constants.REQUEST_CODE_LOCATION_PERMISSIONS:
-                if ( GeoRepo.get().isLocationPermissionGranted() ) this.locateMe();                 // 2nd try, if granted
+                if ( GeoRepo.get().isPermissionGranted() ) this.locateMe();                 // 2nd try, if granted
             default:
                 super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
@@ -203,7 +203,7 @@ public class MajorDummyFragment extends Fragment {
      *
      */
     private void locateMe() {
-        if (GeoRepo.get().isLocationPermissionGranted() ) {
+        if (GeoRepo.get().isPermissionGranted() ) {
             GeoRepo.get().startLocationUpdates();
         } else {
             super.requestPermissions(Constants.LOCATION_PERMISSIONS, Constants.REQUEST_CODE_LOCATION_PERMISSIONS);

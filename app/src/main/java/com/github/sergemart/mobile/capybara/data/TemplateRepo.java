@@ -5,13 +5,13 @@ import java.util.List;
 
 
 // Singleton
-public class Repository {
+public class TemplateRepo {
 
-    private static Repository sInstance = new Repository();
+    private static TemplateRepo sInstance = new TemplateRepo();
 
 
     // Private constructor
-    private Repository() {
+    private TemplateRepo() {
         mItems = new ArrayList<>();
         mItems.add("1");
         mItems.add("2");
@@ -20,8 +20,8 @@ public class Repository {
 
 
     // Factory method
-    public static Repository get() {
-        if(sInstance == null) sInstance = new Repository();
+    public static TemplateRepo get() {
+        if(sInstance == null) sInstance = new TemplateRepo();
         return sInstance;
     }
 

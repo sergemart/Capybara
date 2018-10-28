@@ -1,15 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="button_cornerRadius">24dp</dimen>
-    <dimen name="button_layout_margin">24dp</dimen>
-    <dimen name="button_padding">24dp</dimen>
-    <dimen name="button_textSize">30sp</dimen>
-    <dimen name="button$small_layout_margin">8dp</dimen>
-    <dimen name="button$small_padding">8dp</dimen>
-    <dimen name="button$small_textSize">10sp</dimen>
+    <dimen name="buttonLarge_cornerRadius">24dp</dimen>
+    <dimen name="buttonLarge_layout_margin">24dp</dimen>
+    <dimen name="buttonLarge_padding">24dp</dimen>
+    <dimen name="buttonLarge_textSize">30sp</dimen>
+    <dimen name="buttonSmall_layout_margin">8dp</dimen>
+    <dimen name="buttonSmall_padding">8dp</dimen>
+    <dimen name="buttonSmall_textSize">10sp</dimen>
+
     <dimen name="map_inset_margin">100dp</dimen>
-    <dimen name="textView_layout_margin">24dp</dimen>
-    <dimen name="textView_textSize">30sp</dimen>
-    <dimen name="textView$small_layout_margin">8dp</dimen>
-    <dimen name="textView$small_textSize">10sp</dimen>
+
+    <dimen name="imageViewThumbnail_height">40dp</dimen>
+    <dimen name="imageViewThumbnail_width">40dp</dimen>
+    <dimen name="imageViewThumbnail_marginEnd">10dp</dimen>
+
+    <dimen name="textViewLarge_layout_margin">24dp</dimen>
+    <dimen name="textViewLarge_textSize">30sp</dimen>
+    <dimen name="textViewMedium_textSize">20sp</dimen>
+    <dimen name="textViewMedium_layout_margin">8dp</dimen>
+    <dimen name="textViewSmall_layout_margin">8dp</dimen>
+    <dimen name="textViewSmall_textSize">10sp</dimen>
+    <dimen name="textViewTiny_layout_margin">8dp</dimen>
+    <dimen name="textViewTiny_textSize">10sp</dimen>
 </resources>

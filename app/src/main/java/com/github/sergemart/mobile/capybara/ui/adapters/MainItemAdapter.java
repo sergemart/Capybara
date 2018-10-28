@@ -1,4 +1,4 @@
-package com.github.sergemart.mobile.capybara.ui;
+package com.github.sergemart.mobile.capybara.ui.adapters;
 
 import android.content.Context;
 import androidx.annotation.NonNull;
@@ -13,14 +13,14 @@ import com.github.sergemart.mobile.capybara.R;
 import java.util.List;
 
 
-class MainItemAdapter extends RecyclerView.Adapter<MainItemAdapter.MainItemHolder> {
+public class MainItemAdapter extends RecyclerView.Adapter<MainItemAdapter.MainItemHolder> {
 
     private Context mContext;
     private LayoutInflater mLayoutInflater;
     private List<Object> mItems;                                                                    // collection to display; TBC
 
 
-    MainItemAdapter(Context context, List<Object> items) {                                          // TBC
+    public MainItemAdapter(Context context, List<Object> items) {                                          // TBC
         mContext = context;
         mLayoutInflater = LayoutInflater.from(context);
         mItems = items;                                                                             // TBC
@@ -33,7 +33,7 @@ class MainItemAdapter extends RecyclerView.Adapter<MainItemAdapter.MainItemHolde
     @NonNull
     @Override
     public MainItemHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View itemView = mLayoutInflater.inflate(R.layout.list_item, parent, false);
+        View itemView = mLayoutInflater.inflate(R.layout.list_item_contact, parent, false);
         return new MainItemHolder(itemView);
     }
 
@@ -64,7 +64,7 @@ class MainItemAdapter extends RecyclerView.Adapter<MainItemAdapter.MainItemHolde
 
         MainItemHolder(View view) {
             super(view);
-            itemAttribute = view.findViewById(R.id.textView_list_item_attribute);
+            itemAttribute = view.findViewById(R.id.textView_contact_name);
         }
     }
 

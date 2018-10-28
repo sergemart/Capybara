@@ -16,6 +16,7 @@
     <string name="action_cancel">Cancel</string>
     <string name="desc_page_background">Background Image</string>
     <string name="desc_front_image">Front Image</string>
+    <string name="desc_thumbnail_image">Thumbnail Image</string>
     <string name="title_google_signin_canceled">Google Sign-In Canceled</string>
     <string name="title_google_signin_failed">Google Sign-In Failed</string>
     <string name="msg_google_unknown_error">Unknown error while signing in to Google. The app cannot proceed. Retry?</string>

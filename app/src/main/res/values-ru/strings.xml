@@ -16,6 +16,7 @@
     <string name="action_cancel">Отменить</string>
     <string name="desc_page_background">Фоновый рисунок</string>
     <string name="desc_front_image">Рисунок</string>
+    <string name="desc_thumbnail_image">Маленькое фото</string>
     <string name="title_google_signin_canceled">Вход в аккаунт отменён</string>
     <string name="title_google_signin_failed">Не могу войти в ваш аккаунт Google</string>
     <string name="msg_google_unknown_error">Непонятно, что произошло. Попробовать ещё раз?</string>

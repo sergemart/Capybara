@@ -19,9 +19,10 @@ public final class Constants {
 
     // ----------------------- Request codes
 
-    public static final int REQUEST_CODE_SIGN_IN = 7001;
-    public static final int REQUEST_CODE_LOCATION_PERMISSIONS = 7002;
-    public static final int REQUEST_CODE_DIALOG_FRAGMENT = 7003;
+    public static final int REQUEST_CODE_SIGN_IN = 7010;
+    public static final int REQUEST_CODE_LOCATION_PERMISSIONS = 7020;
+    public static final int REQUEST_CODE_READ_CONTACTS_PERMISSIONS = 7030;
+    public static final int REQUEST_CODE_DIALOG_FRAGMENT = 7040;
 
 
     // ----------------------- Return codes
@@ -59,8 +60,11 @@ public final class Constants {
     // ----------------------- Permissions
 
     public static final String[] LOCATION_PERMISSIONS = new String[]{
-        android.Manifest.permission.ACCESS_FINE_LOCATION,
+        Manifest.permission.ACCESS_FINE_LOCATION,
         Manifest.permission.ACCESS_COARSE_LOCATION,
+    };
+    public static final String[] CONTACTS_PERMISSIONS = new String[]{
+        Manifest.permission.READ_CONTACTS,
     };
 
 
