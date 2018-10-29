@@ -14,7 +14,7 @@ public abstract class AbstractActivity
 {
 
     protected String TAG;
-    protected CompositeDisposable mInstanceDisposable;
+    protected CompositeDisposable pInstanceDisposable;
 
 
     // --------------------------- Override activity event handlers
@@ -28,7 +28,7 @@ public abstract class AbstractActivity
         TAG = this.getClass().getSimpleName();
         if (BuildConfig.DEBUG) Log.d(TAG, "onCreate() called");
 
-        mInstanceDisposable = new CompositeDisposable();
+        pInstanceDisposable = new CompositeDisposable();
     }
 
 
@@ -57,7 +57,7 @@ public abstract class AbstractActivity
      */
     @Override
     public void onDestroy() {
-        mInstanceDisposable.clear();
+        pInstanceDisposable.clear();
         if (BuildConfig.DEBUG) Log.d(TAG, "onDestroy() called, instance subscriptions disposed");
         super.onDestroy();
     }

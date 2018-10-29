@@ -5,6 +5,7 @@
     android:layout_height="match_parent">
 
     <ImageView
+        android:id="@+id/imageView_background"
         style="@style/App.ImageView.Background.ErrorPage"
         android:contentDescription="@string/desc_page_background"/>
 

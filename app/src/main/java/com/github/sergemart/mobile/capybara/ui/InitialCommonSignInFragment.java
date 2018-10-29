@@ -27,21 +27,18 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
-import io.reactivex.disposables.CompositeDisposable;
 
 
-public class InitialCommonSignInFragment extends Fragment {
+public class InitialCommonSignInFragment
+    extends AbstractFragment
+{
 
-    private static final String TAG = InitialCommonSignInFragment.class.getSimpleName();
     private static final String TAG_SIGN_IN_RETRY_DIALOG = "signInRetryDialog";
 
     private MaterialButton mSignInButton;
     private ProgressBar mProgressBar;
 
-    private CompositeDisposable mViewDisposable;
-    private CompositeDisposable mInstanceDisposable;
     private InitialCommonSharedViewModel mInitialCommonSharedViewModel;
     private Throwable mCause;
     private boolean mSignInStarted;
@@ -50,16 +47,12 @@ public class InitialCommonSignInFragment extends Fragment {
     // --------------------------- Override fragment lifecycle event handlers
 
     /**
-     * View-unrelated startup actions
+     * Instance creation actions
      */
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (BuildConfig.DEBUG) Log.d(TAG, "onCreate() called");
-        super.setRetainInstance(true);
 
-        mViewDisposable = new CompositeDisposable();
-        mInstanceDisposable = new CompositeDisposable();
         mInitialCommonSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(super.getActivity())).get(InitialCommonSharedViewModel.class);
         mSignInStarted = false;
 
@@ -75,6 +68,8 @@ public class InitialCommonSignInFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View fragmentView = inflater.inflate(R.layout.fragment_initial_common_sign_in, container, false);
+
+        pBackgroundImageView = fragmentView.findViewById(R.id.imageView_background);
         mSignInButton = fragmentView.findViewById(R.id.button_sign_in);
         mProgressBar = fragmentView.findViewById(R.id.progressBar_waiting);
 
@@ -102,28 +97,6 @@ public class InitialCommonSignInFragment extends Fragment {
     }
 
 
-    /**
-     * View clean-up
-     */
-    @Override
-    public void onDestroyView() {
-        mViewDisposable.clear();
-        if (BuildConfig.DEBUG) Log.d(TAG, "View-related subscriptions are disposed");
-        super.onDestroyView();
-    }
-
-
-    /**
-     * Instance clean-up
-     */
-    @Override
-    public void onDestroy() {
-        mInstanceDisposable.clear();
-        if (BuildConfig.DEBUG) Log.d(TAG, "View-unrelated subscriptions are disposed");
-        super.onDestroy();
-    }
-
-
     // --------------------------- Fragment lifecycle subroutines
 
     /**
@@ -132,7 +105,7 @@ public class InitialCommonSignInFragment extends Fragment {
     private void setInstanceListeners() {
 
         // Set a listener to the "SignInResult" event
-        mInstanceDisposable.add(CloudRepo.get().getSignInSubject().subscribe(event -> {
+        pInstanceDisposable.add(CloudRepo.get().getSignInSubject().subscribe(event -> {
             switch (event) {
                 case SUCCESS:
                     if (BuildConfig.DEBUG) Log.d(TAG, "SignInResult.SUCCESS event received; getting device token");
@@ -146,7 +119,7 @@ public class InitialCommonSignInFragment extends Fragment {
         }));
 
         // Set a listener to the "GetDeviceTokenResult" event
-        mInstanceDisposable.add(CloudRepo.get().getGetDeviceTokenSubject().subscribe(event -> {
+        pInstanceDisposable.add(CloudRepo.get().getGetDeviceTokenSubject().subscribe(event -> {
             switch (event) {
                 case SUCCESS:
                     if (BuildConfig.DEBUG) Log.d(TAG, "GetDeviceTokenResult.SUCCESS event received; publishing device token");
@@ -160,7 +133,7 @@ public class InitialCommonSignInFragment extends Fragment {
         }));
 
         // Set a listener to the "PublishDeviceTokenResult" event
-        mInstanceDisposable.add(CloudRepo.get().getPublishDeviceTokenSubject().subscribe(event -> {
+        pInstanceDisposable.add(CloudRepo.get().getPublishDeviceTokenSubject().subscribe(event -> {
             switch (event) {
                 case SUCCESS:
                     if (BuildConfig.DEBUG) Log.d(TAG, "PublishDeviceTokenResult.SUCCESS event received; emmitting CommonSetupFinished event");
@@ -182,7 +155,7 @@ public class InitialCommonSignInFragment extends Fragment {
     private void setViewListeners() {
 
         // Set a listener to the "Sign In" button
-        mViewDisposable.add(RxView.clicks(mSignInButton).subscribe(
+        pViewDisposable.add(RxView.clicks(mSignInButton).subscribe(
             event -> this.signIn()
         ));
 

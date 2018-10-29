@@ -58,7 +58,7 @@ public class InitialMajorActivity
     private void setInstanceListeners() {
 
         // Set a listener to the "MajorSetupFinished" event
-        mInstanceDisposable.add(mInitialMajorSharedViewModel.getMajorSetupFinishedSubject().subscribe(event -> {
+        pInstanceDisposable.add(mInitialMajorSharedViewModel.getMajorSetupFinishedSubject().subscribe(event -> {
             switch (event) {
                 case SUCCESS:
                     if (BuildConfig.DEBUG) Log.d(TAG, "MajorSetupFinished.SUCCESS event received; leaving nav graph");

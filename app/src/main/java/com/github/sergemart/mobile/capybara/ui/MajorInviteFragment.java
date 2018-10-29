@@ -1,12 +1,10 @@
 package com.github.sergemart.mobile.capybara.ui;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import com.github.sergemart.mobile.capybara.BuildConfig;
 import com.github.sergemart.mobile.capybara.Constants;
@@ -21,47 +19,37 @@ import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 
 
-public class MajorInviteFragment extends Fragment {
+public class MajorInviteFragment
+    extends AbstractFragment
+{
 
-    private static final String TAG = MajorInviteFragment.class.getSimpleName();
-
-    private ImageView mBackgroundImageView;
     private RecyclerView mContactsRecyclerView;
 
     private ContactsAdapter mContactsAdapter;
     private List<ContactsRepo.Contact> mContacts;
-    private CompositeDisposable mViewDisposable;
-    private CompositeDisposable mInstanceDisposable;
     private MajorSharedViewModel mMajorSharedViewModel;
 
 
     // --------------------------- Override fragment lifecycle event handlers
 
     /**
-     * View-unrelated startup actions
+     * Instance creation actions
      */
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (BuildConfig.DEBUG) Log.d(TAG, "onCreate() called");
-        super.setRetainInstance(true);
 
         mContacts = new ArrayList<>();                                                              // a stub used to init an adapter
         mContactsAdapter = new ContactsAdapter(Objects.requireNonNull( super.getActivity() ), mContacts);
-        mViewDisposable = new CompositeDisposable();
-        mInstanceDisposable = new CompositeDisposable();
         mMajorSharedViewModel = ViewModelProviders.of(Objects.requireNonNull( super.getActivity() )).get(MajorSharedViewModel.class);
 
         this.setInstanceListeners();
@@ -76,7 +64,8 @@ public class MajorInviteFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View fragmentView = inflater.inflate(R.layout.fragment_major_invite, container, false);
-        mBackgroundImageView = fragmentView.findViewById(R.id.imageView_background);
+
+        pBackgroundImageView = fragmentView.findViewById(R.id.imageView_background);
         mContactsRecyclerView = fragmentView.findViewById(R.id.recyclerView_contacts);
 
         // Set up the RecyclerView
@@ -107,29 +96,6 @@ public class MajorInviteFragment extends Fragment {
     }
 
 
-    /**
-     * View clean-up
-     */
-    @Override
-    public void onDestroyView() {
-        mViewDisposable.clear();
-        if (BuildConfig.DEBUG) Log.d(TAG, "View-related subscriptions are disposed");
-        mBackgroundImageView.setImageBitmap(null);                                                  // to avoid memory leak
-        super.onDestroyView();
-    }
-
-
-    /**
-     * Instance clean-up
-     */
-    @Override
-    public void onDestroy() {
-        mInstanceDisposable.clear();
-        if (BuildConfig.DEBUG) Log.d(TAG, "View-unrelated subscriptions are disposed");
-        super.onDestroy();
-    }
-
-
     // --------------------------- Fragment lifecycle subroutines
 
     /**
@@ -150,7 +116,7 @@ public class MajorInviteFragment extends Fragment {
 
     private void getContacts() {
         if (ContactsRepo.get().isPermissionGranted() ) {
-            mInstanceDisposable.add(ContactsRepo.get().getContactsObservable()
+            pInstanceDisposable.add(ContactsRepo.get().getContactsObservable()
                 .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(result -> {
                     switch (result) {
                         case SUCCESS:

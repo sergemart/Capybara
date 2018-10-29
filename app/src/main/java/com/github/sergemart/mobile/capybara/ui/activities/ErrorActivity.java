@@ -56,7 +56,7 @@ public class ErrorActivity
     private void setInstanceListeners() {
 
         // Set a listener to the "EXIT REQUESTED" event
-        mInstanceDisposable.add(mErrorSharedViewModel.getExitRequestedSubject().subscribe(
+        pInstanceDisposable.add(mErrorSharedViewModel.getExitRequestedSubject().subscribe(
             this::exitApplication
         ));
 

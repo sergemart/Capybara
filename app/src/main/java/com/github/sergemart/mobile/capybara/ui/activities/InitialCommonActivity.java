@@ -73,7 +73,7 @@ public class InitialCommonActivity
     private void setInstanceListeners() {
 
         // Set a listener to the "CommonSetupFinished" event
-        mInstanceDisposable.add(mInitialCommonSharedViewModel.getCommonSetupFinishedSubject().subscribe(event -> {
+        pInstanceDisposable.add(mInitialCommonSharedViewModel.getCommonSetupFinishedSubject().subscribe(event -> {
             switch (event) {
                 case SUCCESS:
                     if (BuildConfig.DEBUG) Log.d(TAG, "CommonSetupFinished.SUCCESS event received; leaving nav graph");

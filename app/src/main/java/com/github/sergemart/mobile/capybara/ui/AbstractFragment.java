@@ -2,15 +2,10 @@ package com.github.sergemart.mobile.capybara.ui;
 
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.github.sergemart.mobile.capybara.BuildConfig;
-import com.github.sergemart.mobile.capybara.R;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import io.reactivex.disposables.CompositeDisposable;
@@ -20,9 +15,9 @@ public abstract class AbstractFragment extends Fragment {
 
     protected String TAG;
 
-    private ImageView mBackgroundImageView;
-    protected CompositeDisposable mViewDisposable;
-    protected CompositeDisposable mInstanceDisposable;
+    ImageView pBackgroundImageView;
+    CompositeDisposable pViewDisposable;
+    CompositeDisposable pInstanceDisposable;
 
 
     // --------------------------- Override fragment lifecycle event handlers
@@ -37,21 +32,8 @@ public abstract class AbstractFragment extends Fragment {
         if (BuildConfig.DEBUG) Log.d(TAG, "onCreate() called");
         super.setRetainInstance(true);
 
-        mViewDisposable = new CompositeDisposable();
-        mInstanceDisposable = new CompositeDisposable();
-    }
-
-
-    /**
-     * View-related startup actions
-     * @return Inflated content view of the fragment
-     */
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View fragmentView = inflater.inflate(R.layout.fragment_major_invite, container, false);
-        mBackgroundImageView = fragmentView.findViewById(R.id.imageView_background);
-        return null;
+        pViewDisposable = new CompositeDisposable();
+        pInstanceDisposable = new CompositeDisposable();
     }
 
 
@@ -60,9 +42,9 @@ public abstract class AbstractFragment extends Fragment {
      */
     @Override
     public void onDestroyView() {
-        mViewDisposable.clear();
+        pViewDisposable.clear();
         if (BuildConfig.DEBUG) Log.d(TAG, "onDestroyView() called, view-related subscriptions disposed");
-        if (mBackgroundImageView != null )mBackgroundImageView.setImageBitmap(null);                // to avoid memory leak
+        if (pBackgroundImageView != null) pBackgroundImageView.setImageBitmap(null);                // to avoid memory leak
         super.onDestroyView();
     }
 
@@ -72,9 +54,10 @@ public abstract class AbstractFragment extends Fragment {
      */
     @Override
     public void onDestroy() {
-        mInstanceDisposable.clear();
-        if (BuildConfig.DEBUG) Log.d(TAG, "onDestroy() called, instance subscriptions are disposed");
+        pInstanceDisposable.clear();
+        if (BuildConfig.DEBUG) Log.d(TAG, "onDestroy() called, instance subscriptions disposed");
         super.onDestroy();
     }
+
 
 }
