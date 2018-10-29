@@ -6,10 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".ui.MinorDummyFragment">
 
-    <ImageView
-        style="@style/App.ImageView.Background"
-        android:contentDescription="@string/desc_page_background"/>
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

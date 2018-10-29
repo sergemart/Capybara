@@ -148,9 +148,16 @@ public class MajorInviteFragment extends Fragment {
         if (ContactsRepo.get().isPermissionGranted() ) {
             mInstanceDisposable.add(ContactsRepo.get().getContactsObservable()
                 .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(result -> {
-                    mContacts.clear();
-                    mContacts.addAll(result);
-                    mContactsAdapter.notifyDataSetChanged();
+                    switch (result) {
+                        case SUCCESS:
+                            mContacts.clear();
+                            mContacts.addAll((List<ContactsRepo.Contact>)result.getData());
+                            mContactsAdapter.notifyDataSetChanged();
+                            break;
+                        case FAILURE:
+                            break;
+                        default:
+                    }
                 })
             );
         } else {

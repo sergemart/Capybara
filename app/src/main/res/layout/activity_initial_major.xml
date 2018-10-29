@@ -5,6 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <ImageView
+        style="@style/App.ImageView.Background"
+        android:contentDescription="@string/desc_page_background"/>
+
     <fragment
         android:id="@+id/nav_host_fragment_initial_major"
         android:name="androidx.navigation.fragment.NavHostFragment"
