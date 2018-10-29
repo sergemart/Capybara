@@ -1,4 +1,4 @@
-package com.github.sergemart.mobile.capybara.ui;
+package com.github.sergemart.mobile.capybara.ui.fragments;
 
 import android.location.Location;
 import android.os.Bundle;
@@ -21,12 +21,13 @@ import androidx.fragment.app.Fragment;
 import io.reactivex.disposables.CompositeDisposable;
 
 
-public class MinorDummyFragment extends Fragment {
+public class MajorDummyFragment extends Fragment {
 
-    private static final String TAG = MinorDummyFragment.class.getSimpleName();
+    private static final String TAG = MajorDummyFragment.class.getSimpleName();
 
-    private MaterialButton mSendMyLocationButton;
-    private MaterialButton mJoinFamilyButton;
+    private MaterialButton mCreateFamilyMemberButton;
+    private MaterialButton mDeleteFamilyMemberButton;
+    private MaterialButton mSendInviteButton;
 
     private Location mCurrentLocation;
     private CompositeDisposable mViewDisposable;
@@ -42,8 +43,8 @@ public class MinorDummyFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        super.setRetainInstance(true);
         if (BuildConfig.DEBUG) Log.d(TAG, "onCreate() called");
+        super.setRetainInstance(true);
 
         mViewDisposable = new CompositeDisposable();
         mInstanceDisposable = new CompositeDisposable();
@@ -59,10 +60,11 @@ public class MinorDummyFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View fragmentView = inflater.inflate(R.layout.fragment_minor_dummy, container, false);
+        View fragmentView = inflater.inflate(R.layout.fragment_major_dummy, container, false);
 
-        mSendMyLocationButton = fragmentView.findViewById(R.id.button_send_my_location);
-        mJoinFamilyButton = fragmentView.findViewById(R.id.button_join_family);
+        mDeleteFamilyMemberButton = fragmentView.findViewById(R.id.button_delete_family_member);
+        mCreateFamilyMemberButton = fragmentView.findViewById(R.id.button_create_family_member);
+        mSendInviteButton = fragmentView.findViewById(R.id.button_send_invite);
 
         this.setViewListeners();
         return fragmentView;
@@ -122,14 +124,19 @@ public class MinorDummyFragment extends Fragment {
      */
     private void setViewListeners() {
 
-        // Set a listener to the "Send My Location" button
+        // Set a listener to the "Delete family member" button
         mViewDisposable.add(
-            RxView.clicks(mSendMyLocationButton).subscribe(event -> this.sendMyLocation())
+            RxView.clicks(mDeleteFamilyMemberButton).subscribe(event -> this.deleteFamilyMember())
         );
 
-        // Set a listener to the "Join The Family" button
+        // Set a listener to the "Create family member" button
         mViewDisposable.add(
-            RxView.clicks(mJoinFamilyButton).subscribe(event -> this.joinFamily())
+            RxView.clicks(mCreateFamilyMemberButton).subscribe(event -> this.createFamilyMember())
+        );
+
+        // Set a listener to the "Send invite" button
+        mViewDisposable.add(
+            RxView.clicks(mSendInviteButton).subscribe(event -> this.sendInvite())
         );
 
     }
@@ -140,10 +147,10 @@ public class MinorDummyFragment extends Fragment {
      */
     private void setInstanceListeners() {
 
-        // Set a listener to the "GOT A LOCATION" event
-        mInstanceDisposable.add(GeoRepo.get().getLocationSubject()
-            .subscribe(location -> mCurrentLocation = location)
-        );
+        // Set a listener to the "CreateFamily" result
+        mInstanceDisposable.add(CloudRepo.get().getCreateFamilySubject().subscribe(
+            event -> {}
+        ));
 
     }
 
@@ -161,19 +168,34 @@ public class MinorDummyFragment extends Fragment {
 
 
     /**
-     * Update the device token
+     * Create family data
      */
-    private void updateDeviceToken() {
-        CloudRepo.get().publishDeviceTokenAsync();
+    private void createFamily() {
+        CloudRepo.get().createFamilyAsync();
     }
 
 
+    /**
+     * Create family member
+     */
+    private void createFamilyMember() {
+        CloudRepo.get().createFamilyMemberAsync("serge.martynov@gmail.com");
+    }
+
 
     /**
-     * Join the family
+     * Create family member
      */
-    private void joinFamily() {
-        CloudRepo.get().joinFamilyAsync("serge.martynov@gmail.com");
+    private void deleteFamilyMember() {
+        CloudRepo.get().deleteFamilyMemberAsync("serge.martynov@gmail.com");
+    }
+
+
+    /**
+     * Create family member
+     */
+    private void sendInvite() {
+        CloudRepo.get().sendInviteAsync("serge.martynov@gmail.com");
     }
 
 

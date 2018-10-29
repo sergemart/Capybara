@@ -1,4 +1,4 @@
-package com.github.sergemart.mobile.capybara.ui;
+package com.github.sergemart.mobile.capybara.ui.fragments;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;

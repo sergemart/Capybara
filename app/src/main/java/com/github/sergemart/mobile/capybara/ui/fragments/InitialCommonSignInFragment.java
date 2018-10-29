@@ -1,4 +1,4 @@
-package com.github.sergemart.mobile.capybara.ui;
+package com.github.sergemart.mobile.capybara.ui.fragments;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -17,7 +17,9 @@ import com.github.sergemart.mobile.capybara.R;
 import com.github.sergemart.mobile.capybara.data.CloudRepo;
 import com.github.sergemart.mobile.capybara.data.ResRepo;
 import com.github.sergemart.mobile.capybara.events.GenericResult;
-import com.github.sergemart.mobile.capybara.viewmodel.InitialMajorSharedViewModel;
+import com.github.sergemart.mobile.capybara.viewmodel.InitialCommonSharedViewModel;
+import com.google.android.material.button.MaterialButton;
+import com.jakewharton.rxbinding2.view.RxView;
 
 import java.util.Objects;
 
@@ -28,16 +30,18 @@ import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.ViewModelProviders;
 
 
-public class InitialMajorCreateFamilyFragment
+public class InitialCommonSignInFragment
     extends AbstractFragment
 {
 
-    private static final String TAG_CREATE_FAMILY_RETRY_DIALOG = "createFamilyRetryDialog";
+    private static final String TAG_SIGN_IN_RETRY_DIALOG = "signInRetryDialog";
 
+    private MaterialButton mSignInButton;
     private ProgressBar mProgressBar;
 
-    private InitialMajorSharedViewModel mInitialMajorSharedViewModel;
+    private InitialCommonSharedViewModel mInitialCommonSharedViewModel;
     private Throwable mCause;
+    private boolean mSignInStarted;
 
 
     // --------------------------- Override fragment lifecycle event handlers
@@ -49,7 +53,8 @@ public class InitialMajorCreateFamilyFragment
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mInitialMajorSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(super.getActivity())).get(InitialMajorSharedViewModel.class);
+        mInitialCommonSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(super.getActivity())).get(InitialCommonSharedViewModel.class);
+        mSignInStarted = false;
 
         this.setInstanceListeners();
     }
@@ -62,10 +67,13 @@ public class InitialMajorCreateFamilyFragment
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View fragmentView = inflater.inflate(R.layout.fragment_initial_major_create_family, container, false);
+        View fragmentView = inflater.inflate(R.layout.fragment_initial_common_sign_in, container, false);
 
         pBackgroundImageView = fragmentView.findViewById(R.id.imageView_background);
+        mSignInButton = fragmentView.findViewById(R.id.button_sign_in);
         mProgressBar = fragmentView.findViewById(R.id.progressBar_waiting);
+
+        this.indicateSignInInProgress();
 
         this.setViewListeners();
         return fragmentView;
@@ -80,9 +88,9 @@ public class InitialMajorCreateFamilyFragment
         switch(requestCode) {
             case Constants.REQUEST_CODE_DIALOG_FRAGMENT:
                 if (resultCode == Activity.RESULT_OK) {                                             // retry
-                    this.createFamily();
+                    this.signIn();
                 } else if (resultCode == Activity.RESULT_CANCELED) {                                // fatal
-                    mInitialMajorSharedViewModel.getMajorSetupFinishedSubject().onNext(GenericResult.FAILURE.setException(mCause));
+                    mInitialCommonSharedViewModel.getCommonSetupFinishedSubject().onNext(GenericResult.FAILURE.setException(mCause));
                 }
                 break;
         }
@@ -96,28 +104,48 @@ public class InitialMajorCreateFamilyFragment
      */
     private void setInstanceListeners() {
 
-        // Set a listener to the "CreateFamilySubject" event
-        pInstanceDisposable.add(CloudRepo.get().getCreateFamilySubject().subscribe(event -> {
+        // Set a listener to the "SignInResult" event
+        pInstanceDisposable.add(CloudRepo.get().getSignInSubject().subscribe(event -> {
             switch (event) {
-                case CREATED:
-                    if (BuildConfig.DEBUG) Log.d(TAG, "CreateFamilyResult.CREATED event received; emitting MajorSetupFinished event");
-                    mInitialMajorSharedViewModel.getMajorSetupFinishedSubject().onNext(GenericResult.SUCCESS);
+                case SUCCESS:
+                    if (BuildConfig.DEBUG) Log.d(TAG, "SignInResult.SUCCESS event received; getting device token");
+                    this.getDeviceToken();
                     break;
-                case EXIST:
-                    if (BuildConfig.DEBUG) Log.d(TAG, "CreateFamilyResult.EXIST event received; emitting MajorSetupFinished event");
-                    mInitialMajorSharedViewModel.getMajorSetupFinishedSubject().onNext(GenericResult.SUCCESS);
-                    break;
-                case EXIST_MORE_THAN_ONE:
-                    if (BuildConfig.DEBUG) Log.d(TAG, "CreateFamilyResult.EXIST_MORE_THAN_ONE event received; emitting MajorSetupFinished event");
+                case FAILURE:
+                    if (BuildConfig.DEBUG) Log.d(TAG, "SignInResult.FAILURE event received; invoking retry dialog");
                     mCause = event.getException();
-                    mInitialMajorSharedViewModel.getMajorSetupFinishedSubject().onNext(GenericResult.FAILURE.setException(mCause));
-                    break;
-                case BACKEND_ERROR:
-                    if (BuildConfig.DEBUG) Log.d(TAG, "CreateFamilyResult.BACKEND_ERROR event received; invoking retry dialog");
-                    mCause = event.getException();
-                    this.showCreateFamilyRetryDialog(mCause);
+                    this.showSigninRetryDialog(mCause);
             }
         }));
+
+        // Set a listener to the "GetDeviceTokenResult" event
+        pInstanceDisposable.add(CloudRepo.get().getGetDeviceTokenSubject().subscribe(event -> {
+            switch (event) {
+                case SUCCESS:
+                    if (BuildConfig.DEBUG) Log.d(TAG, "GetDeviceTokenResult.SUCCESS event received; publishing device token");
+                    this.publishDeviceToken();
+                    break;
+                case FAILURE:
+                    if (BuildConfig.DEBUG) Log.d(TAG, "GetDeviceTokenResult.FAILURE event received; invoking retry dialog");
+                    mCause = event.getException();
+                    this.showSigninRetryDialog(mCause);
+            }
+        }));
+
+        // Set a listener to the "PublishDeviceTokenResult" event
+        pInstanceDisposable.add(CloudRepo.get().getPublishDeviceTokenSubject().subscribe(event -> {
+            switch (event) {
+                case SUCCESS:
+                    if (BuildConfig.DEBUG) Log.d(TAG, "PublishDeviceTokenResult.SUCCESS event received; emmitting CommonSetupFinished event");
+                    mInitialCommonSharedViewModel.getCommonSetupFinishedSubject().onNext(GenericResult.SUCCESS);
+                    break;
+                case FAILURE:
+                    if (BuildConfig.DEBUG) Log.d(TAG, "PublishDeviceTokenResult.FAILURE event received; invoking retry dialog");
+                    mCause = event.getException();
+                    this.showSigninRetryDialog(mCause);
+            }
+        }));
+
     }
 
 
@@ -125,31 +153,64 @@ public class InitialMajorCreateFamilyFragment
      * Set listeners to view-related events
      */
     private void setViewListeners() {
+
+        // Set a listener to the "Sign In" button
+        pViewDisposable.add(RxView.clicks(mSignInButton).subscribe(
+            event -> this.signIn()
+        ));
+
     }
 
 
     // --------------------------- Use cases
 
     /**
-     * Create family data on backend
+     * Sign in with Google account
      */
-    private void createFamily() {
-        mProgressBar.setVisibility(View.VISIBLE);
-        CloudRepo.get().createFamilyAsync();
+    private void signIn() {
+        mSignInStarted = true;
+        this.indicateSignInInProgress();
+        CloudRepo.get().sendSignInIntent(Objects.requireNonNull( super.getActivity() ));
     }
 
 
     /**
-     * Show create family retry dialog
+     * Indicate that sign-in process is started and in progress
      */
-    private void showCreateFamilyRetryDialog(Throwable cause) {
-        CreateFamilyRetryDialogFragment.newInstance(cause).show(Objects.requireNonNull(super.getChildFragmentManager()), TAG_CREATE_FAMILY_RETRY_DIALOG);
+    private void indicateSignInInProgress() {
+        if (!mSignInStarted) return;
+        mSignInButton.setVisibility(View.INVISIBLE);
+        mProgressBar.setVisibility(View.VISIBLE);
     }
 
 
-    // --------------------------- Inner classes: Create family retry dialog fragment
+    /**
+     * Show sign-in retry dialog
+     */
+    private void showSigninRetryDialog(Throwable cause) {
+        SignInRetryDialogFragment.newInstance(cause).show(Objects.requireNonNull(super.getChildFragmentManager()), TAG_SIGN_IN_RETRY_DIALOG);
+    }
 
-    public static class CreateFamilyRetryDialogFragment extends DialogFragment {
+
+    /**
+     * Get a Firebase Messaging device token
+     */
+    private void getDeviceToken() {
+        CloudRepo.get().getTokenAsync();
+    }
+
+
+    /**
+     * Publish the Firebase Messaging device token
+     */
+    private void publishDeviceToken() {
+        CloudRepo.get().publishDeviceTokenAsync();
+    }
+
+
+    // --------------------------- Inner classes: Sign-in retry dialog fragment
+
+    public static class SignInRetryDialogFragment extends DialogFragment {
 
         private Throwable mCause;
 
@@ -180,9 +241,9 @@ public class InitialMajorCreateFamilyFragment
         @Override
         public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
             AlertDialog alertDialog = new AlertDialog.Builder(Objects.requireNonNull( super.getActivity() ))
-                .setTitle(ResRepo.get().getCreateFamilyRetryDialogTitleR(mCause))
-                .setMessage(ResRepo.get().getCreateFamilyRetryDialogMessageR(mCause))
-                .setIcon(ResRepo.get().getCreateFamilyRetryDialogIconR(mCause))
+                .setTitle(ResRepo.get().getSignInRetryDialogTitleR(mCause))
+                .setMessage(ResRepo.get().getSignInRetryDialogMessageR(mCause))
+                .setIcon(ResRepo.get().getSignInRetryDialogIconR(mCause))
                 .setPositiveButton(R.string.action_retry, (dialog, button) ->
                     Objects.requireNonNull(super.getParentFragment()).onActivityResult(             // use Fragment#onActivityResult() as a callback
                         Constants.REQUEST_CODE_DIALOG_FRAGMENT,
@@ -227,8 +288,8 @@ public class InitialMajorCreateFamilyFragment
         /**
          * The dialog fragment factory
          */
-        static CreateFamilyRetryDialogFragment newInstance(Throwable cause) {
-            CreateFamilyRetryDialogFragment instance = new CreateFamilyRetryDialogFragment();
+        static SignInRetryDialogFragment newInstance(Throwable cause) {
+            SignInRetryDialogFragment instance = new SignInRetryDialogFragment();
             instance.setCause(cause);
             return instance;
         }

@@ -7,12 +7,12 @@
 
     <fragment
         android:id="@+id/majorLocatorFragment"
-        android:name="com.github.sergemart.mobile.capybara.ui.MajorLocatorFragment"
+        android:name="com.github.sergemart.mobile.capybara.ui.fragments.MajorLocatorFragment"
         android:label="fragment_major_locator"
         tools:layout="@layout/fragment_major_locator" />
     <fragment
         android:id="@+id/majorDummyFragment"
-        android:name="com.github.sergemart.mobile.capybara.ui.MajorDummyFragment"
+        android:name="com.github.sergemart.mobile.capybara.ui.fragments.MajorDummyFragment"
         android:label="fragment_major_dummy"
         tools:layout="@layout/fragment_major_dummy" >
         <action
@@ -21,7 +21,7 @@
     </fragment>
     <fragment
         android:id="@+id/majorInviteFragment"
-        android:name="com.github.sergemart.mobile.capybara.ui.MajorInviteFragment"
+        android:name="com.github.sergemart.mobile.capybara.ui.fragments.MajorInviteFragment"
         android:label="fragment_major_invite"
         tools:layout="@layout/fragment_major_invite" />
 

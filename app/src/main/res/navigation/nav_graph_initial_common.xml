@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/initialCommonSetupFragment"
-        android:name="com.github.sergemart.mobile.capybara.ui.InitialCommonSetupFragment"
+        android:name="com.github.sergemart.mobile.capybara.ui.fragments.InitialCommonSetupFragment"
         android:label="fragment_initial_common_setup"
         tools:layout="@layout/fragment_initial_common_setup" >
         <action
@@ -16,7 +16,7 @@
     </fragment>
     <fragment
         android:id="@+id/initialCommonSignInFragment"
-        android:name="com.github.sergemart.mobile.capybara.ui.InitialCommonSignInFragment"
+        android:name="com.github.sergemart.mobile.capybara.ui.fragments.InitialCommonSignInFragment"
         android:label="fragment_initial_common_sign_in"
         tools:layout="@layout/fragment_initial_common_sign_in" />
 </navigation>
