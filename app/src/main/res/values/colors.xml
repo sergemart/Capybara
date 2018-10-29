@@ -3,7 +3,7 @@
     <color name="colorPrimary">#18ba26</color>
     <color name="colorPrimaryDark">#128e1d</color>
     <color name="colorAccent">#6295f4</color>
-    <color name="colorDefaultPageBackground">#69f086</color>
-    <color name="colorErrorPageBackground">#ff9e80</color>
+    <color name="colorDefaultPageBackground">#45a949</color>
+    <color name="colorErrorPageBackground">#da625f</color>
     <color name="colorText">#ffffff</color>
 </resources>
