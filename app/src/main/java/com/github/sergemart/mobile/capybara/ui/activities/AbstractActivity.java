@@ -20,7 +20,7 @@ public abstract class AbstractActivity
     // --------------------------- Override activity event handlers
 
     /**
-     * Instance start-up
+     * Instance creation actions
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,11 +32,33 @@ public abstract class AbstractActivity
     }
 
 
-    // Instance clean-up
+    /**
+     * Getting visible
+     */
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (BuildConfig.DEBUG) Log.d(TAG, "onStart() called");
+    }
+
+
+    /**
+     * Getting hidden
+     */
+    @Override
+    protected void onStop() {
+        if (BuildConfig.DEBUG) Log.d(TAG, "onStop() called");
+        super.onStop();
+    }
+
+
+    /**
+     *  Instance clean-up actions
+     */
     @Override
     public void onDestroy() {
         mInstanceDisposable.clear();
-        if (BuildConfig.DEBUG) Log.d(TAG, "Instance subscriptions are disposed");
+        if (BuildConfig.DEBUG) Log.d(TAG, "onDestroy() called, instance subscriptions disposed");
         super.onDestroy();
     }
 

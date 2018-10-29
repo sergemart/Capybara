@@ -23,12 +23,12 @@ public class ErrorActivity
 
 
     /**
-     * Start-up actions
+     * Instance creation actions
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_error);
+        super.setContentView(R.layout.activity_error);
 
         // Publish the error cause
         mErrorSharedViewModel = ViewModelProviders.of(this).get(ErrorSharedViewModel.class);
@@ -50,6 +50,9 @@ public class ErrorActivity
 
     // --------------------------- Activity lifecycle subroutines
 
+    /**
+     * Set instance listeners
+     */
     private void setInstanceListeners() {
 
         // Set a listener to the "EXIT REQUESTED" event
@@ -73,7 +76,9 @@ public class ErrorActivity
 
     // --------------------------- Static encapsulation-leveraging methods
 
-    // Create properly configured intent intended to invoke this activity
+    /**
+     * Create properly configured intent intended to invoke this activity
+     */
     public static Intent newIntent(Context packageContext) {
         Intent intent = new Intent(packageContext, ErrorActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

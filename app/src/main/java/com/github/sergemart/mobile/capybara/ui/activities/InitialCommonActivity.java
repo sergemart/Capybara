@@ -21,21 +21,18 @@ public class InitialCommonActivity
     extends AbstractActivity
 {
 
-    private static final String TAG = InitialCommonActivity.class.getSimpleName();
-
     private InitialCommonSharedViewModel mInitialCommonSharedViewModel;
 
 
     // --------------------------- Override activity event handlers
 
     /**
-     * Start-up actions
+     * Instance creation actions
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (BuildConfig.DEBUG) Log.d(TAG, "onCreate() called");
-        setContentView(R.layout.activity_initial_common);
+        super.setContentView(R.layout.activity_initial_common);
 
         mInitialCommonSharedViewModel = ViewModelProviders.of(this).get(InitialCommonSharedViewModel.class);
 
@@ -49,8 +46,6 @@ public class InitialCommonActivity
     @Override
     protected void onStart() {
         super.onStart();
-        if (BuildConfig.DEBUG) Log.d(TAG, "onStart() called");
-
         // Leave the common initial graph if the APP IS SET UP and the USER IS AUTHENTICATED.
         // Otherwise implicitly delegate control to the local nav AAC
         if ( PreferenceStore.getStoredIsAppModeSet() && CloudRepo.get().isAuthenticated() ) this.leaveNavGraph();
@@ -72,6 +67,9 @@ public class InitialCommonActivity
 
     // --------------------------- Activity lifecycle subroutines
 
+    /**
+     * Set instance listeners
+     */
     private void setInstanceListeners() {
 
         // Set a listener to the "CommonSetupFinished" event
