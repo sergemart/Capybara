@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.github.sergemart.mobile.capybara.BuildConfig;
 import com.github.sergemart.mobile.capybara.Constants;
@@ -36,6 +37,7 @@ public class MajorInviteFragment extends Fragment {
 
     private static final String TAG = MajorInviteFragment.class.getSimpleName();
 
+    private ImageView mBackgroundImageView;
     private RecyclerView mContactsRecyclerView;
 
     private ContactsAdapter mContactsAdapter;
@@ -74,6 +76,7 @@ public class MajorInviteFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View fragmentView = inflater.inflate(R.layout.fragment_major_invite, container, false);
+        mBackgroundImageView = fragmentView.findViewById(R.id.imageView_background);
         mContactsRecyclerView = fragmentView.findViewById(R.id.recyclerView_contacts);
 
         // Set up the RecyclerView
@@ -111,6 +114,7 @@ public class MajorInviteFragment extends Fragment {
     public void onDestroyView() {
         mViewDisposable.clear();
         if (BuildConfig.DEBUG) Log.d(TAG, "View-related subscriptions are disposed");
+        mBackgroundImageView.setImageBitmap(null);                                                  // to avoid memory leak
         super.onDestroyView();
     }
 

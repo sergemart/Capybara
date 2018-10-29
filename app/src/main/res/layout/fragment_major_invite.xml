@@ -7,6 +7,11 @@
     android:layout_height="match_parent"
     tools:context=".ui.MajorInviteFragment">
 
+    <ImageView
+        android:id="@+id/imageView_background"
+        style="@style/App.ImageView.Background"
+        android:contentDescription="@string/desc_page_background"/>
+
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">

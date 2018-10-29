@@ -6,6 +6,10 @@
     android:layout_height="match_parent"
     tools:context=".ui.InitialCommonSignInFragment">
 
+    <ImageView
+        style="@style/App.ImageView.Background"
+        android:contentDescription="@string/desc_page_background"/>
+
     <ProgressBar
         android:id="@+id/progressBar_waiting"
         android:layout_width="match_parent"
