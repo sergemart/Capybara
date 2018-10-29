@@ -24,7 +24,9 @@ import androidx.annotation.Nullable;
 import io.reactivex.disposables.CompositeDisposable;
 
 
-public class MajorLocatorFragment extends SupportMapFragment {
+public class MajorLocatorFragment
+    extends SupportMapFragment
+{
 
     private static final String TAG = MajorLocatorFragment.class.getSimpleName();
 
