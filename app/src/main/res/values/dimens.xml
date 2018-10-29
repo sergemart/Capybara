@@ -8,6 +8,11 @@
     <dimen name="buttonSmall_padding">8dp</dimen>
     <dimen name="buttonSmall_textSize">10sp</dimen>
 
+    <dimen name="layoutListItem_paddingTop">10dp</dimen>
+    <dimen name="layoutListItem_paddingBottom">10dp</dimen>
+    <dimen name="layoutListItem_paddingStart">16dp</dimen>
+    <dimen name="layoutListItem_paddingEnd">16dp</dimen>
+
     <dimen name="map_inset_margin">100dp</dimen>
 
     <dimen name="imageViewThumbnail_height">40dp</dimen>

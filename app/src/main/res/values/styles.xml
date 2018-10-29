@@ -27,6 +27,24 @@
         <item name="android:background">@color/colorErrorPageBackground</item>
     </style>
 
+    <!-- ========================== Layout styles -->
+
+    <style name="App.Layout" parent="android:Widget">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+
+    <style name="App.Layout.ListItem">
+        <item name="android:paddingTop">@dimen/layoutListItem_paddingTop</item>
+        <item name="android:paddingBottom">@dimen/layoutListItem_paddingBottom</item>
+        <item name="android:paddingStart">@dimen/layoutListItem_paddingStart</item>
+        <item name="android:paddingEnd">@dimen/layoutListItem_paddingEnd</item>
+        <item name="android:background">?attr/selectableItemBackground</item>
+        <item name="android:focusable">true</item>
+        <item name="android:clickable">true</item>
+    </style>
+
 
     <!-- ========================== Button styles -->
 
@@ -65,6 +83,18 @@
 
     <style name="App.TextView.Small">
         <item name="android:layout_margin">@dimen/textViewSmall_layout_margin</item>
+        <item name="android:textSize">@dimen/textViewSmall_textSize</item>
+    </style>
+
+
+    <style name="App.TextView.ListItem">
+        <item name="android:layout_margin">@dimen/textViewSmall_layout_margin</item>
+        <item name="android:textAlignment">textStart</item>
+        <item name="android:textSize">@dimen/textViewLarge_textSize</item>
+    </style>
+
+
+    <style name="App.TextView.ListItem.Small">
         <item name="android:textSize">@dimen/textViewSmall_textSize</item>
     </style>
 

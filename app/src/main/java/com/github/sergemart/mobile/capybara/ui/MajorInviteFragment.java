@@ -1,5 +1,6 @@
 package com.github.sergemart.mobile.capybara.ui;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,7 +21,10 @@ import java.util.Objects;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -53,10 +57,10 @@ public class MajorInviteFragment extends Fragment {
         super.setRetainInstance(true);
 
         mContacts = new ArrayList<>();                                                              // a stub used to init an adapter
-        mContactsAdapter = new ContactsAdapter(this.getActivity(), mContacts);
+        mContactsAdapter = new ContactsAdapter(Objects.requireNonNull( super.getActivity() ), mContacts);
         mViewDisposable = new CompositeDisposable();
         mInstanceDisposable = new CompositeDisposable();
-        mMajorSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(super.getActivity())).get(MajorSharedViewModel.class);
+        mMajorSharedViewModel = ViewModelProviders.of(Objects.requireNonNull( super.getActivity() )).get(MajorSharedViewModel.class);
 
         this.setInstanceListeners();
     }
@@ -73,7 +77,9 @@ public class MajorInviteFragment extends Fragment {
         mContactsRecyclerView = fragmentView.findViewById(R.id.recyclerView_contacts);
 
         // Set up the RecyclerView
-        mContactsRecyclerView.setLayoutManager(new LinearLayoutManager( this.getActivity() ));
+        mContactsRecyclerView.setLayoutManager(new LinearLayoutManager(Objects.requireNonNull( super.getActivity() )));
+        mContactsRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        mContactsRecyclerView.addItemDecoration(new DividerItemDecoration(Objects.requireNonNull( super.getActivity() ), DividerItemDecoration.VERTICAL));
         mContactsRecyclerView.setAdapter(mContactsAdapter);
 
         this.setViewListeners();

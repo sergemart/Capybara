@@ -15,6 +15,7 @@ import java.util.Objects;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProviders;
 import io.reactivex.disposables.CompositeDisposable;
 
@@ -41,7 +42,7 @@ public class TemplateFragment extends Fragment {
 
         mViewDisposable = new CompositeDisposable();
         mInstanceDisposable = new CompositeDisposable();
-        mMajorSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(super.getActivity())).get(MajorSharedViewModel.class);
+        mMajorSharedViewModel = ViewModelProviders.of(Objects.requireNonNull( super.getActivity() )).get(MajorSharedViewModel.class);
 
         this.setInstanceListeners();
     }
