@@ -1,4 +1,4 @@
-package com.github.sergemart.mobile.capybara.ui;
+package com.github.sergemart.mobile.capybara.ui.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,9 +14,7 @@ import com.github.sergemart.mobile.capybara.viewmodel.InitialCommonSharedViewMod
 
 import java.lang.ref.WeakReference;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProviders;
-import io.reactivex.disposables.CompositeDisposable;
 
 
 public class InitialCommonActivity

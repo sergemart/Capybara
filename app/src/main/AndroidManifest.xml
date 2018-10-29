@@ -15,16 +15,16 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".ui.InitialCommonActivity">
+        <activity android:name=".ui.activities.InitialCommonActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.MajorActivity" />
-        <activity android:name=".ui.MinorActivity" />
-        <activity android:name=".ui.ErrorActivity" />
-        <activity android:name=".ui.InitialMajorActivity" />
+        <activity android:name=".ui.activities.MajorActivity" />
+        <activity android:name=".ui.activities.MinorActivity" />
+        <activity android:name=".ui.activities.ErrorActivity" />
+        <activity android:name=".ui.activities.InitialMajorActivity" />
 
         <service android:name=".service.CloudMessagingService"
             android:stopWithTask="true"

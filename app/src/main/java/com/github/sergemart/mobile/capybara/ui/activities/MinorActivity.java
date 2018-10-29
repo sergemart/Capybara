@@ -1,4 +1,4 @@
-package com.github.sergemart.mobile.capybara.ui;
+package com.github.sergemart.mobile.capybara.ui.activities;
 
 import android.content.Context;
 import android.content.Intent;
@@ -11,11 +11,11 @@ import com.github.sergemart.mobile.capybara.R;
 import androidx.appcompat.app.AppCompatActivity;
 
 
-public class MajorActivity
+public class MinorActivity
     extends AppCompatActivity
 {
 
-    private static final String TAG = MajorActivity.class.getSimpleName();
+    private static final String TAG = MinorActivity.class.getSimpleName();
 
 
     // --------------------------- Override activity event handlers
@@ -24,7 +24,7 @@ public class MajorActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (BuildConfig.DEBUG) Log.d(TAG, "onCreate() called");
-        setContentView(R.layout.activity_major);
+        setContentView(R.layout.activity_minor);
     }
 
 
@@ -43,7 +43,7 @@ public class MajorActivity
 
     // Create properly configured intent intended to invoke this activity
     public static Intent newIntent(Context packageContext) {
-        return new Intent(packageContext, MajorActivity.class);
+        return new Intent(packageContext, MinorActivity.class);
     }
 
 }

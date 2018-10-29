@@ -1,4 +1,4 @@
-package com.github.sergemart.mobile.capybara.ui;
+package com.github.sergemart.mobile.capybara.ui.activities;
 
 import android.content.Context;
 import android.content.Intent;

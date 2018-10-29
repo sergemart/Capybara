@@ -1,12 +1,10 @@
-package com.github.sergemart.mobile.capybara.ui;
+package com.github.sergemart.mobile.capybara.ui.activities;
 
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 
 import com.github.sergemart.mobile.capybara.App;
-import com.github.sergemart.mobile.capybara.BuildConfig;
 import com.github.sergemart.mobile.capybara.R;
 import com.github.sergemart.mobile.capybara.events.GenericResult;
 import com.github.sergemart.mobile.capybara.viewmodel.ErrorSharedViewModel;
