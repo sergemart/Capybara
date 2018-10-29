@@ -11,19 +11,14 @@ import com.github.sergemart.mobile.capybara.R;
 import com.github.sergemart.mobile.capybara.events.GenericResult;
 import com.github.sergemart.mobile.capybara.viewmodel.ErrorSharedViewModel;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProviders;
-import io.reactivex.disposables.CompositeDisposable;
 
 
 public class ErrorActivity
-    extends AppCompatActivity
+    extends AbstractActivity
 {
 
-    private static final String TAG = ErrorActivity.class.getSimpleName();
-
     ErrorSharedViewModel mErrorSharedViewModel;
-    private CompositeDisposable mInstanceDisposable;
 
 
     // --------------------------- Override activity event handlers
@@ -36,7 +31,6 @@ public class ErrorActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_error);
-        mInstanceDisposable = new CompositeDisposable();
 
         // Publish the error cause
         mErrorSharedViewModel = ViewModelProviders.of(this).get(ErrorSharedViewModel.class);
@@ -53,15 +47,6 @@ public class ErrorActivity
     @Override
     public void onBackPressed() {
         this.exitApplication();
-    }
-
-
-    // Instance clean-up
-    @Override
-    public void onDestroy() {
-        mInstanceDisposable.clear();
-        if (BuildConfig.DEBUG) Log.d(TAG, "View-unrelated subscriptions are disposed");
-        super.onDestroy();
     }
 
 

@@ -20,13 +20,12 @@ import io.reactivex.disposables.CompositeDisposable;
 
 
 public class InitialCommonActivity
-    extends AppCompatActivity
+    extends AbstractActivity
 {
 
     private static final String TAG = InitialCommonActivity.class.getSimpleName();
 
     private InitialCommonSharedViewModel mInitialCommonSharedViewModel;
-    private CompositeDisposable mInstanceDisposable;
 
 
     // --------------------------- Override activity event handlers
@@ -40,7 +39,6 @@ public class InitialCommonActivity
         if (BuildConfig.DEBUG) Log.d(TAG, "onCreate() called");
         setContentView(R.layout.activity_initial_common);
 
-        mInstanceDisposable = new CompositeDisposable();
         mInitialCommonSharedViewModel = ViewModelProviders.of(this).get(InitialCommonSharedViewModel.class);
 
         this.setInstanceListeners();
@@ -71,15 +69,6 @@ public class InitialCommonActivity
         if (requestCode == Constants.REQUEST_CODE_SIGN_IN) {
             CloudRepo.get().proceedWithFirebaseAuthAsync(responseIntent);
         }
-    }
-
-
-    // Instance clean-up
-    @Override
-    public void onDestroy() {
-        mInstanceDisposable.clear();
-        if (BuildConfig.DEBUG) Log.d(TAG, "View-unrelated subscriptions are disposed");
-        super.onDestroy();
     }
 
 
