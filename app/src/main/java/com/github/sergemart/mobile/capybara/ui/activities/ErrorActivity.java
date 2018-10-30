@@ -32,9 +32,10 @@ public class ErrorActivity
 
         // Publish the error cause
         mErrorSharedViewModel = ViewModelProviders.of(this).get(ErrorSharedViewModel.class);
-        Throwable cause = App.getLastFatalException().get();
-        mErrorSharedViewModel.getCauseSubject().onNext(GenericResult.SUCCESS.setException(cause));
-
+        if (App.getLastFatalException() != null) {
+            Throwable cause = App.getLastFatalException().get();
+            mErrorSharedViewModel.getCauseSubject().onNext(GenericResult.SUCCESS.setException(cause));
+        }
         this.setInstanceListeners();
     }
 
