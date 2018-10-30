@@ -112,7 +112,7 @@ public class ContactsRepo {
                         null
                     )) {
                         if (emailCursor != null && emailCursor.getCount() > 0) {
-                            while (emailCursor.moveToNext()) {                                              // could be more than one email
+                            while (emailCursor.moveToNext()) {                                      // could be more than one email
                                 String contactEmail = emailCursor.getString(emailCursor.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA));
                                 Contact contact = new Contact();
                                 contact.id = contactId;
@@ -122,6 +122,20 @@ public class ContactsRepo {
                             }
                         }
                     }
+
+
+//
+//                    String imWhere = ContactsContract.Data.CONTACT_ID + " = ? AND " + ContactsContract.Data.MIMETYPE + " = ?";
+//                    String[] imWhereParams = new String[]{contactId, ContactsContract.CommonDataKinds.Im.CONTENT_ITEM_TYPE};
+//                    Cursor imCur = mContentResolver.query(ContactsContract.Data.CONTENT_URI,null, imWhere, imWhereParams, null);
+//                    if (imCur.moveToFirst()) {
+//                        String imName = imCur.getString(imCur.getColumnIndex(ContactsContract.CommonDataKinds.Im.DATA));
+//                        String imType;
+//                        imType = imCur.getString(imCur.getColumnIndex(ContactsContract.CommonDataKinds.Im.TYPE));
+//                    }
+//                    imCur.close();
+
+
                 }
             }
         }

@@ -112,6 +112,7 @@ public class MajorInviteFragment
 
     // --------------------------- Use cases
 
+    @SuppressWarnings("unchecked")
     private void getContacts() {
         if (ContactsRepo.get().isPermissionGranted() ) {
             pInstanceDisposable.add(ContactsRepo.get().getContactsObservable()
