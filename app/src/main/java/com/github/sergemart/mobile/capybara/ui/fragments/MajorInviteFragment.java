@@ -148,7 +148,6 @@ public class MajorInviteFragment
 
         // ============================== Overrides
 
-
         /**
          * @return View holder instance
          */

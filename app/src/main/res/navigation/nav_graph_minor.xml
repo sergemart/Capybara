@@ -6,18 +6,10 @@
     app:startDestination="@id/minorDummyFragment">
 
     <fragment
-        android:id="@+id/minorTaskListFragment"
-        android:name="com.github.sergemart.mobile.capybara.ui.fragments.MinorTaskListFragment"
-        android:label="fragment_minor_task_list"
-        tools:layout="@layout/fragment_minor_task_list" />
-    <fragment
         android:id="@+id/minorDummyFragment"
         android:name="com.github.sergemart.mobile.capybara.ui.fragments.MinorDummyFragment"
         android:label="fragment_minor_dummy"
         tools:layout="@layout/fragment_minor_dummy" >
-        <action
-            android:id="@+id/action_minorDummy_to_minorTaskList"
-            app:destination="@id/minorTaskListFragment" />
     </fragment>
 
 </navigation>
