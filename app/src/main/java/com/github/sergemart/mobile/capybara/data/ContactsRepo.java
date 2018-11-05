@@ -16,18 +16,25 @@ import com.github.sergemart.mobile.capybara.App;
 import com.github.sergemart.mobile.capybara.BuildConfig;
 import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
-import com.github.sergemart.mobile.capybara.events.GenericResult;
+import com.github.sergemart.mobile.capybara.events.GenericEvent;
 import com.github.sergemart.mobile.capybara.exceptions.ContactsException;
 
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 import androidx.core.content.ContextCompat;
 import io.reactivex.Observable;
 import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.observables.ConnectableObservable;
+import io.reactivex.schedulers.Schedulers;
+
+import static com.github.sergemart.mobile.capybara.events.GenericEvent.Result.FAILURE;
+import static com.github.sergemart.mobile.capybara.events.GenericEvent.Result.SUCCESS;
 
 
 // Singleton
@@ -64,49 +71,58 @@ public class ContactsRepo {
     private List<Contact> mContacts;
     private Map<String, Bitmap> mBitmapCache;
 
+    private ConnectableObservable<GenericEvent> mContactsObservable;
+
 
     // --------------------------- Repository interface
 
     /**
-     * @return An observable emitting a contact list
+     * @return A connectable observable emitting a contact list
      */
-    public Observable<GenericResult> getContactsObservable() {
-        return Observable.create(emitter -> {
+    public ConnectableObservable<GenericEvent> getContactsObservable() {
+        if (mContactsObservable != null) return mContactsObservable;
+
+        Observable<GenericEvent> observable = Observable.create(emitter -> {
             try {
                 this.loadContacts();
                 if (BuildConfig.DEBUG) Log.d(TAG, "Contacts loaded, emitting them");
-                emitter.onNext(GenericResult.SUCCESS.setData(mContacts));
+                emitter.onNext(GenericEvent.of(SUCCESS).setData(mContacts));
             } catch (SecurityException e) {
                 String errorMessage = mContext.getString(R.string.exception_contacts_no_permission);
                 if (BuildConfig.DEBUG) Log.e(TAG, errorMessage + ": " + e.getMessage());
-                emitter.onNext(GenericResult.FAILURE.setException(new ContactsException(errorMessage, e)));
+                emitter.onNext(GenericEvent.of(FAILURE).setException(new ContactsException(errorMessage, e)));
             } catch (Exception e) {
-                emitter.onNext(GenericResult.FAILURE.setException(new ContactsException(e)));
+                emitter.onNext(GenericEvent.of(FAILURE).setException(new ContactsException(e)));
             }
         });
+        mContactsObservable = observable.replay();                                                  // last operator in the chain: here occurs the multicasting
+        return mContactsObservable;
     }
 
 
     /**
-     * @return A single observable emitting a contact photo
+     * @return A cold observable emitting a contact data structure used as a photo container
      */
-    public Observable<GenericResult> getContactPhotoObservable(String contactId) {
+    public Observable<GenericEvent> getEnrichedContactObservable(String contactId) {
         return Observable.create(emitter -> {
+            Contact auxContactData = new Contact();
+            auxContactData.id = contactId;
+
             if (mBitmapCache.containsKey(contactId) && mBitmapCache.get(contactId) != null) {
-                if (BuildConfig.DEBUG) Log.d(TAG, "Contact photo for " + contactId + " read from cache");
-                emitter.onNext(GenericResult.SUCCESS.setData(mBitmapCache.get(contactId)));         // emit cached bitmap
+                auxContactData.photo = mBitmapCache.get(contactId);
+                emitter.onNext(GenericEvent.of(SUCCESS).setData(auxContactData));                   // emit a cached bitmap
             } else {
                 try {
-                    Bitmap contactPhoto = this.getContactPhoto(contactId);
-                    if (mBitmapCache.get(contactId) != null) mBitmapCache.put(contactId, contactPhoto); // cache the bitmap
-                    if (BuildConfig.DEBUG) Log.d(TAG, "Contact photo for " + contactId + " fetched");
-                    emitter.onNext(GenericResult.SUCCESS.setData(contactPhoto));                    // emit fetched bitmab
+                    Bitmap contactPhoto = this.getContactPhoto(contactId);                          // data provider op
+                    mBitmapCache.put(contactId, contactPhoto);                                      // cache the bitmap
+                    auxContactData.photo = contactPhoto;
+                    emitter.onNext(GenericEvent.of(SUCCESS).setData(auxContactData));               // emit a fetched bitmap
                 } catch (SecurityException e) {
                     String errorMessage = mContext.getString(R.string.exception_contacts_no_permission);
                     if (BuildConfig.DEBUG) Log.e(TAG, errorMessage + ": " + e.getMessage());
-                    emitter.onNext(GenericResult.FAILURE.setException(new ContactsException(errorMessage, e)));
+                    emitter.onNext(GenericEvent.of(FAILURE).setException(new ContactsException(errorMessage, e)));
                 } catch (Exception e) {
-                    emitter.onNext(GenericResult.FAILURE.setException(new ContactsException(e)));
+                    emitter.onNext(GenericEvent.of(FAILURE).setException(new ContactsException(e)));
                 }
             }
         });
@@ -203,6 +219,7 @@ public class ContactsRepo {
         public String name;
         public String email;
         public Bitmap photo;
+        public int position;
     }
 
 

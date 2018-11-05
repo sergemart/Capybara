@@ -1,6 +1,6 @@
 package com.github.sergemart.mobile.capybara.viewmodel;
 
-import com.github.sergemart.mobile.capybara.events.GenericResult;
+import com.github.sergemart.mobile.capybara.events.GenericEvent;
 
 import androidx.lifecycle.ViewModel;
 import io.reactivex.subjects.BehaviorSubject;
@@ -8,12 +8,12 @@ import io.reactivex.subjects.BehaviorSubject;
 
 public class InitialMajorSharedViewModel extends ViewModel {
 
-    private final BehaviorSubject<GenericResult> mMajorSetupFinishedSubject = BehaviorSubject.create();
+    private final BehaviorSubject<GenericEvent> mMajorSetupFinishedSubject = BehaviorSubject.create();
 
 
     // --------------------------- Observable getters
 
-    public BehaviorSubject<GenericResult> getMajorSetupFinishedSubject() {
+    public BehaviorSubject<GenericEvent> getMajorSetupFinishedSubject() {
         return mMajorSetupFinishedSubject;
     }
 

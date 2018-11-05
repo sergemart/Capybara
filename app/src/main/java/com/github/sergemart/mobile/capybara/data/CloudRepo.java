@@ -14,7 +14,7 @@ import com.github.sergemart.mobile.capybara.R;
 import com.github.sergemart.mobile.capybara.Tools;
 import com.github.sergemart.mobile.capybara.events.CreateFamilyResult;
 import com.github.sergemart.mobile.capybara.events.FamilyActionResult;
-import com.github.sergemart.mobile.capybara.events.GenericResult;
+import com.github.sergemart.mobile.capybara.events.GenericEvent;
 import com.github.sergemart.mobile.capybara.events.SignInResult;
 import com.github.sergemart.mobile.capybara.exceptions.FirebaseFunctionException;
 import com.github.sergemart.mobile.capybara.exceptions.FirebaseSigninException;
@@ -37,6 +37,9 @@ import java.util.Map;
 import java.util.Objects;
 
 import io.reactivex.subjects.PublishSubject;
+
+import static com.github.sergemart.mobile.capybara.events.GenericEvent.Result.FAILURE;
+import static com.github.sergemart.mobile.capybara.events.GenericEvent.Result.SUCCESS;
 
 
 // Singleton
@@ -77,15 +80,15 @@ public class CloudRepo {
     // --------------------------- Member variables
 
     private final PublishSubject<SignInResult> mSignInSubject = PublishSubject.create();
-    private final PublishSubject<GenericResult> mGetDeviceTokenSubject = PublishSubject.create();
-    private final PublishSubject<GenericResult> mPublishDeviceTokenSubject = PublishSubject.create();
+    private final PublishSubject<GenericEvent> mGetDeviceTokenSubject = PublishSubject.create();
+    private final PublishSubject<GenericEvent> mPublishDeviceTokenSubject = PublishSubject.create();
     private final PublishSubject<CreateFamilyResult> mCreateFamilySubject = PublishSubject.create();
     private final PublishSubject<FamilyActionResult> mCreateFamilyMemberSubject = PublishSubject.create();
     private final PublishSubject<FamilyActionResult> mDeleteFamilyMemberSubject = PublishSubject.create();
-    private final PublishSubject<GenericResult> mSendInviteSubject = PublishSubject.create();
+    private final PublishSubject<GenericEvent> mSendInviteSubject = PublishSubject.create();
     private final PublishSubject<FamilyActionResult> mJoinFamilySubject = PublishSubject.create();
     private final PublishSubject<FamilyActionResult> mSendLocationSubject = PublishSubject.create();
-    private final PublishSubject<GenericResult> mSignOutSubject = PublishSubject.create();
+    private final PublishSubject<GenericEvent> mSignOutSubject = PublishSubject.create();
 
     private final Context mContext;
     private GoogleSignInClient mGoogleSignInClient;
@@ -104,12 +107,12 @@ public class CloudRepo {
     }
 
 
-    public PublishSubject<GenericResult> getGetDeviceTokenSubject() {
+    public PublishSubject<GenericEvent> getGetDeviceTokenSubject() {
         return mGetDeviceTokenSubject;
     }
 
 
-    public PublishSubject<GenericResult> getPublishDeviceTokenSubject() {
+    public PublishSubject<GenericEvent> getPublishDeviceTokenSubject() {
         return mPublishDeviceTokenSubject;
     }
 
@@ -129,7 +132,7 @@ public class CloudRepo {
     }
 
 
-    public PublishSubject<GenericResult> getSendInviteSubject() {
+    public PublishSubject<GenericEvent> getSendInviteSubject() {
         return mSendInviteSubject;
     }
 
@@ -139,7 +142,7 @@ public class CloudRepo {
     }
 
 
-    public PublishSubject<GenericResult> getSignOutSubject() {
+    public PublishSubject<GenericEvent> getSignOutSubject() {
         return mSignOutSubject;
     }
 
@@ -235,9 +238,9 @@ public class CloudRepo {
             mFirebaseAuth.signOut();
             mGoogleSignInClient.signOut();
             mUsername = Constants.DEFAULT_USERNAME;
-            mSignOutSubject.onNext(GenericResult.SUCCESS);
+            mSignOutSubject.onNext(GenericEvent.of(SUCCESS));
         } catch (Exception e) {
-            mSignOutSubject.onNext(GenericResult.FAILURE.setException(new FirebaseSigninException(e)));
+            mSignOutSubject.onNext(GenericEvent.of(FAILURE).setException(new FirebaseSigninException(e)));
         }
     }
 
@@ -254,12 +257,12 @@ public class CloudRepo {
             .addOnSuccessListener(instanseIdResult -> {
                 mDeviceToken = instanseIdResult.getToken();
                 if (BuildConfig.DEBUG) Log.d(TAG, "Got device token: " + mDeviceToken);
-                mGetDeviceTokenSubject.onNext(GenericResult.SUCCESS);
+                mGetDeviceTokenSubject.onNext(GenericEvent.of(SUCCESS));
             })
             .addOnFailureListener(e -> {
                 String errorMessage = mContext.getString(R.string.exception_firebase_device_token_not_received);
                 if (BuildConfig.DEBUG) Log.e(TAG, errorMessage + ": " +  e.getMessage());
-                mGetDeviceTokenSubject.onNext(GenericResult.FAILURE.setException( new FirebaseFunctionException(errorMessage, e)) );
+                mGetDeviceTokenSubject.onNext(GenericEvent.of(FAILURE).setException( new FirebaseFunctionException(errorMessage, e)) );
             })
         ;
     }
@@ -307,11 +310,11 @@ public class CloudRepo {
                     result = (Map<String, Object>) Objects.requireNonNull(task.getResult()).getData(); // throws an exception on error
                     // if success:
                     if (BuildConfig.DEBUG) Log.d(TAG, "Device token published :" + mDeviceToken);
-                    mPublishDeviceTokenSubject.onNext(GenericResult.SUCCESS);
+                    mPublishDeviceTokenSubject.onNext(GenericEvent.of(SUCCESS));
                 } catch (Exception e) {
                     String errorMessage = mContext.getString(R.string.exception_firebase_device_token_not_published);
                     if (BuildConfig.DEBUG) Log.e(TAG, errorMessage + ": " +  e.getMessage());
-                    mPublishDeviceTokenSubject.onNext(GenericResult.FAILURE.setException( new FirebaseFunctionException(errorMessage, e)) );
+                    mPublishDeviceTokenSubject.onNext(GenericEvent.of(FAILURE).setException( new FirebaseFunctionException(errorMessage, e)) );
                 }
                 return result;
             })
@@ -320,11 +323,11 @@ public class CloudRepo {
                     Exception e = task.getException();
                     String errorMessage = mContext.getString(R.string.exception_firebase_device_token_not_published);
                     if (BuildConfig.DEBUG) Log.e(TAG, errorMessage + ": " +  e.getMessage());
-                    mPublishDeviceTokenSubject.onNext(GenericResult.FAILURE.setException( new FirebaseFunctionException(errorMessage, e)) );
+                    mPublishDeviceTokenSubject.onNext(GenericEvent.of(FAILURE).setException( new FirebaseFunctionException(errorMessage, e)) );
                 } else if (!task.isSuccessful()) {
                     String errorMessage = mContext.getString(R.string.exception_firebase_device_token_not_published);
                     if (BuildConfig.DEBUG) Log.e(TAG, errorMessage + "; no exception provided");
-                    mPublishDeviceTokenSubject.onNext(GenericResult.FAILURE.setException( new FirebaseFunctionException(errorMessage)) );
+                    mPublishDeviceTokenSubject.onNext(GenericEvent.of(FAILURE).setException( new FirebaseFunctionException(errorMessage)) );
                 }
             })
         ;
@@ -565,17 +568,17 @@ public class CloudRepo {
                     switch (returnCode) {
                         case Constants.RETURN_CODE_SENT:
                             if (BuildConfig.DEBUG) Log.d(TAG, "Invite message sent");
-                            mSendInviteSubject.onNext(GenericResult.SUCCESS);
+                            mSendInviteSubject.onNext(GenericEvent.of(SUCCESS));
                             break;
                         default:
                             String errorMessage = mContext.getString(R.string.exception_firebase_function_unknown_response);
                             if (BuildConfig.DEBUG) Log.e(TAG, errorMessage);
-                            mSendInviteSubject.onNext(GenericResult.FAILURE.setException( new FirebaseFunctionException(errorMessage) ));
+                            mSendInviteSubject.onNext(GenericEvent.of(FAILURE).setException( new FirebaseFunctionException(errorMessage) ));
                     }
                 } catch (Exception e) {
                     String errorMessage = mContext.getString(R.string.exception_firebase_invite_message_not_sent);
                     if (BuildConfig.DEBUG) Log.e(TAG, errorMessage + ": " + e.getMessage());
-                    mSendInviteSubject.onNext(GenericResult.FAILURE.setException( new FirebaseFunctionException(errorMessage, e) ));
+                    mSendInviteSubject.onNext(GenericEvent.of(FAILURE).setException( new FirebaseFunctionException(errorMessage, e) ));
                 }
                 return result;
             })
@@ -584,11 +587,11 @@ public class CloudRepo {
                     Exception e = task.getException();
                     String errorMessage = mContext.getString(R.string.exception_firebase_invite_message_not_sent);
                     if (BuildConfig.DEBUG) Log.e(TAG, errorMessage + ": " + e.getMessage());
-                    mSendInviteSubject.onNext(GenericResult.FAILURE.setException( new FirebaseFunctionException(errorMessage, e) ));
+                    mSendInviteSubject.onNext(GenericEvent.of(FAILURE).setException( new FirebaseFunctionException(errorMessage, e) ));
                 } else if (!task.isSuccessful()) {
                     String errorMessage = mContext.getString(R.string.exception_firebase_invite_message_not_sent);
                     if (BuildConfig.DEBUG) Log.e(TAG, errorMessage);
-                    mSendInviteSubject.onNext(GenericResult.FAILURE.setException( new FirebaseFunctionException(errorMessage) ));
+                    mSendInviteSubject.onNext(GenericEvent.of(FAILURE).setException( new FirebaseFunctionException(errorMessage) ));
                 }
             })
         ;

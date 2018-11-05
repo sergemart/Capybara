@@ -9,7 +9,7 @@ import com.github.sergemart.mobile.capybara.Tools;
 import com.github.sergemart.mobile.capybara.data.CloudRepo;
 import com.github.sergemart.mobile.capybara.data.MessagingServiceRepo;
 import com.github.sergemart.mobile.capybara.data.PreferenceStore;
-import com.github.sergemart.mobile.capybara.events.GenericResult;
+import com.github.sergemart.mobile.capybara.events.GenericEvent;
 import com.github.sergemart.mobile.capybara.events.LocationResult;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
@@ -18,6 +18,8 @@ import java.util.Map;
 import java.util.Objects;
 
 import io.reactivex.disposables.CompositeDisposable;
+
+import static com.github.sergemart.mobile.capybara.events.GenericEvent.Result.SUCCESS;
 
 
 public class CloudMessagingService
@@ -114,8 +116,8 @@ public class CloudMessagingService
             return;
         }
         if (BuildConfig.DEBUG) Log.d(TAG, "An invite message received, emitting a corresponding event");
-        MessagingServiceRepo.get().getInviteReceivedSubject().onNext(GenericResult
-            .SUCCESS
+        MessagingServiceRepo.get().getInviteReceivedSubject().onNext(GenericEvent
+            .of(SUCCESS)
             .setData(invitingEmail)
         );
     }
@@ -138,8 +140,8 @@ public class CloudMessagingService
             return;
         }
         if (BuildConfig.DEBUG) Log.d(TAG, "An invite acceptance message received, emitting a corresponding event");
-        MessagingServiceRepo.get().getAcceptInviteReceivedSubject().onNext(GenericResult
-            .SUCCESS
+        MessagingServiceRepo.get().getAcceptInviteReceivedSubject().onNext(GenericEvent
+            .of(SUCCESS)
             .setData(inviteeEmail)
         );
     }

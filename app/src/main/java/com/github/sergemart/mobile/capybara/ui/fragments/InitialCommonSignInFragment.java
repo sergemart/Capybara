@@ -16,7 +16,7 @@ import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
 import com.github.sergemart.mobile.capybara.data.CloudRepo;
 import com.github.sergemart.mobile.capybara.data.ResRepo;
-import com.github.sergemart.mobile.capybara.events.GenericResult;
+import com.github.sergemart.mobile.capybara.events.GenericEvent;
 import com.github.sergemart.mobile.capybara.viewmodel.InitialCommonSharedViewModel;
 import com.google.android.material.button.MaterialButton;
 import com.jakewharton.rxbinding2.view.RxView;
@@ -28,6 +28,9 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.ViewModelProviders;
+
+import static com.github.sergemart.mobile.capybara.events.GenericEvent.Result.FAILURE;
+import static com.github.sergemart.mobile.capybara.events.GenericEvent.Result.SUCCESS;
 
 
 public class InitialCommonSignInFragment
@@ -90,7 +93,7 @@ public class InitialCommonSignInFragment
                 if (resultCode == Activity.RESULT_OK) {                                             // retry
                     this.signIn();
                 } else if (resultCode == Activity.RESULT_CANCELED) {                                // fatal
-                    mInitialCommonSharedViewModel.getCommonSetupFinishedSubject().onNext(GenericResult.FAILURE.setException(mCause));
+                    mInitialCommonSharedViewModel.getCommonSetupFinishedSubject().onNext(GenericEvent.of(FAILURE).setException(mCause));
                 }
                 break;
         }
@@ -120,7 +123,7 @@ public class InitialCommonSignInFragment
 
         // Set a listener to the "GetDeviceTokenResult" event
         pInstanceDisposable.add(CloudRepo.get().getGetDeviceTokenSubject().subscribe(event -> {
-            switch (event) {
+            switch (event.getResult()) {
                 case SUCCESS:
                     if (BuildConfig.DEBUG) Log.d(TAG, "GetDeviceTokenResult.SUCCESS event received; publishing device token");
                     this.publishDeviceToken();
@@ -134,10 +137,10 @@ public class InitialCommonSignInFragment
 
         // Set a listener to the "PublishDeviceTokenResult" event
         pInstanceDisposable.add(CloudRepo.get().getPublishDeviceTokenSubject().subscribe(event -> {
-            switch (event) {
+            switch (event.getResult()) {
                 case SUCCESS:
                     if (BuildConfig.DEBUG) Log.d(TAG, "PublishDeviceTokenResult.SUCCESS event received; emmitting CommonSetupFinished event");
-                    mInitialCommonSharedViewModel.getCommonSetupFinishedSubject().onNext(GenericResult.SUCCESS);
+                    mInitialCommonSharedViewModel.getCommonSetupFinishedSubject().onNext(GenericEvent.of(SUCCESS));
                     break;
                 case FAILURE:
                     if (BuildConfig.DEBUG) Log.d(TAG, "PublishDeviceTokenResult.FAILURE event received; invoking retry dialog");

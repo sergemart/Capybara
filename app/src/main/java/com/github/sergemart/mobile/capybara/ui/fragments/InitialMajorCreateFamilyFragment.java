@@ -16,7 +16,7 @@ import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
 import com.github.sergemart.mobile.capybara.data.CloudRepo;
 import com.github.sergemart.mobile.capybara.data.ResRepo;
-import com.github.sergemart.mobile.capybara.events.GenericResult;
+import com.github.sergemart.mobile.capybara.events.GenericEvent;
 import com.github.sergemart.mobile.capybara.viewmodel.InitialMajorSharedViewModel;
 
 import java.util.Objects;
@@ -26,6 +26,9 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.ViewModelProviders;
+
+import static com.github.sergemart.mobile.capybara.events.GenericEvent.Result.FAILURE;
+import static com.github.sergemart.mobile.capybara.events.GenericEvent.Result.SUCCESS;
 
 
 public class InitialMajorCreateFamilyFragment
@@ -82,7 +85,7 @@ public class InitialMajorCreateFamilyFragment
                 if (resultCode == Activity.RESULT_OK) {                                             // retry
                     this.createFamily();
                 } else if (resultCode == Activity.RESULT_CANCELED) {                                // fatal
-                    mInitialMajorSharedViewModel.getMajorSetupFinishedSubject().onNext(GenericResult.FAILURE.setException(mCause));
+                    mInitialMajorSharedViewModel.getMajorSetupFinishedSubject().onNext(GenericEvent.of(FAILURE).setException(mCause));
                 }
                 break;
         }
@@ -101,16 +104,16 @@ public class InitialMajorCreateFamilyFragment
             switch (event) {
                 case CREATED:
                     if (BuildConfig.DEBUG) Log.d(TAG, "CreateFamilyResult.CREATED event received; emitting MajorSetupFinished event");
-                    mInitialMajorSharedViewModel.getMajorSetupFinishedSubject().onNext(GenericResult.SUCCESS);
+                    mInitialMajorSharedViewModel.getMajorSetupFinishedSubject().onNext(GenericEvent.of(SUCCESS));
                     break;
                 case EXIST:
                     if (BuildConfig.DEBUG) Log.d(TAG, "CreateFamilyResult.EXIST event received; emitting MajorSetupFinished event");
-                    mInitialMajorSharedViewModel.getMajorSetupFinishedSubject().onNext(GenericResult.SUCCESS);
+                    mInitialMajorSharedViewModel.getMajorSetupFinishedSubject().onNext(GenericEvent.of(SUCCESS));
                     break;
                 case EXIST_MORE_THAN_ONE:
                     if (BuildConfig.DEBUG) Log.d(TAG, "CreateFamilyResult.EXIST_MORE_THAN_ONE event received; emitting MajorSetupFinished event");
                     mCause = event.getException();
-                    mInitialMajorSharedViewModel.getMajorSetupFinishedSubject().onNext(GenericResult.FAILURE.setException(mCause));
+                    mInitialMajorSharedViewModel.getMajorSetupFinishedSubject().onNext(GenericEvent.of(FAILURE).setException(mCause));
                     break;
                 case BACKEND_ERROR:
                     if (BuildConfig.DEBUG) Log.d(TAG, "CreateFamilyResult.BACKEND_ERROR event received; invoking retry dialog");

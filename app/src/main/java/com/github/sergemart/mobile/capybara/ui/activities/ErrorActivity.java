@@ -6,10 +6,12 @@ import android.os.Bundle;
 
 import com.github.sergemart.mobile.capybara.App;
 import com.github.sergemart.mobile.capybara.R;
-import com.github.sergemart.mobile.capybara.events.GenericResult;
+import com.github.sergemart.mobile.capybara.events.GenericEvent;
 import com.github.sergemart.mobile.capybara.viewmodel.ErrorSharedViewModel;
 
 import androidx.lifecycle.ViewModelProviders;
+
+import static com.github.sergemart.mobile.capybara.events.GenericEvent.Result.SUCCESS;
 
 
 public class ErrorActivity
@@ -34,7 +36,7 @@ public class ErrorActivity
         mErrorSharedViewModel = ViewModelProviders.of(this).get(ErrorSharedViewModel.class);
         if (App.getLastFatalException() != null) {
             Throwable cause = App.getLastFatalException().get();
-            mErrorSharedViewModel.getCauseSubject().onNext(GenericResult.SUCCESS.setException(cause));
+            mErrorSharedViewModel.getCauseSubject().onNext(GenericEvent.of(SUCCESS).setException(cause));
         }
         this.setInstanceListeners();
     }

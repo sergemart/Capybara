@@ -1,20 +1,26 @@
 package com.github.sergemart.mobile.capybara.ui.fragments;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.github.sergemart.mobile.capybara.BuildConfig;
 import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
 import com.github.sergemart.mobile.capybara.data.ContactsRepo;
+import com.github.sergemart.mobile.capybara.events.GenericEvent;
 import com.github.sergemart.mobile.capybara.viewmodel.MajorSharedViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -23,8 +29,11 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
+
+import static com.github.sergemart.mobile.capybara.events.GenericEvent.Result.SUCCESS;
 
 
 public class MajorInviteFragment
@@ -117,12 +126,16 @@ public class MajorInviteFragment
 
     @SuppressWarnings("unchecked")
     private void getContacts() {
+
         if (ContactsRepo.get().isPermissionGranted() ) {
+
             pInstanceDisposable.add(ContactsRepo.get().getContactsObservable()
-                .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(result -> {
-                    switch (result) {
+                .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .subscribe(contactsResult -> {
+                    switch (contactsResult.getResult()) {
                         case SUCCESS:
-                            mContacts = (List)result.getData();
+                            mContacts.clear();
+                            mContacts.addAll( (List)contactsResult.getData() );
                             mContactsAdapter.notifyDataSetChanged();
                             break;
                         case FAILURE:
@@ -131,9 +144,48 @@ public class MajorInviteFragment
                     }
                 })
             );
+
+            pInstanceDisposable.add(ContactsRepo.get().getContactsObservable()
+                .flatMap(event ->  Observable.fromIterable( (List)event.getData() ))
+                .flatMap(contact -> {
+                    String contactId = ((ContactsRepo.Contact) contact).id;
+                    return ContactsRepo.get().getEnrichedContactObservable(contactId);
+                })
+                .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .subscribe(bitmapEvent -> {
+                    switch ( ((GenericEvent)bitmapEvent).getResult() ) {
+                        case SUCCESS:
+                            ContactsRepo.Contact auxContactData = (ContactsRepo.Contact) ((GenericEvent)bitmapEvent).getData();
+                            int position = this.getContactIndexById(auxContactData.id);
+                            mContacts.get(position).photo = auxContactData.photo;
+                            mContactsAdapter.notifyItemChanged(position);
+                            break;
+                        case FAILURE:
+                            break;
+                        default:
+                    }
+                })
+            );
+
+            ContactsRepo.get().getContactsObservable().connect();
+
         } else {
             super.requestPermissions(Constants.CONTACTS_PERMISSIONS, Constants.REQUEST_CODE_READ_CONTACTS_PERMISSIONS);
         }
+    }
+
+
+    // --------------------------- Subroutines
+
+    /**
+     * Get a contact list index by its ID
+     */
+    private int getContactIndexById(String contactId) {
+        for (int i = 0; i < mContacts.size(); i++) {
+            ContactsRepo.Contact contact = mContacts.get(i);
+            if (contact.id.equals(contactId)) return i;
+        }
+        return -1;
     }
 
 
@@ -168,23 +220,6 @@ public class MajorInviteFragment
             holder.mmContactNameTextView.setText(item.name);
             holder.mmContactEmailTextView.setText(item.email);
             holder.mmThumbnailImageView.setImageBitmap(item.photo);
-
-//        Disposable disposable = ContactsRepo.get().getContactPhotoObservable(item.id)
-//            .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(result -> {
-//                switch (result) {
-//                    case SUCCESS:
-//                        if (result.getData() != null) {
-//                            if (BuildConfig.DEBUG) Log.d(TAG, "Contact photo for " + item.email + " received");
-//                            holder.mmThumbnailImageView.setImageBitmap((Bitmap) result.getData());
-//                        }
-//                        break;
-//                    case FAILURE:
-//                        break;
-//                    default:
-//                }
-//            })
-//        ;
-
         }
 
 
@@ -223,6 +258,7 @@ public class MajorInviteFragment
             mmContactNameTextView = view.findViewById(R.id.textView_contact_name);
             mmContactEmailTextView = view.findViewById(R.id.textView_contact_email);
         }
+
     }
 
 }
