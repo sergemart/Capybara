@@ -4,11 +4,9 @@ public enum Result {
 
     SUCCESS,
     FAILURE,
-    CREATED,
     EXIST,
-    EXIST_MORE_THAN_ONE,
-    NO_FAMILY,
-    MORE_THAN_ONE_FAMILY,
+    NOT_FOUND,
+    INTEGRITY_ERROR,
     BACKEND_ERROR
 
 }

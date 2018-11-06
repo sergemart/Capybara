@@ -8,9 +8,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.robolectric.RobolectricTestRunner;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,7 +16,6 @@ import java.util.Objects;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
-import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
 
 

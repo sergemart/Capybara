@@ -102,7 +102,7 @@ public class InitialMajorCreateFamilyFragment
         // Set a listener to the "CreateFamilySubject" event
         pInstanceDisposable.add(CloudRepo.get().getCreateFamilySubject().subscribe(event -> {
             switch (event.getResult()) {
-                case CREATED:
+                case SUCCESS:
                     if (BuildConfig.DEBUG) Log.d(TAG, "CreateFamilyResult.CREATED event received; emitting MajorSetupFinished event");
                     mInitialMajorSharedViewModel.getMajorSetupFinishedSubject().onNext(GenericEvent.of(SUCCESS));
                     break;
@@ -110,8 +110,8 @@ public class InitialMajorCreateFamilyFragment
                     if (BuildConfig.DEBUG) Log.d(TAG, "CreateFamilyResult.EXIST event received; emitting MajorSetupFinished event");
                     mInitialMajorSharedViewModel.getMajorSetupFinishedSubject().onNext(GenericEvent.of(SUCCESS));
                     break;
-                case EXIST_MORE_THAN_ONE:
-                    if (BuildConfig.DEBUG) Log.d(TAG, "CreateFamilyResult.EXIST_MORE_THAN_ONE event received; emitting MajorSetupFinished event");
+                case INTEGRITY_ERROR:
+                    if (BuildConfig.DEBUG) Log.d(TAG, "CreateFamilyResult.INTEGRITY_ERROR event received; emitting MajorSetupFinished event");
                     mCause = event.getException();
                     mInitialMajorSharedViewModel.getMajorSetupFinishedSubject().onNext(GenericEvent.of(FAILURE).setException(mCause));
                     break;

@@ -39,7 +39,7 @@ public class App extends Application {
         });
 
         // App start-up actions
-        CloudRepo.get().getTokenAsync();                                                            // make sense for non-initial startups
+        CloudRepo.get().getTokenAsync();                                                            // make sense for non-initial start-ups
     }
 
 

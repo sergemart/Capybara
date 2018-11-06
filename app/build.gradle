@@ -84,6 +84,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-functions:16.1.0'                                  // corresponds to core:16.0.3
     // Gson
     implementation 'com.google.code.gson:gson:2.8.5'
+    // Utilities
+    implementation 'de.hdodenhof:circleimageview:2.2.0'
 }
 
 apply plugin: 'com.google.gms.google-services'

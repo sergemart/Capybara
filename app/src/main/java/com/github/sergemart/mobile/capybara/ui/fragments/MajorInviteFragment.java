@@ -1,15 +1,12 @@
 package com.github.sergemart.mobile.capybara.ui.fragments;
 
-import android.annotation.SuppressLint;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.github.sergemart.mobile.capybara.BuildConfig;
 import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
 import com.github.sergemart.mobile.capybara.data.ContactsRepo;
@@ -18,9 +15,7 @@ import com.github.sergemart.mobile.capybara.viewmodel.MajorSharedViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
