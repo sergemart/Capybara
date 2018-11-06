@@ -10,7 +10,7 @@ import com.github.sergemart.mobile.capybara.data.CloudRepo;
 import com.github.sergemart.mobile.capybara.data.MessagingServiceRepo;
 import com.github.sergemart.mobile.capybara.data.PreferenceStore;
 import com.github.sergemart.mobile.capybara.events.GenericEvent;
-import com.github.sergemart.mobile.capybara.events.LocationResult;
+import com.github.sergemart.mobile.capybara.events.LocationEvent;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -161,8 +161,8 @@ public class CloudMessagingService
         }
         if (BuildConfig.DEBUG) Log.d(TAG, "A location message received, emitting a corresponding event");
         Location location = Tools.get().getLocationFromJson(locationJson);
-        MessagingServiceRepo.get().getLocationReceivedSubject().onNext(LocationResult
-            .SUCCESS
+        MessagingServiceRepo.get().getLocationReceivedSubject().onNext(LocationEvent
+            .of(LocationEvent.Result.SUCCESS)
             .setLocation(location)
             .setSenderEmail(senderEmail)
         );

@@ -101,7 +101,7 @@ public class InitialMajorCreateFamilyFragment
 
         // Set a listener to the "CreateFamilySubject" event
         pInstanceDisposable.add(CloudRepo.get().getCreateFamilySubject().subscribe(event -> {
-            switch (event) {
+            switch (event.getResult()) {
                 case CREATED:
                     if (BuildConfig.DEBUG) Log.d(TAG, "CreateFamilyResult.CREATED event received; emitting MajorSetupFinished event");
                     mInitialMajorSharedViewModel.getMajorSetupFinishedSubject().onNext(GenericEvent.of(SUCCESS));

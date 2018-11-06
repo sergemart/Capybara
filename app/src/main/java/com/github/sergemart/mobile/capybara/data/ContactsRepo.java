@@ -174,6 +174,7 @@ public class ContactsRepo {
                                 contact.id = contactId;
                                 contact.name = contactName;
                                 contact.email = contactEmail;
+                                contact.photo = BitmapFactory.decodeResource(mContext.getResources(), R.mipmap.capybara_bighead); // a placeholder
                                 mContacts.add(contact);
                             }
                         }

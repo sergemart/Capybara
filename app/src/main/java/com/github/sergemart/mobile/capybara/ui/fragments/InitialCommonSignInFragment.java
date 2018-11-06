@@ -109,7 +109,7 @@ public class InitialCommonSignInFragment
 
         // Set a listener to the "SignInResult" event
         pInstanceDisposable.add(CloudRepo.get().getSignInSubject().subscribe(event -> {
-            switch (event) {
+            switch (event.getResult()) {
                 case SUCCESS:
                     if (BuildConfig.DEBUG) Log.d(TAG, "SignInResult.SUCCESS event received; getting device token");
                     this.getDeviceToken();

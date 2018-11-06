@@ -12,10 +12,10 @@ import com.github.sergemart.mobile.capybara.BuildConfig;
 import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
 import com.github.sergemart.mobile.capybara.Tools;
-import com.github.sergemart.mobile.capybara.events.CreateFamilyResult;
-import com.github.sergemart.mobile.capybara.events.FamilyActionResult;
+import com.github.sergemart.mobile.capybara.events.CreateFamilyEvent;
+import com.github.sergemart.mobile.capybara.events.FamilyActionEvent;
 import com.github.sergemart.mobile.capybara.events.GenericEvent;
-import com.github.sergemart.mobile.capybara.events.SignInResult;
+import com.github.sergemart.mobile.capybara.events.SignInEvent;
 import com.github.sergemart.mobile.capybara.exceptions.FirebaseFunctionException;
 import com.github.sergemart.mobile.capybara.exceptions.FirebaseSigninException;
 import com.github.sergemart.mobile.capybara.exceptions.GoogleSigninException;
@@ -38,6 +38,12 @@ import java.util.Objects;
 
 import io.reactivex.subjects.PublishSubject;
 
+import static com.github.sergemart.mobile.capybara.events.CreateFamilyEvent.Result.BACKEND_ERROR;
+import static com.github.sergemart.mobile.capybara.events.CreateFamilyEvent.Result.CREATED;
+import static com.github.sergemart.mobile.capybara.events.CreateFamilyEvent.Result.EXIST;
+import static com.github.sergemart.mobile.capybara.events.CreateFamilyEvent.Result.EXIST_MORE_THAN_ONE;
+import static com.github.sergemart.mobile.capybara.events.FamilyActionEvent.Result.MORE_THAN_ONE_FAMILY;
+import static com.github.sergemart.mobile.capybara.events.FamilyActionEvent.Result.NO_FAMILY;
 import static com.github.sergemart.mobile.capybara.events.GenericEvent.Result.FAILURE;
 import static com.github.sergemart.mobile.capybara.events.GenericEvent.Result.SUCCESS;
 
@@ -79,15 +85,15 @@ public class CloudRepo {
 
     // --------------------------- Member variables
 
-    private final PublishSubject<SignInResult> mSignInSubject = PublishSubject.create();
+    private final PublishSubject<SignInEvent> mSignInSubject = PublishSubject.create();
     private final PublishSubject<GenericEvent> mGetDeviceTokenSubject = PublishSubject.create();
     private final PublishSubject<GenericEvent> mPublishDeviceTokenSubject = PublishSubject.create();
-    private final PublishSubject<CreateFamilyResult> mCreateFamilySubject = PublishSubject.create();
-    private final PublishSubject<FamilyActionResult> mCreateFamilyMemberSubject = PublishSubject.create();
-    private final PublishSubject<FamilyActionResult> mDeleteFamilyMemberSubject = PublishSubject.create();
+    private final PublishSubject<CreateFamilyEvent> mCreateFamilySubject = PublishSubject.create();
+    private final PublishSubject<FamilyActionEvent> mCreateFamilyMemberSubject = PublishSubject.create();
+    private final PublishSubject<FamilyActionEvent> mDeleteFamilyMemberSubject = PublishSubject.create();
     private final PublishSubject<GenericEvent> mSendInviteSubject = PublishSubject.create();
-    private final PublishSubject<FamilyActionResult> mJoinFamilySubject = PublishSubject.create();
-    private final PublishSubject<FamilyActionResult> mSendLocationSubject = PublishSubject.create();
+    private final PublishSubject<FamilyActionEvent> mJoinFamilySubject = PublishSubject.create();
+    private final PublishSubject<FamilyActionEvent> mSendLocationSubject = PublishSubject.create();
     private final PublishSubject<GenericEvent> mSignOutSubject = PublishSubject.create();
 
     private final Context mContext;
@@ -102,7 +108,7 @@ public class CloudRepo {
 
     // --------------------------- Observable getters
 
-    public PublishSubject<SignInResult> getSignInSubject() {
+    public PublishSubject<SignInEvent> getSignInSubject() {
         return mSignInSubject;
     }
 
@@ -117,17 +123,17 @@ public class CloudRepo {
     }
 
 
-    public PublishSubject<CreateFamilyResult> getCreateFamilySubject() {
+    public PublishSubject<CreateFamilyEvent> getCreateFamilySubject() {
         return mCreateFamilySubject;
     }
 
 
-    public PublishSubject<FamilyActionResult> getCreateFamilyMemberSubject() {
+    public PublishSubject<FamilyActionEvent> getCreateFamilyMemberSubject() {
         return mCreateFamilyMemberSubject;
     }
 
 
-    public PublishSubject<FamilyActionResult> getDeleteFamilyMemberSubject() {
+    public PublishSubject<FamilyActionEvent> getDeleteFamilyMemberSubject() {
         return mDeleteFamilyMemberSubject;
     }
 
@@ -137,7 +143,7 @@ public class CloudRepo {
     }
 
 
-    public PublishSubject<FamilyActionResult> getJoinFamilySubject() {
+    public PublishSubject<FamilyActionEvent> getJoinFamilySubject() {
         return mJoinFamilySubject;
     }
 
@@ -147,7 +153,7 @@ public class CloudRepo {
     }
 
 
-    public PublishSubject<FamilyActionResult> getSendLocationSubject() {
+    public PublishSubject<FamilyActionEvent> getSendLocationSubject() {
         return mSendLocationSubject;
     }
 
@@ -193,13 +199,13 @@ public class CloudRepo {
         } catch (ApiException e) {
             String errorMessage = mContext.getString(R.string.exception_google_sign_in_failed);
             if (BuildConfig.DEBUG) Log.e(TAG, errorMessage + ": " +  e.getMessage());
-            mSignInSubject.onNext(SignInResult.FAILURE.setException( new GoogleSigninException(errorMessage, e)) );
+            mSignInSubject.onNext(SignInEvent.of(SignInEvent.Result.FAILURE).setException( new GoogleSigninException(errorMessage, e)) );
             return;
         }
         if (googleSignInAccount == null) {
             String errorMessage = mContext.getString(R.string.exception_google_sign_in_account_is_null);
             if (BuildConfig.DEBUG) Log.e(TAG, errorMessage);
-            mSignInSubject.onNext(SignInResult.FAILURE.setException( new GoogleSigninException(errorMessage)) );
+            mSignInSubject.onNext(SignInEvent.of(SignInEvent.Result.FAILURE).setException( new GoogleSigninException(errorMessage)) );
             return;
         }
 
@@ -211,19 +217,19 @@ public class CloudRepo {
                 if ( !task.isSuccessful() ) {                                                       // error check
                     String errorMessage = mContext.getString(R.string.exception_firebase_client_connection_failed);
                     if (BuildConfig.DEBUG) Log.e(TAG, errorMessage);
-                    mSignInSubject.onNext(SignInResult.FAILURE.setException( new FirebaseSigninException(errorMessage)) );
+                    mSignInSubject.onNext(SignInEvent.of(SignInEvent.Result.FAILURE).setException( new FirebaseSigninException(errorMessage)) );
                     return;
                 }
                 mFirebaseUser = mFirebaseAuth.getCurrentUser();
                 if (mFirebaseUser == null) {
                     String errorMessage = mContext.getString(R.string.exception_firebase_user_is_null);
                     if (BuildConfig.DEBUG) Log.e(TAG, errorMessage);
-                    mSignInSubject.onNext(SignInResult.FAILURE.setException( new FirebaseSigninException(errorMessage)) );
+                    mSignInSubject.onNext(SignInEvent.of(SignInEvent.Result.FAILURE).setException( new FirebaseSigninException(errorMessage)) );
                     return;
                 }
                 mUsername = mFirebaseUser.getDisplayName();
                 if (BuildConfig.DEBUG) Log.d(TAG, "Signed in successfully: " + mUsername);
-                mSignInSubject.onNext(SignInResult.SUCCESS.setFirebaseUser(mFirebaseUser));
+                mSignInSubject.onNext(SignInEvent.of(SignInEvent.Result.SUCCESS).setFirebaseUser(mFirebaseUser));
             })
         ;
     }
@@ -363,26 +369,26 @@ public class CloudRepo {
                         case Constants.RETURN_CODE_CREATED:
                             familyUid = (String)Objects.requireNonNull(result.get("familyUid"));
                             if (BuildConfig.DEBUG) Log.d(TAG, "Family data created on backend");
-                            mCreateFamilySubject.onNext(CreateFamilyResult.CREATED.setFamilyUid(familyUid));
+                            mCreateFamilySubject.onNext(CreateFamilyEvent.of(CREATED).setFamilyUid(familyUid));
                             break;
                         case Constants.RETURN_CODE_EXIST:
                             familyUid = (String)Objects.requireNonNull(result.get("familyUid"));
                             if (BuildConfig.DEBUG) Log.d(TAG, "Family data already exist on backend");
-                            mCreateFamilySubject.onNext(CreateFamilyResult.EXIST.setFamilyUid(familyUid));
+                            mCreateFamilySubject.onNext(CreateFamilyEvent.of(EXIST).setFamilyUid(familyUid));
                             break;
                         case Constants.RETURN_CODE_MORE_THAN_ONE_FAMILY:
                             if (BuildConfig.DEBUG) Log.e(TAG, "The user has more than one family record");
-                            mCreateFamilySubject.onNext(CreateFamilyResult.EXIST_MORE_THAN_ONE);
+                            mCreateFamilySubject.onNext(CreateFamilyEvent.of(EXIST_MORE_THAN_ONE));
                             break;
                         default:
                             String errorMessage = mContext.getString(R.string.exception_firebase_function_unknown_response);
                             if (BuildConfig.DEBUG) Log.e(TAG, errorMessage);
-                            mCreateFamilySubject.onNext(CreateFamilyResult.BACKEND_ERROR.setException( new FirebaseFunctionException(errorMessage) ));
+                            mCreateFamilySubject.onNext(CreateFamilyEvent.of(BACKEND_ERROR).setException( new FirebaseFunctionException(errorMessage) ));
                     }
                 } catch (Exception e) {
                     String errorMessage = mContext.getString(R.string.exception_firebase_family_not_created);
                     if (BuildConfig.DEBUG) Log.e(TAG, errorMessage + ": " + e.getMessage());
-                    mCreateFamilySubject.onNext(CreateFamilyResult.BACKEND_ERROR.setException( new FirebaseFunctionException(errorMessage, e) ));
+                    mCreateFamilySubject.onNext(CreateFamilyEvent.of(BACKEND_ERROR).setException( new FirebaseFunctionException(errorMessage, e) ));
                 }
                 return result;
             })
@@ -391,11 +397,11 @@ public class CloudRepo {
                     Exception e = task.getException();
                     String errorMessage = mContext.getString(R.string.exception_firebase_family_not_created);
                     if (BuildConfig.DEBUG) Log.e(TAG, errorMessage + ": " + e.getMessage());
-                    mCreateFamilySubject.onNext(CreateFamilyResult.BACKEND_ERROR.setException( new FirebaseFunctionException(errorMessage, e) ));
+                    mCreateFamilySubject.onNext(CreateFamilyEvent.of(BACKEND_ERROR).setException( new FirebaseFunctionException(errorMessage, e) ));
                 } else if (!task.isSuccessful()) {
                     String errorMessage = mContext.getString(R.string.exception_firebase_family_not_created);
                     if (BuildConfig.DEBUG) Log.e(TAG, errorMessage);
-                    mCreateFamilySubject.onNext(CreateFamilyResult.BACKEND_ERROR.setException( new FirebaseFunctionException(errorMessage) ));
+                    mCreateFamilySubject.onNext(CreateFamilyEvent.of(BACKEND_ERROR).setException( new FirebaseFunctionException(errorMessage) ));
                 }
             })
         ;
@@ -432,25 +438,25 @@ public class CloudRepo {
                     switch (returnCode) {
                         case Constants.RETURN_CODE_CREATED:
                             if (BuildConfig.DEBUG) Log.d(TAG, "Family member stored on backend");
-                            mCreateFamilyMemberSubject.onNext(FamilyActionResult.SUCCESS);
+                            mCreateFamilyMemberSubject.onNext(FamilyActionEvent.of(FamilyActionEvent.Result.SUCCESS));
                             break;
                         case Constants.RETURN_CODE_MORE_THAN_ONE_FAMILY:
                             if (BuildConfig.DEBUG) Log.e(TAG, "The user has more than one family record");
-                            mCreateFamilyMemberSubject.onNext(FamilyActionResult.MORE_THAN_ONE_FAMILY);
+                            mCreateFamilyMemberSubject.onNext(FamilyActionEvent.of(MORE_THAN_ONE_FAMILY));
                             break;
                         case Constants.RETURN_CODE_NO_FAMILY:
                             if (BuildConfig.DEBUG) Log.e(TAG, "The user has no family records");
-                            mCreateFamilyMemberSubject.onNext(FamilyActionResult.NO_FAMILY);
+                            mCreateFamilyMemberSubject.onNext(FamilyActionEvent.of(NO_FAMILY));
                             break;
                         default:
                             String errorMessage = mContext.getString(R.string.exception_firebase_function_unknown_response);
                             if (BuildConfig.DEBUG) Log.e(TAG, errorMessage);
-                            mCreateFamilyMemberSubject.onNext(FamilyActionResult.BACKEND_ERROR.setException( new FirebaseFunctionException(errorMessage) ));
+                            mCreateFamilyMemberSubject.onNext(FamilyActionEvent.of(FamilyActionEvent.Result.BACKEND_ERROR).setException( new FirebaseFunctionException(errorMessage) ));
                     }
                 } catch (Exception e) {
                     String errorMessage = mContext.getString(R.string.exception_firebase_family_member_not_created);
                     if (BuildConfig.DEBUG) Log.e(TAG, errorMessage + ": " + e.getMessage());
-                    mCreateFamilyMemberSubject.onNext(FamilyActionResult.BACKEND_ERROR.setException( new FirebaseFunctionException(errorMessage, e) ));
+                    mCreateFamilyMemberSubject.onNext(FamilyActionEvent.of(FamilyActionEvent.Result.BACKEND_ERROR).setException( new FirebaseFunctionException(errorMessage, e) ));
                 }
                 return result;
             })
@@ -459,11 +465,11 @@ public class CloudRepo {
                     Exception e = task.getException();
                     String errorMessage = mContext.getString(R.string.exception_firebase_family_member_not_created);
                     if (BuildConfig.DEBUG) Log.e(TAG, errorMessage + ": " + e.getMessage());
-                    mCreateFamilyMemberSubject.onNext(FamilyActionResult.BACKEND_ERROR.setException( new FirebaseFunctionException(errorMessage, e) ));
+                    mCreateFamilyMemberSubject.onNext(FamilyActionEvent.of(FamilyActionEvent.Result.BACKEND_ERROR).setException( new FirebaseFunctionException(errorMessage, e) ));
                 } else if (!task.isSuccessful()) {
                     String errorMessage = mContext.getString(R.string.exception_firebase_family_member_not_created);
                     if (BuildConfig.DEBUG) Log.e(TAG, errorMessage);
-                    mCreateFamilyMemberSubject.onNext(FamilyActionResult.BACKEND_ERROR.setException( new FirebaseFunctionException(errorMessage) ));
+                    mCreateFamilyMemberSubject.onNext(FamilyActionEvent.of(FamilyActionEvent.Result.BACKEND_ERROR).setException( new FirebaseFunctionException(errorMessage) ));
                 }
             })
         ;
@@ -500,25 +506,25 @@ public class CloudRepo {
                     switch (returnCode) {
                         case Constants.RETURN_CODE_DELETED:
                             if (BuildConfig.DEBUG) Log.d(TAG, "Family member removed on backend");
-                            mDeleteFamilyMemberSubject.onNext(FamilyActionResult.SUCCESS);
+                            mDeleteFamilyMemberSubject.onNext(FamilyActionEvent.of(FamilyActionEvent.Result.SUCCESS));
                             break;
                         case Constants.RETURN_CODE_MORE_THAN_ONE_FAMILY:
                             if (BuildConfig.DEBUG) Log.e(TAG, "The user has more than one family record");
-                            mDeleteFamilyMemberSubject.onNext(FamilyActionResult.MORE_THAN_ONE_FAMILY);
+                            mDeleteFamilyMemberSubject.onNext(FamilyActionEvent.of(MORE_THAN_ONE_FAMILY));
                             break;
                         case Constants.RETURN_CODE_NO_FAMILY:
                             if (BuildConfig.DEBUG) Log.e(TAG, "The user has no family records");
-                            mDeleteFamilyMemberSubject.onNext(FamilyActionResult.NO_FAMILY);
+                            mDeleteFamilyMemberSubject.onNext(FamilyActionEvent.of(NO_FAMILY));
                             break;
                         default:
                             String errorMessage = mContext.getString(R.string.exception_firebase_function_unknown_response);
                             if (BuildConfig.DEBUG) Log.e(TAG, errorMessage);
-                            mDeleteFamilyMemberSubject.onNext(FamilyActionResult.BACKEND_ERROR.setException( new FirebaseFunctionException(errorMessage) ));
+                            mDeleteFamilyMemberSubject.onNext(FamilyActionEvent.of(FamilyActionEvent.Result.BACKEND_ERROR).setException( new FirebaseFunctionException(errorMessage) ));
                     }
                 } catch (Exception e) {
                     String errorMessage = mContext.getString(R.string.exception_firebase_family_member_not_deleted);
                     if (BuildConfig.DEBUG) Log.e(TAG, errorMessage + ": " + e.getMessage());
-                    mDeleteFamilyMemberSubject.onNext(FamilyActionResult.BACKEND_ERROR.setException( new FirebaseFunctionException(errorMessage, e) ));
+                    mDeleteFamilyMemberSubject.onNext(FamilyActionEvent.of(FamilyActionEvent.Result.BACKEND_ERROR).setException( new FirebaseFunctionException(errorMessage, e) ));
                 }
                 return result;
             })
@@ -527,11 +533,11 @@ public class CloudRepo {
                     Exception e = task.getException();
                     String errorMessage = mContext.getString(R.string.exception_firebase_family_member_not_deleted);
                     if (BuildConfig.DEBUG) Log.e(TAG, errorMessage + ": " + e.getMessage());
-                    mDeleteFamilyMemberSubject.onNext(FamilyActionResult.BACKEND_ERROR.setException( new FirebaseFunctionException(errorMessage, e) ));
+                    mDeleteFamilyMemberSubject.onNext(FamilyActionEvent.of(FamilyActionEvent.Result.BACKEND_ERROR).setException( new FirebaseFunctionException(errorMessage, e) ));
                 } else if (!task.isSuccessful()) {
                     String errorMessage = mContext.getString(R.string.exception_firebase_family_member_not_deleted);
                     if (BuildConfig.DEBUG) Log.e(TAG, errorMessage);
-                    mDeleteFamilyMemberSubject.onNext(FamilyActionResult.BACKEND_ERROR.setException( new FirebaseFunctionException(errorMessage) ));
+                    mDeleteFamilyMemberSubject.onNext(FamilyActionEvent.of(FamilyActionEvent.Result.BACKEND_ERROR).setException( new FirebaseFunctionException(errorMessage) ));
                 }
             })
         ;
@@ -629,31 +635,31 @@ public class CloudRepo {
                     switch (returnCode) {
                         case Constants.RETURN_CODE_OK:
                             if (BuildConfig.DEBUG) Log.d(TAG, "Family joined");
-                            mJoinFamilySubject.onNext(FamilyActionResult.SUCCESS);
+                            mJoinFamilySubject.onNext(FamilyActionEvent.of(FamilyActionEvent.Result.SUCCESS));
                             break;
                         case Constants.RETURN_CODE_MORE_THAN_ONE_FAMILY:
                             if (BuildConfig.DEBUG) Log.e(TAG, "The inviting user has more than one family record");
-                            mJoinFamilySubject.onNext(FamilyActionResult.MORE_THAN_ONE_FAMILY);
+                            mJoinFamilySubject.onNext(FamilyActionEvent.of(MORE_THAN_ONE_FAMILY));
                             break;
                         case Constants.RETURN_CODE_NO_FAMILY:
                             if (BuildConfig.DEBUG) Log.e(TAG, "The inviting user has no family records");
-                            mJoinFamilySubject.onNext(FamilyActionResult.NO_FAMILY);
+                            mJoinFamilySubject.onNext(FamilyActionEvent.of(NO_FAMILY));
                             break;
                         case Constants.RETURN_CODE_NOT_SENT:
                             String receivedErrorMessage = (String)Objects.requireNonNull(result.get("errorMessage"));
                             String errorMessage = mContext.getString(R.string.exception_firebase_invite_acceptance_message_not_sent);
                             if (BuildConfig.DEBUG) Log.e(TAG, errorMessage + ": " + receivedErrorMessage);
-                            mJoinFamilySubject.onNext(FamilyActionResult.BACKEND_ERROR.setException( new FirebaseFunctionException(errorMessage) ));
+                            mJoinFamilySubject.onNext(FamilyActionEvent.of(FamilyActionEvent.Result.BACKEND_ERROR).setException( new FirebaseFunctionException(errorMessage) ));
                             break;
                         default:
                             errorMessage = mContext.getString(R.string.exception_firebase_function_unknown_response);
                             if (BuildConfig.DEBUG) Log.e(TAG, errorMessage);
-                            mJoinFamilySubject.onNext(FamilyActionResult.BACKEND_ERROR.setException( new FirebaseFunctionException(errorMessage) ));
+                            mJoinFamilySubject.onNext(FamilyActionEvent.of(FamilyActionEvent.Result.BACKEND_ERROR).setException( new FirebaseFunctionException(errorMessage) ));
                     }
                 } catch (Exception e) {
                     String errorMessage = mContext.getString(R.string.exception_firebase_family_not_joined);
                     if (BuildConfig.DEBUG) Log.e(TAG, errorMessage + ": " + e.getMessage());
-                    mJoinFamilySubject.onNext(FamilyActionResult.BACKEND_ERROR.setException( new FirebaseFunctionException(errorMessage, e) ));
+                    mJoinFamilySubject.onNext(FamilyActionEvent.of(FamilyActionEvent.Result.BACKEND_ERROR).setException( new FirebaseFunctionException(errorMessage, e) ));
                 }
                 return result;
             })
@@ -662,11 +668,11 @@ public class CloudRepo {
                     Exception e = task.getException();
                     String errorMessage = mContext.getString(R.string.exception_firebase_family_not_joined);
                     if (BuildConfig.DEBUG) Log.e(TAG, errorMessage + ": " + e.getMessage());
-                    mJoinFamilySubject.onNext(FamilyActionResult.BACKEND_ERROR.setException( new FirebaseFunctionException(errorMessage, e) ));
+                    mJoinFamilySubject.onNext(FamilyActionEvent.of(FamilyActionEvent.Result.BACKEND_ERROR).setException( new FirebaseFunctionException(errorMessage, e) ));
                 } else if (!task.isSuccessful()) {
                     String errorMessage = mContext.getString(R.string.exception_firebase_family_not_joined);
                     if (BuildConfig.DEBUG) Log.e(TAG, errorMessage);
-                    mJoinFamilySubject.onNext(FamilyActionResult.BACKEND_ERROR.setException( new FirebaseFunctionException(errorMessage) ));
+                    mJoinFamilySubject.onNext(FamilyActionEvent.of(FamilyActionEvent.Result.BACKEND_ERROR).setException( new FirebaseFunctionException(errorMessage) ));
                 }
             })
         ;
@@ -705,30 +711,30 @@ public class CloudRepo {
                     switch (returnCode) {
                         case Constants.RETURN_CODE_ALL_SENT: case Constants.RETURN_CODE_SOME_SENT:
                             if (BuildConfig.DEBUG) Log.d(TAG, "Location sent");
-                            mSendLocationSubject.onNext(FamilyActionResult.SUCCESS);
+                            mSendLocationSubject.onNext(FamilyActionEvent.of(FamilyActionEvent.Result.SUCCESS));
                             break;
                         case Constants.RETURN_CODE_MORE_THAN_ONE_FAMILY:
                             if (BuildConfig.DEBUG) Log.e(TAG, "The user has more than one family record");
-                            mSendLocationSubject.onNext(FamilyActionResult.MORE_THAN_ONE_FAMILY);
+                            mSendLocationSubject.onNext(FamilyActionEvent.of(MORE_THAN_ONE_FAMILY));
                             break;
                         case Constants.RETURN_CODE_NO_FAMILY:
                             if (BuildConfig.DEBUG) Log.e(TAG, "The user has no family records");
-                            mSendLocationSubject.onNext(FamilyActionResult.NO_FAMILY);
+                            mSendLocationSubject.onNext(FamilyActionEvent.of(NO_FAMILY));
                             break;
                         case Constants.RETURN_CODE_NONE_SENT:
                             String errorMessage = mContext.getString(R.string.exception_firebase_location_not_sent);
                             if (BuildConfig.DEBUG) Log.e(TAG, errorMessage);
-                            mSendLocationSubject.onNext(FamilyActionResult.BACKEND_ERROR.setException( new FirebaseFunctionException(errorMessage) ));
+                            mSendLocationSubject.onNext(FamilyActionEvent.of(FamilyActionEvent.Result.BACKEND_ERROR).setException( new FirebaseFunctionException(errorMessage) ));
                             break;
                         default:
                             errorMessage = mContext.getString(R.string.exception_firebase_function_unknown_response);
                             if (BuildConfig.DEBUG) Log.e(TAG, errorMessage);
-                            mSendLocationSubject.onNext(FamilyActionResult.BACKEND_ERROR.setException( new FirebaseFunctionException(errorMessage) ));
+                            mSendLocationSubject.onNext(FamilyActionEvent.of(FamilyActionEvent.Result.BACKEND_ERROR).setException( new FirebaseFunctionException(errorMessage) ));
                     }
                 } catch (Exception e) {
                     String errorMessage = mContext.getString(R.string.exception_firebase_location_not_sent);
                     if (BuildConfig.DEBUG) Log.e(TAG, errorMessage + ": " + e.getMessage());
-                    mSendLocationSubject.onNext(FamilyActionResult.BACKEND_ERROR.setException( new FirebaseFunctionException(errorMessage, e) ));
+                    mSendLocationSubject.onNext(FamilyActionEvent.of(FamilyActionEvent.Result.BACKEND_ERROR).setException( new FirebaseFunctionException(errorMessage, e) ));
                 }
                 return result;
             })
@@ -737,11 +743,11 @@ public class CloudRepo {
                     Exception e = task.getException();
                     String errorMessage = mContext.getString(R.string.exception_firebase_location_not_sent);
                     if (BuildConfig.DEBUG) Log.e(TAG, errorMessage + ": " + e.getMessage());
-                    mSendLocationSubject.onNext(FamilyActionResult.BACKEND_ERROR.setException( new FirebaseFunctionException(errorMessage, e) ));
+                    mSendLocationSubject.onNext(FamilyActionEvent.of(FamilyActionEvent.Result.BACKEND_ERROR).setException( new FirebaseFunctionException(errorMessage, e) ));
                 } else if (!task.isSuccessful()) {
                     String errorMessage = mContext.getString(R.string.exception_firebase_location_not_sent);
                     if (BuildConfig.DEBUG) Log.e(TAG, errorMessage);
-                    mSendLocationSubject.onNext(FamilyActionResult.BACKEND_ERROR.setException( new FirebaseFunctionException(errorMessage) ));
+                    mSendLocationSubject.onNext(FamilyActionEvent.of(FamilyActionEvent.Result.BACKEND_ERROR).setException( new FirebaseFunctionException(errorMessage) ));
                 }
             })
         ;

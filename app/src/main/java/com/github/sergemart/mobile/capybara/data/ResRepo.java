@@ -31,7 +31,7 @@ public class ResRepo {
      * @return Sign-in retry dialog icon resource id
      */
     public int getSignInRetryDialogIconR(Throwable cause) {
-        return R.mipmap.ic_launcher; // TODO: Make dialog icons
+        return R.mipmap.capybara_profile; // TODO: Make dialog icons
     }
 
 
@@ -86,7 +86,7 @@ public class ResRepo {
      * @return  Create family retry dialog icon resource id
      */
     public int getCreateFamilyRetryDialogIconR(Throwable cause) {
-        return R.mipmap.ic_launcher; // TODO: Make dialog icons
+        return R.mipmap.capybara_profile; // TODO: Make dialog icons
     }
 
 
