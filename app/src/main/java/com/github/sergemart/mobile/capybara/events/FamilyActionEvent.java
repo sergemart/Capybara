@@ -38,13 +38,4 @@ public class FamilyActionEvent {
         return this;
     }
 
-
-    // --------------------------- Inner classes: A result
-
-    public enum Result {
-        SUCCESS,
-        NO_FAMILY,
-        MORE_THAN_ONE_FAMILY,
-        BACKEND_ERROR
-    }
 }

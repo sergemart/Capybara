@@ -11,7 +11,7 @@ import com.github.sergemart.mobile.capybara.viewmodel.ErrorSharedViewModel;
 
 import androidx.lifecycle.ViewModelProviders;
 
-import static com.github.sergemart.mobile.capybara.events.GenericEvent.Result.SUCCESS;
+import static com.github.sergemart.mobile.capybara.events.Result.SUCCESS;
 
 
 public class ErrorActivity

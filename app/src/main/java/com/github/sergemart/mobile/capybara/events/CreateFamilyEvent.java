@@ -50,13 +50,4 @@ public class CreateFamilyEvent {
         return this;
     }
 
-
-    // --------------------------- Inner classes: A result
-
-    public enum Result {
-        CREATED,
-        EXIST,
-        EXIST_MORE_THAN_ONE,
-        BACKEND_ERROR
-    }
 }

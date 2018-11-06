@@ -19,7 +19,7 @@ import java.util.Objects;
 
 import io.reactivex.disposables.CompositeDisposable;
 
-import static com.github.sergemart.mobile.capybara.events.GenericEvent.Result.SUCCESS;
+import static com.github.sergemart.mobile.capybara.events.Result.SUCCESS;
 
 
 public class CloudMessagingService
@@ -162,7 +162,7 @@ public class CloudMessagingService
         if (BuildConfig.DEBUG) Log.d(TAG, "A location message received, emitting a corresponding event");
         Location location = Tools.get().getLocationFromJson(locationJson);
         MessagingServiceRepo.get().getLocationReceivedSubject().onNext(LocationEvent
-            .of(LocationEvent.Result.SUCCESS)
+            .of(SUCCESS)
             .setLocation(location)
             .setSenderEmail(senderEmail)
         );

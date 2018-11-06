@@ -50,11 +50,4 @@ public class GenericEvent<T> {
         return this;
     }
 
-
-    // --------------------------- Inner classes: A result
-
-    public enum Result {
-        SUCCESS,
-        FAILURE
-    }
 }

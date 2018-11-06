@@ -23,18 +23,14 @@ import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 import androidx.core.content.ContextCompat;
 import io.reactivex.Observable;
-import io.reactivex.Single;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.observables.ConnectableObservable;
-import io.reactivex.schedulers.Schedulers;
 
-import static com.github.sergemart.mobile.capybara.events.GenericEvent.Result.FAILURE;
-import static com.github.sergemart.mobile.capybara.events.GenericEvent.Result.SUCCESS;
+import static com.github.sergemart.mobile.capybara.events.Result.FAILURE;
+import static com.github.sergemart.mobile.capybara.events.Result.SUCCESS;
 
 
 // Singleton

@@ -27,8 +27,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.ViewModelProviders;
 
-import static com.github.sergemart.mobile.capybara.events.GenericEvent.Result.FAILURE;
-import static com.github.sergemart.mobile.capybara.events.GenericEvent.Result.SUCCESS;
+import static com.github.sergemart.mobile.capybara.events.Result.FAILURE;
+import static com.github.sergemart.mobile.capybara.events.Result.SUCCESS;
 
 
 public class InitialMajorCreateFamilyFragment

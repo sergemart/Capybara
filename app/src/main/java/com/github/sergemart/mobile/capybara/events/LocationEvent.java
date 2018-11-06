@@ -66,10 +66,4 @@ public class LocationEvent {
     }
 
 
-    // --------------------------- Inner classes: A result
-
-    public enum Result {
-        SUCCESS,
-        FAILURE
-    }
 }
