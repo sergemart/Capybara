@@ -51,7 +51,8 @@
         <item name="android:paddingBottom">@dimen/layoutListItem_paddingBottom</item>
         <item name="android:paddingStart">@dimen/layoutListItem_paddingStart</item>
         <item name="android:paddingEnd">@dimen/layoutListItem_paddingEnd</item>
-        <item name="android:background">?attr/selectableItemBackground</item>
+        <!--<item name="android:background">?attr/selectableItemBackground</item>-->
+        <item name="android:background">@color/list_item_background_back</item>
         <item name="android:focusable">true</item>
         <item name="android:clickable">true</item>
     </style>

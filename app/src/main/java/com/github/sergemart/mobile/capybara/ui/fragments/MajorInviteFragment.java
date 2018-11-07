@@ -2,6 +2,7 @@ package com.github.sergemart.mobile.capybara.ui.fragments;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -20,6 +21,10 @@ import java.util.Objects;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.selection.ItemDetailsLookup;
+import androidx.recyclerview.selection.ItemKeyProvider;
+import androidx.recyclerview.selection.SelectionTracker;
+import androidx.recyclerview.selection.StorageStrategy;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -32,6 +37,9 @@ import io.reactivex.schedulers.Schedulers;
 public class MajorInviteFragment
     extends AbstractFragment
 {
+
+    private static final String SELECTION_ID = "selection_id";
+
 
     private RecyclerView mContactsRecyclerView;
 
@@ -76,6 +84,18 @@ public class MajorInviteFragment
         mContactsRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mContactsRecyclerView.addItemDecoration(new DividerItemDecoration(Objects.requireNonNull( super.getActivity() ), DividerItemDecoration.VERTICAL));
         mContactsRecyclerView.setAdapter(mContactsAdapter);
+
+        SelectionTracker<String> selectionTracker = new SelectionTracker.Builder<>(
+            SELECTION_ID,
+            mContactsRecyclerView,
+            new ContactsKeyProvider(ItemKeyProvider.SCOPE_MAPPED),
+            new ContactLookup(),
+            StorageStrategy.createStringStorage()
+        )
+            .withOnItemActivatedListener((itemDetails, motionEvent) -> true)
+            .build()
+        ;
+        mContactsAdapter.setSelectionTracker(selectionTracker);
 
         this.setViewListeners();
 
@@ -187,11 +207,13 @@ public class MajorInviteFragment
     class ContactsAdapter extends RecyclerView.Adapter<ContactHolder> {
 
 
-        ContactsAdapter() {
+        private SelectionTracker<String> mmSelectionTracker;
+
+
+        void setSelectionTracker(SelectionTracker<String> selectionTracker) {
+            mmSelectionTracker = selectionTracker;
         }
 
-
-        // ============================== Overrides
 
         /**
          * @return View holder instance
@@ -210,9 +232,7 @@ public class MajorInviteFragment
         @Override
         public void onBindViewHolder(@NonNull ContactHolder holder, int position) {
             ContactsRepo.Contact item = mContacts.get(position);
-            holder.mmContactNameTextView.setText(item.name);
-            holder.mmContactEmailTextView.setText(item.email);
-            holder.mmThumbnailImageView.setImageBitmap(item.photo);
+            holder.bind(item, mmSelectionTracker.isSelected(item.id));
         }
 
 
@@ -238,20 +258,117 @@ public class MajorInviteFragment
 
     // ============================== Inner classes: View holder
 
-    class ContactHolder extends RecyclerView.ViewHolder {
+    class ContactHolder
+        extends RecyclerView.ViewHolder
+    {
 
+        View mmItemView;
         ImageView mmThumbnailImageView;
         TextView mmContactNameTextView;
         TextView mmContactEmailTextView;
 
 
-        ContactHolder(View view) {
-            super(view);
-            mmThumbnailImageView = view.findViewById(R.id.imageView_thumbnail);
-            mmContactNameTextView = view.findViewById(R.id.textView_contact_name);
-            mmContactEmailTextView = view.findViewById(R.id.textView_contact_email);
+        ContactHolder(View itemView) {
+            super(itemView);
+            mmItemView = itemView;
+            mmThumbnailImageView = itemView.findViewById(R.id.imageView_thumbnail);
+            mmContactNameTextView = itemView.findViewById(R.id.textView_contact_name);
+            mmContactEmailTextView = itemView.findViewById(R.id.textView_contact_email);
+        }
+
+
+        void bind(ContactsRepo.Contact item, boolean isActive) {
+            mmItemView.setActivated(isActive);
+            mmContactNameTextView.setText(item.name);
+            mmContactEmailTextView.setText(item.email);
+            mmThumbnailImageView.setImageBitmap(item.photo);
+        }
+
+
+        /**
+         * An utility method for the selection library
+         *
+         */
+        ContactDetails getItemDetails() {
+            int position = super.getAdapterPosition();
+            return new ContactDetails(position, mContacts.get(position).id);
         }
 
     }
 
+
+    // ============================== Inner classes: Item key provider
+
+    public class ContactsKeyProvider
+        extends ItemKeyProvider<String>
+    {
+
+        ContactsKeyProvider(int scope) {
+            super(scope);
+        }
+
+
+        @Nullable
+        @Override
+        public String getKey(int position) {
+            return mContacts.get(position).id;
+        }
+
+
+        @Override
+        public int getPosition(@NonNull String key) {
+            return getContactIndexById(key);
+        }
+    }
+
+
+    // ============================== Inner classes: Item details
+
+    public class ContactDetails
+        extends ItemDetailsLookup.ItemDetails<String>
+    {
+
+        private final int mmPosition;
+        private final String mmSelectionKey;
+
+
+        ContactDetails(int position, String selectionKey) {
+            this.mmPosition = position;
+            this.mmSelectionKey = selectionKey;
+        }
+
+
+        @Override
+        public int getPosition() {
+            return mmPosition;
+        }
+
+
+        @Nullable
+        @Override
+        public String getSelectionKey() {
+            return mmSelectionKey;
+        }
+    }
+
+
+    // ============================== Inner classes: Item details lookup
+
+    public class ContactLookup
+        extends ItemDetailsLookup<String>
+    {
+
+        @Nullable
+        @Override
+        public ItemDetails<String> getItemDetails(@NonNull MotionEvent motionEvent) {
+            View view = mContactsRecyclerView.findChildViewUnder(motionEvent.getX(), motionEvent.getY());
+            if (view != null) {
+                RecyclerView.ViewHolder viewHolder = mContactsRecyclerView.getChildViewHolder(view);
+                if (viewHolder instanceof ContactHolder) {
+                    return ((ContactHolder) viewHolder).getItemDetails();
+                }
+            }
+            return null;
+        }
+    }
 }
