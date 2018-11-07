@@ -160,15 +160,15 @@ public class MajorInviteFragment
             pInstanceDisposable.add(ContactsRepo.get().getContactsObservable()
                 .flatMap(event ->  Observable.fromIterable( (List)event.getData() ))
                 .flatMap(contact -> {
-                    String contactId = ((ContactsRepo.Contact) contact).id;
-                    return ContactsRepo.get().getEnrichedContactObservable(contactId);
+                    String contactEmail = ((ContactsRepo.Contact) contact).email;
+                    return ContactsRepo.get().getEnrichedContactObservable(contactEmail);
                 })
                 .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
                 .subscribe(bitmapEvent -> {
                     switch ( ((GenericEvent)bitmapEvent).getResult() ) {
                         case SUCCESS:
                             ContactsRepo.Contact auxContactData = (ContactsRepo.Contact) ((GenericEvent)bitmapEvent).getData();
-                            int position = this.getContactIndexById(auxContactData.id);
+                            int position = this.getContactIndexByEmail(auxContactData.email);
                             mContacts.get(position).photo = auxContactData.photo;
                             mContactsAdapter.notifyItemChanged(position);
                             break;
@@ -190,12 +190,24 @@ public class MajorInviteFragment
     // --------------------------- Subroutines
 
     /**
-     * Get a contact list index by its email
+     * Get a contact list index by its ID
      */
     private int getContactIndexById(String contactId) {
         for (int i = 0; i < mContacts.size(); i++) {
             ContactsRepo.Contact contact = mContacts.get(i);
             if (contact.id.equals(contactId)) return i;
+        }
+        return -1;
+    }
+
+
+    /**
+     * Get a contact list index by its email
+     */
+    private int getContactIndexByEmail(String contactEmail) {
+        for (int i = 0; i < mContacts.size(); i++) {
+            ContactsRepo.Contact contact = mContacts.get(i);
+            if (contact.email.equals(contactEmail)) return i;
         }
         return -1;
     }

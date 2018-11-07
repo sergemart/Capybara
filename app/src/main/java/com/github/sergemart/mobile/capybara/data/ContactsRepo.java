@@ -23,6 +23,7 @@ import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 import androidx.core.content.ContextCompat;
@@ -50,6 +51,7 @@ public class ContactsRepo {
         mContentResolver = mContext.getContentResolver();
         mContacts = new ArrayList<>();
         mBitmapCache = new ConcurrentHashMap<>();
+        mIdsByEmail = new ConcurrentHashMap<>();
     }
 
 
@@ -66,6 +68,7 @@ public class ContactsRepo {
     private ContentResolver mContentResolver;
     private List<Contact> mContacts;
     private Map<String, Bitmap> mBitmapCache;
+    private Map<String, String> mIdsByEmail;
 
     private ConnectableObservable<GenericEvent> mContactsObservable;
 
@@ -99,18 +102,20 @@ public class ContactsRepo {
     /**
      * @return A cold observable emitting a contact data structure used as a photo container
      */
-    public Observable<GenericEvent> getEnrichedContactObservable(String contactId) {
+    public Observable<GenericEvent> getEnrichedContactObservable(String contactEmail) {
         return Observable.create(emitter -> {
             Contact auxContactData = new Contact();
-            auxContactData.id = contactId;
+            String contactId = mIdsByEmail.get(contactEmail);
+            auxContactData.id = Objects.requireNonNull(contactId);
+            auxContactData.email = contactEmail;
 
             if (mBitmapCache.containsKey(contactId) && mBitmapCache.get(contactId) != null) {
                 auxContactData.photo = mBitmapCache.get(contactId);
                 emitter.onNext(GenericEvent.of(SUCCESS).setData(auxContactData));                   // emit a cached bitmap
             } else {
                 try {
-                    Bitmap contactPhoto = this.getContactPhoto(contactId);                       // data provider op
-                    mBitmapCache.put(contactId, contactPhoto);                                   // cache the bitmap
+                    Bitmap contactPhoto = this.getContactPhoto(contactId);                          // data provider op
+                    mBitmapCache.put(contactId, contactPhoto);                                      // cache the bitmap
                     auxContactData.photo = contactPhoto;
                     emitter.onNext(GenericEvent.of(SUCCESS).setData(auxContactData));               // emit a fetched bitmap
                 } catch (SecurityException e) {
@@ -172,6 +177,7 @@ public class ContactsRepo {
                                 contact.email = contactEmail;
                                 contact.photo = BitmapFactory.decodeResource(mContext.getResources(), R.mipmap.capybara_bighead); // a placeholder
                                 mContacts.add(contact);
+                                mIdsByEmail.put(contactEmail, contactId);
                             }
                         }
                     }
@@ -187,6 +193,7 @@ public class ContactsRepo {
      */
     private Bitmap getContactPhoto(String contactId) {
         Bitmap result = null;
+
         Uri contactUri = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, Long.parseLong(contactId));
         Uri photoUri = Uri.withAppendedPath(contactUri, ContactsContract.Contacts.Photo.CONTENT_DIRECTORY);
 
