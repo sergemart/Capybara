@@ -109,8 +109,8 @@ public class ContactsRepo {
                 emitter.onNext(GenericEvent.of(SUCCESS).setData(auxContactData));                   // emit a cached bitmap
             } else {
                 try {
-                    Bitmap contactPhoto = this.getContactPhoto(contactId);                          // data provider op
-                    mBitmapCache.put(contactId, contactPhoto);                                      // cache the bitmap
+                    Bitmap contactPhoto = this.getContactPhoto(contactId);                       // data provider op
+                    mBitmapCache.put(contactId, contactPhoto);                                   // cache the bitmap
                     auxContactData.photo = contactPhoto;
                     emitter.onNext(GenericEvent.of(SUCCESS).setData(auxContactData));               // emit a fetched bitmap
                 } catch (SecurityException e) {

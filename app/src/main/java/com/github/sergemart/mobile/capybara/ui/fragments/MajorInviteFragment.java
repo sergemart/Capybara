@@ -84,13 +84,12 @@ public class MajorInviteFragment
         mContactsRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mContactsRecyclerView.addItemDecoration(new DividerItemDecoration(Objects.requireNonNull( super.getActivity() ), DividerItemDecoration.VERTICAL));
         mContactsRecyclerView.setAdapter(mContactsAdapter);
-
-        SelectionTracker<String> selectionTracker = new SelectionTracker.Builder<>(
+        SelectionTracker<String> selectionTracker = new SelectionTracker.Builder<>(                 // a main engine of the selection library
             SELECTION_ID,
             mContactsRecyclerView,
-            new ContactsKeyProvider(ItemKeyProvider.SCOPE_MAPPED),
-            new ContactLookup(),
-            StorageStrategy.createStringStorage()
+            new MajorInviteFragment.ContactsKeyProvider(ItemKeyProvider.SCOPE_MAPPED),              // scope = all list data
+            new MajorInviteFragment.ContactLookup(),
+            StorageStrategy.createStringStorage()                                                   // key type is String
         )
             .withOnItemActivatedListener((itemDetails, motionEvent) -> true)
             .build()
@@ -191,7 +190,7 @@ public class MajorInviteFragment
     // --------------------------- Subroutines
 
     /**
-     * Get a contact list index by its ID
+     * Get a contact list index by its email
      */
     private int getContactIndexById(String contactId) {
         for (int i = 0; i < mContacts.size(); i++) {
@@ -286,8 +285,8 @@ public class MajorInviteFragment
 
 
         /**
-         * An utility method for the selection library
-         *
+         * A helper method for the selection library
+         * @return A position and a key of the item
          */
         ContactDetails getItemDetails() {
             int position = super.getAdapterPosition();
@@ -299,6 +298,10 @@ public class MajorInviteFragment
 
     // ============================== Inner classes: Item key provider
 
+    /**
+     * A helper class for the selection library.
+     * Provides a two-way link between a key and a position
+     */
     public class ContactsKeyProvider
         extends ItemKeyProvider<String>
     {
@@ -324,6 +327,11 @@ public class MajorInviteFragment
 
     // ============================== Inner classes: Item details
 
+
+    /**
+     * A helper class for the selection library.
+     * Serves as a container for the item's key and position
+     */
     public class ContactDetails
         extends ItemDetailsLookup.ItemDetails<String>
     {
@@ -354,6 +362,10 @@ public class MajorInviteFragment
 
     // ============================== Inner classes: Item details lookup
 
+    /**
+     * A helper class for the selection library.
+     * Produces an item details by the motion event
+     */
     public class ContactLookup
         extends ItemDetailsLookup<String>
     {
@@ -362,13 +374,11 @@ public class MajorInviteFragment
         @Override
         public ItemDetails<String> getItemDetails(@NonNull MotionEvent motionEvent) {
             View view = mContactsRecyclerView.findChildViewUnder(motionEvent.getX(), motionEvent.getY());
-            if (view != null) {
-                RecyclerView.ViewHolder viewHolder = mContactsRecyclerView.getChildViewHolder(view);
-                if (viewHolder instanceof ContactHolder) {
-                    return ((ContactHolder) viewHolder).getItemDetails();
-                }
-            }
-            return null;
+            if (view == null) return null;
+
+            RecyclerView.ViewHolder viewHolder = mContactsRecyclerView.getChildViewHolder(view);
+            if (viewHolder instanceof ContactHolder) return ((ContactHolder) viewHolder).getItemDetails();
+            else return null;
         }
     }
 }

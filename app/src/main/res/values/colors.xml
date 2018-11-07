@@ -5,7 +5,7 @@
     <color name="colorAccent">#6295f4</color>
     <color name="colorDefaultPageBackground">#45a949</color>
     <color name="colorErrorPageBackground">#da625f</color>
-    <color name="colorSelectedBackground">#ffffff</color>
+    <color name="colorSelectedBackground">#30000000</color>
     <color name="colorText">#ffffff</color>
     <color name="colorThumbnailBackground">#ffffff</color>
     <color name="colorThumbnailBorder">#30000000</color>
