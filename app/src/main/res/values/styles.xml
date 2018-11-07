@@ -13,7 +13,7 @@
     </style>
 
 
-    <!-- ========================== Background image styles -->
+    <!-- ========================== Image styles -->
 
     <style name="App.ImageView.Background" parent="android:Widget">
         <item name="android:layout_width">match_parent</item>
@@ -26,6 +26,17 @@
     <style name="App.ImageView.Background.ErrorPage">
         <item name="android:background">@color/colorErrorPageBackground</item>
     </style>
+
+
+    <style name="App.ImageView.Thumbnail" parent="android:Widget">
+        <item name="android:layout_width">@dimen/imageViewThumbnail_width</item>
+        <item name="android:layout_height">@dimen/imageViewThumbnail_height</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="civ_circle_background_color">@color/colorThumbnailBackground</item>
+        <item name="civ_border_color">@color/colorThumbnailBorder</item>
+        <item name="civ_border_width">@dimen/imageViewThumbnail_border_width</item>
+    </style>
+
 
     <!-- ========================== Layout styles -->
 
