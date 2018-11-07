@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     style="@style/App.Layout.ListItem">
 
-    <ImageView
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/imageView_thumbnail"
         android:layout_width="@dimen/imageViewThumbnail_width"
         android:layout_height="@dimen/imageViewThumbnail_height"
@@ -16,6 +16,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:civ_border_width="1dp"
+        app:civ_border_color="#30000000"
         tools:srcCompat="@mipmap/capybara_profile" />
 
     <TextView
