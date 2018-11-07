@@ -89,7 +89,7 @@ public class MajorInviteFragment
             mContactsRecyclerView,
             new MajorInviteFragment.ContactsKeyProvider(ItemKeyProvider.SCOPE_MAPPED),              // scope = all list data
             new MajorInviteFragment.ContactLookup(),
-            StorageStrategy.createStringStorage()                                                   // key type is String
+            StorageStrategy.createStringStorage()                                                   // key type is String (email)
         )
             .withOnItemActivatedListener((itemDetails, motionEvent) -> true)
             .build()
@@ -189,16 +189,16 @@ public class MajorInviteFragment
 
     // --------------------------- Subroutines
 
-    /**
-     * Get a contact list index by its ID
-     */
-    private int getContactIndexById(String contactId) {
-        for (int i = 0; i < mContacts.size(); i++) {
-            ContactsRepo.Contact contact = mContacts.get(i);
-            if (contact.id.equals(contactId)) return i;
-        }
-        return -1;
-    }
+//    /**
+//     * Get a contact list index by its ID
+//     */
+//    private int getContactIndexById(String contactId) {
+//        for (int i = 0; i < mContacts.size(); i++) {
+//            ContactsRepo.Contact contact = mContacts.get(i);
+//            if (contact.id.equals(contactId)) return i;
+//        }
+//        return -1;
+//    }
 
 
     /**
@@ -243,7 +243,7 @@ public class MajorInviteFragment
         @Override
         public void onBindViewHolder(@NonNull ContactHolder holder, int position) {
             ContactsRepo.Contact item = mContacts.get(position);
-            holder.bind(item, mmSelectionTracker.isSelected(item.id));
+            holder.bind(item, mmSelectionTracker.isSelected(item.email));
         }
 
 
@@ -302,7 +302,7 @@ public class MajorInviteFragment
          */
         ContactDetails getItemDetails() {
             int position = super.getAdapterPosition();
-            return new ContactDetails(position, mContacts.get(position).id);
+            return new ContactDetails(position, mContacts.get(position).email);
         }
 
     }
@@ -326,13 +326,13 @@ public class MajorInviteFragment
         @Nullable
         @Override
         public String getKey(int position) {
-            return mContacts.get(position).id;
+            return mContacts.get(position).email;
         }
 
 
         @Override
         public int getPosition(@NonNull String key) {
-            return getContactIndexById(key);
+            return getContactIndexByEmail(key);
         }
     }
 
