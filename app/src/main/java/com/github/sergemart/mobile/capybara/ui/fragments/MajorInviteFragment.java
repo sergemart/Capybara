@@ -1,7 +1,10 @@
 package com.github.sergemart.mobile.capybara.ui.fragments;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,11 +18,14 @@ import com.github.sergemart.mobile.capybara.events.GenericEvent;
 import com.github.sergemart.mobile.capybara.viewmodel.MajorSharedViewModel;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.ActionMode;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.selection.ItemDetailsLookup;
 import androidx.recyclerview.selection.ItemKeyProvider;
@@ -43,10 +49,12 @@ public class MajorInviteFragment
     private RecyclerView mContactsRecyclerView;
 
     private List<ContactsRepo.Contact> mContacts;
+    private List <String> mSelectedEmails;
     private ContactsAdapter mContactsAdapter;
     private SelectionTracker<String> mSelectionTracker;
     private LayoutInflater mLayoutInflater;
     private MajorSharedViewModel mMajorSharedViewModel;
+    private ActionMode mActionMode;
 
 
     // --------------------------- Override fragment lifecycle event handlers
@@ -59,9 +67,10 @@ public class MajorInviteFragment
         super.onCreate(savedInstanceState);
 
         mContacts = new ArrayList<>();
+        mSelectedEmails = new ArrayList<>();
         mContactsAdapter = new ContactsAdapter();
-        mLayoutInflater = LayoutInflater.from(super.getActivity());
-        mMajorSharedViewModel = ViewModelProviders.of(Objects.requireNonNull( super.getActivity() )).get(MajorSharedViewModel.class);
+        mLayoutInflater = LayoutInflater.from(pActivity);
+        mMajorSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(pActivity)).get(MajorSharedViewModel.class);
 
         this.setInstanceListeners();
     }
@@ -80,18 +89,17 @@ public class MajorInviteFragment
         mContactsRecyclerView = fragmentView.findViewById(R.id.recyclerView_contacts);
 
         // Set up the RecyclerView
-        mContactsRecyclerView.setLayoutManager(new LinearLayoutManager(Objects.requireNonNull( super.getActivity() )));
+        mContactsRecyclerView.setLayoutManager(new LinearLayoutManager(Objects.requireNonNull(pActivity)));
         mContactsRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        mContactsRecyclerView.addItemDecoration(new DividerItemDecoration(Objects.requireNonNull( super.getActivity() ), DividerItemDecoration.VERTICAL));
+        mContactsRecyclerView.addItemDecoration(new DividerItemDecoration(Objects.requireNonNull(pActivity), DividerItemDecoration.VERTICAL));
         mContactsRecyclerView.setAdapter(mContactsAdapter);
-        mSelectionTracker = new SelectionTracker.Builder<>(                 // a main engine of the selection library
+        mSelectionTracker = new SelectionTracker.Builder<>(                                         // a main engine of the selection library
             SELECTION_ID,
             mContactsRecyclerView,
             new MajorInviteFragment.ContactsKeyProvider(ItemKeyProvider.SCOPE_MAPPED),              // scope = all list data
             new MajorInviteFragment.ContactLookup(),
             StorageStrategy.createStringStorage()                                                   // key type is String (email)
         )
-            .withOnItemActivatedListener((itemDetails, motionEvent) -> true)
             .build()
         ;
         mSelectionTracker.onRestoreInstanceState(savedInstanceState);                               // recall selected items
@@ -139,6 +147,22 @@ public class MajorInviteFragment
      * Set listeners to view-related events
      */
     private void setViewListeners() {
+
+        // Add listeners to selection events
+        mSelectionTracker.addObserver(new SelectionTracker.SelectionObserver<String>() {
+
+            // Manage a context menu depending on the selection
+            @Override
+            public void onSelectionChanged() {
+                super.onSelectionChanged();
+                if (mSelectionTracker.hasSelection() && mActionMode == null) {                      // when an item selected and no menu shown...
+                    mActionMode = (Objects.requireNonNull(pActivity)).startSupportActionMode(new ActionModeController()); // ... show the menu
+                } else if (!mSelectionTracker.hasSelection() && mActionMode != null) {              // when no selected items left and the menu is shown...
+                    mActionMode.finish();                                                           // ... destroy the menu
+                    mActionMode = null;
+                }
+            }
+        });
     }
 
 
@@ -335,7 +359,6 @@ public class MajorInviteFragment
 
     // ============================== Inner classes: Item details
 
-
     /**
      * A helper class for the selection library.
      * Serves as a container for the item's key and position
@@ -387,6 +410,42 @@ public class MajorInviteFragment
             RecyclerView.ViewHolder viewHolder = mContactsRecyclerView.getChildViewHolder(view);
             if (viewHolder instanceof ContactHolder) return ((ContactHolder) viewHolder).getItemDetails();
             else return null;
+        }
+    }
+
+
+    // ============================== Inner classes: Context menu (ActionMode) controller
+
+    public class ActionModeController implements ActionMode.Callback {
+
+        @Override
+        public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
+            actionMode.getMenuInflater().inflate(R.menu.menu_major_invite, menu);
+            return true;
+        }
+
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
+            return true;
+        }
+
+
+        @Override
+        public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
+            switch (menuItem.getItemId()) {
+                case R.id.menuItem_invite_send:
+                    actionMode.finish();
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+
+        @Override
+        public void onDestroyActionMode(ActionMode actionMode) {
+            mSelectionTracker.clearSelection();
         }
     }
 }

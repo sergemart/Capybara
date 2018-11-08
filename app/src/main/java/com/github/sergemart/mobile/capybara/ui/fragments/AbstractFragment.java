@@ -1,12 +1,18 @@
 package com.github.sergemart.mobile.capybara.ui.fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.github.sergemart.mobile.capybara.BuildConfig;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import io.reactivex.disposables.CompositeDisposable;
 
@@ -15,12 +21,24 @@ public abstract class AbstractFragment extends Fragment {
 
     protected String TAG;
 
+    AppCompatActivity pActivity;
     ImageView pBackgroundImageView;
     CompositeDisposable pViewDisposable;
     CompositeDisposable pInstanceDisposable;
 
 
     // --------------------------- Override fragment lifecycle event handlers
+
+
+    /**
+     * Activity attach actions
+     */
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        pActivity = (AppCompatActivity) super.getActivity();
+    }
+
 
     /**
      * Instance creation actions
@@ -60,4 +78,12 @@ public abstract class AbstractFragment extends Fragment {
     }
 
 
+    /**
+     * Activity detach actions
+     */
+    @Override
+    public void onDetach() {
+        pActivity = null;
+        super.onDetach();
+    }
 }
