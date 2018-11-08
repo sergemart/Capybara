@@ -40,11 +40,11 @@ public class MajorInviteFragment
 
     private static final String SELECTION_ID = "selection_id";
 
-
     private RecyclerView mContactsRecyclerView;
 
     private List<ContactsRepo.Contact> mContacts;
     private ContactsAdapter mContactsAdapter;
+    private SelectionTracker<String> mSelectionTracker;
     private LayoutInflater mLayoutInflater;
     private MajorSharedViewModel mMajorSharedViewModel;
 
@@ -84,7 +84,7 @@ public class MajorInviteFragment
         mContactsRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mContactsRecyclerView.addItemDecoration(new DividerItemDecoration(Objects.requireNonNull( super.getActivity() ), DividerItemDecoration.VERTICAL));
         mContactsRecyclerView.setAdapter(mContactsAdapter);
-        SelectionTracker<String> selectionTracker = new SelectionTracker.Builder<>(                 // a main engine of the selection library
+        mSelectionTracker = new SelectionTracker.Builder<>(                 // a main engine of the selection library
             SELECTION_ID,
             mContactsRecyclerView,
             new MajorInviteFragment.ContactsKeyProvider(ItemKeyProvider.SCOPE_MAPPED),              // scope = all list data
@@ -94,7 +94,8 @@ public class MajorInviteFragment
             .withOnItemActivatedListener((itemDetails, motionEvent) -> true)
             .build()
         ;
-        mContactsAdapter.setSelectionTracker(selectionTracker);
+        mSelectionTracker.onRestoreInstanceState(savedInstanceState);
+        mContactsAdapter.setSelectionTracker(mSelectionTracker);
 
         this.setViewListeners();
 
@@ -115,6 +116,13 @@ public class MajorInviteFragment
             default:
                 super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
+    }
+
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        mSelectionTracker.onSaveInstanceState(outState);
     }
 
 
