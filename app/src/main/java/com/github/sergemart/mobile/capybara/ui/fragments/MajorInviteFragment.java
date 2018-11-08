@@ -94,7 +94,7 @@ public class MajorInviteFragment
             .withOnItemActivatedListener((itemDetails, motionEvent) -> true)
             .build()
         ;
-        mSelectionTracker.onRestoreInstanceState(savedInstanceState);
+        mSelectionTracker.onRestoreInstanceState(savedInstanceState);                               // recall selected items
         mContactsAdapter.setSelectionTracker(mSelectionTracker);
 
         this.setViewListeners();
@@ -122,7 +122,7 @@ public class MajorInviteFragment
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        mSelectionTracker.onSaveInstanceState(outState);
+        mSelectionTracker.onSaveInstanceState(outState);                                            // remember selected items
     }
 
 
@@ -144,7 +144,7 @@ public class MajorInviteFragment
 
     // --------------------------- Use cases
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "RedundantCast"})
     private void getContacts() {
 
         if (ContactsRepo.get().isPermissionGranted() ) {
@@ -196,18 +196,6 @@ public class MajorInviteFragment
 
 
     // --------------------------- Subroutines
-
-//    /**
-//     * Get a contact list index by its ID
-//     */
-//    private int getContactIndexById(String contactId) {
-//        for (int i = 0; i < mContacts.size(); i++) {
-//            ContactsRepo.Contact contact = mContacts.get(i);
-//            if (contact.id.equals(contactId)) return i;
-//        }
-//        return -1;
-//    }
-
 
     /**
      * Get a contact list index by its email
