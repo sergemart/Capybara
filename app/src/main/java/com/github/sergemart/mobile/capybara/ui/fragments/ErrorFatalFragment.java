@@ -37,7 +37,7 @@ public class ErrorFatalFragment
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mErrorSharedViewModel = ViewModelProviders.of(Objects.requireNonNull( super.getActivity() )).get(ErrorSharedViewModel.class);
+        mErrorSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(pActivity)).get(ErrorSharedViewModel.class);
 
         this.setInstanceListeners();
     }

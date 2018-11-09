@@ -52,7 +52,7 @@ public class InitialMajorCreateFamilyFragment
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mInitialMajorSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(super.getActivity())).get(InitialMajorSharedViewModel.class);
+        mInitialMajorSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(pActivity)).get(InitialMajorSharedViewModel.class);
 
         this.setInstanceListeners();
     }

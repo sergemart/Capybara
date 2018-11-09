@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph_initial_minor"
+    app:startDestination="@id/initialMinorWaitForInviteFragment">
+
+    <fragment
+        android:id="@+id/initialMinorWaitForInviteFragment"
+        android:name="com.github.sergemart.mobile.capybara.ui.fragments.InitialMinorWaitForInviteFragment"
+        android:label="fragment_initial_minor_wait_for_invite"
+        tools:layout="@layout/fragment_initial_minor_wait_for_invite" >
+    </fragment>
+
+    <fragment
+        android:id="@+id/initialMinorAcceptInviteFragment"
+        android:name="com.github.sergemart.mobile.capybara.ui.fragments.InitialMinorAcceptInviteFragment"
+        android:label="fragment_initial_minor_accept_invite"
+        tools:layout="@layout/fragment_initial_minor_accept_invite" >
+    </fragment>
+
+</navigation>

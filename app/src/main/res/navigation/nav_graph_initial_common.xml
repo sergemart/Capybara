@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+<navigation
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph_initial_common"
@@ -14,9 +15,11 @@
             android:id="@+id/action_initialSetup_to_initialSignin"
             app:destination="@id/initialCommonSignInFragment" />
     </fragment>
+
     <fragment
         android:id="@+id/initialCommonSignInFragment"
         android:name="com.github.sergemart.mobile.capybara.ui.fragments.InitialCommonSignInFragment"
         android:label="fragment_initial_common_sign_in"
         tools:layout="@layout/fragment_initial_common_sign_in" />
+
 </navigation>

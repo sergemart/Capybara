@@ -43,7 +43,7 @@ public class InitialCommonSetupFragment
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mInitialCommonSharedViewModel = ViewModelProviders.of(Objects.requireNonNull( super.getActivity() )).get(InitialCommonSharedViewModel.class);
+        mInitialCommonSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(pActivity)).get(InitialCommonSharedViewModel.class);
 
         this.setInstanceListeners();
     }

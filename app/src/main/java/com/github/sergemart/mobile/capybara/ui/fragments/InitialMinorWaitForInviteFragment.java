@@ -6,7 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.github.sergemart.mobile.capybara.R;
-import com.github.sergemart.mobile.capybara.viewmodel.MajorSharedViewModel;
+import com.github.sergemart.mobile.capybara.viewmodel.InitialMinorSharedViewModel;
 
 import java.util.Objects;
 
@@ -15,12 +15,11 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProviders;
 
 
-public class TemplateFragment
+public class InitialMinorWaitForInviteFragment
     extends AbstractFragment
 {
 
-
-    private MajorSharedViewModel mMajorSharedViewModel;
+    private InitialMinorSharedViewModel mInitialMinorSharedViewModel;
 
 
     // --------------------------- Override fragment lifecycle event handlers
@@ -32,7 +31,7 @@ public class TemplateFragment
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mMajorSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(pActivity)).get(MajorSharedViewModel.class);
+        mInitialMinorSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(pActivity)).get(InitialMinorSharedViewModel.class);
 
         this.setInstanceListeners();
     }
@@ -45,7 +44,7 @@ public class TemplateFragment
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View fragmentView = inflater.inflate(R.layout.fragment_major_invite, container, false);
+        View fragmentView = inflater.inflate(R.layout.fragment_initial_minor_wait_for_invite, container, false);
 
         pBackgroundImageView = fragmentView.findViewById(R.id.imageView_background);
 
