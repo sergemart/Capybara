@@ -568,18 +568,18 @@ public class CloudRepo {
                     String returnCode = (String)Objects.requireNonNull(result.get("returnCode"));
                     switch (returnCode) {
                         case Constants.RETURN_CODE_SENT:
-                            if (BuildConfig.DEBUG) Log.d(TAG, "Invite message sent");
-                            mSendInviteSubject.onNext(GenericEvent.of(SUCCESS));
+                            if (BuildConfig.DEBUG) Log.d(TAG, "Invite message queued");
+                            mSendInviteSubject.onNext(GenericEvent.of(SUCCESS).setData(inviteeEmail));
                             break;
                         default:
                             String errorMessage = mContext.getString(R.string.exception_firebase_function_unknown_response);
                             if (BuildConfig.DEBUG) Log.e(TAG, errorMessage);
-                            mSendInviteSubject.onNext(GenericEvent.of(FAILURE).setException( new FirebaseFunctionException(errorMessage) ));
+                            mSendInviteSubject.onNext(GenericEvent.of(FAILURE).setData(inviteeEmail).setException( new FirebaseFunctionException(errorMessage) ));
                     }
                 } catch (Exception e) {
                     String errorMessage = mContext.getString(R.string.exception_firebase_invite_message_not_sent);
                     if (BuildConfig.DEBUG) Log.e(TAG, errorMessage + ": " + e.getMessage());
-                    mSendInviteSubject.onNext(GenericEvent.of(FAILURE).setException( new FirebaseFunctionException(errorMessage, e) ));
+                    mSendInviteSubject.onNext(GenericEvent.of(FAILURE).setData(inviteeEmail).setException( new FirebaseFunctionException(errorMessage, e) ));
                 }
                 return result;
             })
@@ -588,11 +588,11 @@ public class CloudRepo {
                     Exception e = task.getException();
                     String errorMessage = mContext.getString(R.string.exception_firebase_invite_message_not_sent);
                     if (BuildConfig.DEBUG) Log.e(TAG, errorMessage + ": " + e.getMessage());
-                    mSendInviteSubject.onNext(GenericEvent.of(FAILURE).setException( new FirebaseFunctionException(errorMessage, e) ));
+                    mSendInviteSubject.onNext(GenericEvent.of(FAILURE).setData(inviteeEmail).setException( new FirebaseFunctionException(errorMessage, e) ));
                 } else if (!task.isSuccessful()) {
                     String errorMessage = mContext.getString(R.string.exception_firebase_invite_message_not_sent);
                     if (BuildConfig.DEBUG) Log.e(TAG, errorMessage);
-                    mSendInviteSubject.onNext(GenericEvent.of(FAILURE).setException( new FirebaseFunctionException(errorMessage) ));
+                    mSendInviteSubject.onNext(GenericEvent.of(FAILURE).setData(inviteeEmail).setException( new FirebaseFunctionException(errorMessage) ));
                 }
             })
         ;

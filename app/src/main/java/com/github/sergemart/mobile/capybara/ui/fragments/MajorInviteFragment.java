@@ -9,9 +9,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
+import com.github.sergemart.mobile.capybara.data.CloudRepo;
 import com.github.sergemart.mobile.capybara.data.ContactsRepo;
 import com.github.sergemart.mobile.capybara.events.GenericEvent;
 import com.github.sergemart.mobile.capybara.viewmodel.MajorSharedViewModel;
@@ -46,7 +48,6 @@ public class MajorInviteFragment
     private RecyclerView mContactsRecyclerView;
 
     private List<ContactsRepo.Contact> mContacts;
-    private List <String> mSelectedEmails;
     private ContactsAdapter mContactsAdapter;
     private SelectionTracker<String> mSelectionTracker;
     private LayoutInflater mLayoutInflater;
@@ -65,7 +66,6 @@ public class MajorInviteFragment
         super.onCreate(savedInstanceState);
 
         mContacts = new ArrayList<>();
-        mSelectedEmails = new ArrayList<>();
         mContactsAdapter = new ContactsAdapter();
         mLayoutInflater = LayoutInflater.from(pActivity);
         mMajorSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(pActivity)).get(MajorSharedViewModel.class);
@@ -168,11 +168,31 @@ public class MajorInviteFragment
                 }
             }
         });
+
+
+        // Add a listener to SendInvite event
+        // Update a list item with a transaction result
+        pInstanceDisposable.add(CloudRepo.get().getSendInviteSubject()
+            .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+            .subscribe(inviteResult -> {
+                switch (inviteResult.getResult()) {
+                    case SUCCESS:
+                        break;
+                    case FAILURE:
+                        break;
+                    default:
+                }
+            })
+        );
+
     }
 
 
     // --------------------------- Use cases
 
+    /**
+     * Get contacts to display in the list
+     */
     @SuppressWarnings({"unchecked", "RedundantCast"})
     private void getContacts() {
 
@@ -216,11 +236,22 @@ public class MajorInviteFragment
                 })
             );
 
-            ContactsRepo.get().getContactsObservable().connect();
+            ContactsRepo.get().getContactsObservable().connect();                                   // init multicasting
 
         } else {
             super.requestPermissions(Constants.CONTACTS_PERMISSIONS, Constants.REQUEST_CODE_READ_CONTACTS_PERMISSIONS);
         }
+    }
+
+
+    /**
+     * Send invites to the selected contacts
+     */
+    private void sendInvite() {
+        for (String contactEmail : mSelectionTracker.getSelection()) {
+            CloudRepo.get().sendInviteAsync(contactEmail);
+        }
+        Toast.makeText(pActivity, R.string.msg_invite_sent, Toast.LENGTH_LONG).show();
     }
 
 
@@ -441,6 +472,7 @@ public class MajorInviteFragment
         public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
             switch (menuItem.getItemId()) {
                 case R.id.menuItem_invite_send:
+                    sendInvite();
                     actionMode.finish();
                     return true;
                 default:

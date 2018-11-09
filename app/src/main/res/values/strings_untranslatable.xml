@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name" translatable="false">Capybara Family</string>
+    <string name="font_default" translatable="false">sans-serif</string>                            <!-- Fix Google issue 64053344-->
+</resources>

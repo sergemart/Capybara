@@ -19,6 +19,7 @@
     <string name="desc_thumbnail_image">Маленькое фото</string>
     <string name="title_google_signin_canceled">Вход в аккаунт отменён</string>
     <string name="title_google_signin_failed">Не могу войти в ваш аккаунт Google</string>
+    <string name="msg_invite_sent">Приглашение отправлено</string>
     <string name="msg_google_unknown_error">Непонятно, что произошло. Попробовать ещё раз?</string>
     <string name="msg_google_signin_canceled_by_user">Вы отменили вход в свой аккаунт. Без этого ничего не будет работать. Попробовать ещё раз?</string>
     <string name="msg_google_client_connection_error">Не могу войти в ваш аккаунт Google. Без этого ничего не будет работать. Попробовать ещё раз?</string>
