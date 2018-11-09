@@ -10,7 +10,12 @@
         <item name="android:windowBackground">@color/colorDefaultPageBackground</item>
         <item name="android:fontFamily">@string/font_default</item>                                 <!-- Fix Google issue 64053344-->
         <item name="android:textStyle">normal</item>
-        <item name="windowActionModeOverlay">true</item>
+
+        <item name="windowActionModeOverlay">true</item>                                            <!-- w/o namespace for support version-->
+        <item name="actionModeStyle">@style/App.ActionMode</item>
+        <item name="actionBarTheme">@style/App.ActionBar</item>                                     <!-- font settings here have a priority over Action Mode style -->
+        <item name="actionModeCloseDrawable">@drawable/icon_close</item>
+        <item name="actionModeCloseButtonStyle">@style/App.ActionModeCloseButton</item>
     </style>
 
 
@@ -111,5 +116,27 @@
         <item name="android:textSize">@dimen/textViewSmall_textSize</item>
     </style>
 
+
+    <!-- ========================== Action Mode styles -->
+
+    <style name="App.ActionBar" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar">     <!-- font settings here have a priority -->
+        <item name="colorControlNormal">@color/colorText</item>
+    </style>
+
+
+    <style name="App.ActionMode" parent="Base.Widget.AppCompat.ActionMode">
+        <item name="background">@color/colorPrimaryDark</item>
+        <item name="titleTextStyle">@style/App.ActionModeText</item>
+    </style>
+
+
+    <style name="App.ActionModeText" parent="TextAppearance.AppCompat.Widget.ActionMode.Title">     <!-- no effect, just in case -->
+        <item name="android:textColor">@color/colorText</item>
+    </style>
+
+
+    <style name="App.ActionModeCloseButton" parent="Widget.AppCompat.Light.ActionButton.CloseMode">
+        <!--<item name="android:tint">#ffffff</item>-->
+    </style>
 
 </resources>

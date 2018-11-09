@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="action_sign_in">Google Sign In</string>
     <string name="action_send_location">Send My Location</string>

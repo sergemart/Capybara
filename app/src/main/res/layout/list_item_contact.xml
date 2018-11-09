@@ -26,9 +26,9 @@
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="@+id/imageView_thumbnail"
         app:layout_constraintEnd_toEndOf="@+id/imageView_thumbnail"
-        app:srcCompat="@drawable/success"
+        app:srcCompat="@drawable/icon_success"
         tools:visibility="visible"
-        tools:srcCompat="@drawable/success"/>
+        tools:srcCompat="@drawable/icon_success"/>
 
     <ImageView
         android:id="@+id/imageView_failure"
@@ -38,9 +38,9 @@
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="@+id/imageView_thumbnail"
         app:layout_constraintEnd_toEndOf="@+id/imageView_thumbnail"
-        app:srcCompat="@drawable/failure"
+        app:srcCompat="@drawable/icon_failure"
         tools:visibility="visible"
-        tools:srcCompat="@drawable/failure"/>
+        tools:srcCompat="@drawable/icon_failure"/>
 
     <TextView
         android:id="@+id/textView_contact_name"
