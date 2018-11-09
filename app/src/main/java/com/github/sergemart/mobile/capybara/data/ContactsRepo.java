@@ -233,6 +233,7 @@ public class ContactsRepo {
         public String email;
         public Bitmap photo;
         public int position;
+        public int inviteSendResult;
     }
 
 

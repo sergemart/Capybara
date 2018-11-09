@@ -1,5 +1,6 @@
 package com.github.sergemart.mobile.capybara.ui.fragments;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -175,13 +176,17 @@ public class MajorInviteFragment
         pInstanceDisposable.add(CloudRepo.get().getSendInviteSubject()
             .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
             .subscribe(inviteResult -> {
+                int position = this.getContactIndexByEmail((String)inviteResult.getData());
                 switch (inviteResult.getResult()) {
                     case SUCCESS:
+                        mContacts.get(position).inviteSendResult = Constants.INVITE_SENT;
                         break;
                     case FAILURE:
+                        mContacts.get(position).inviteSendResult = Constants.INVITE_NOT_SENT;
                         break;
                     default:
                 }
+                mContactsAdapter.notifyItemChanged(position);
             })
         );
 
@@ -331,6 +336,8 @@ public class MajorInviteFragment
 
         View mmItemView;
         ImageView mmThumbnailImageView;
+        ImageView mmSuccessImageView;
+        ImageView mmFailureImageView;
         TextView mmContactNameTextView;
         TextView mmContactEmailTextView;
 
@@ -339,6 +346,8 @@ public class MajorInviteFragment
             super(itemView);
             mmItemView = itemView;
             mmThumbnailImageView = itemView.findViewById(R.id.imageView_thumbnail);
+            mmSuccessImageView = itemView.findViewById(R.id.imageView_success);
+            mmFailureImageView = itemView.findViewById(R.id.imageView_failure);
             mmContactNameTextView = itemView.findViewById(R.id.textView_contact_name);
             mmContactEmailTextView = itemView.findViewById(R.id.textView_contact_email);
         }
@@ -349,6 +358,20 @@ public class MajorInviteFragment
             mmContactNameTextView.setText(item.name);
             mmContactEmailTextView.setText(item.email);
             mmThumbnailImageView.setImageBitmap(item.photo);
+            switch (item.inviteSendResult) {
+                case Constants.INVITE_SENT:
+                    mmSuccessImageView.setVisibility(View.VISIBLE);
+                    mmFailureImageView.setVisibility(View.GONE);
+                    break;
+                case Constants.INVITE_NOT_SENT:
+                    mmSuccessImageView.setVisibility(View.GONE);
+                    mmFailureImageView.setVisibility(View.VISIBLE);
+                    break;
+                default:
+                    mmSuccessImageView.setVisibility(View.GONE);
+                    mmFailureImageView.setVisibility(View.GONE);
+
+            }
         }
 
 

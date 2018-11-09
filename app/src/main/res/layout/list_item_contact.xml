@@ -18,6 +18,30 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:srcCompat="@mipmap/capybara_profile" />
 
+    <ImageView
+        android:id="@+id/imageView_success"
+        android:contentDescription="@string/desc_thumbnail_image"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView_thumbnail"
+        app:layout_constraintEnd_toEndOf="@+id/imageView_thumbnail"
+        app:srcCompat="@drawable/success"
+        tools:visibility="visible"
+        tools:srcCompat="@drawable/success"/>
+
+    <ImageView
+        android:id="@+id/imageView_failure"
+        android:contentDescription="@string/desc_thumbnail_image"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView_thumbnail"
+        app:layout_constraintEnd_toEndOf="@+id/imageView_thumbnail"
+        app:srcCompat="@drawable/failure"
+        tools:visibility="visible"
+        tools:srcCompat="@drawable/failure"/>
+
     <TextView
         android:id="@+id/textView_contact_name"
         android:layout_width="0dp"

@@ -5,16 +5,14 @@ import android.Manifest;
 
 public final class Constants {
 
-    // -----------------------
+    // ----------------------- Hard-coded values
 
     public static final boolean APP_MODE_MAJOR = true;
     public static final boolean APP_MODE_MINOR = false;
-
-
-    // ----------------------- Hard-coded strings
-
     public static final String DEFAULT_USERNAME = "anonymous";
     static final String CLOUD_MESSAGING_LOCATION_PROVIDER = "cloudMessagingProvider";
+    public static final int INVITE_SENT = 1;
+    public static final int INVITE_NOT_SENT = 2;
 
 
     // ----------------------- Request codes
