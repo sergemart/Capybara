@@ -40,7 +40,7 @@ public final class Constants {
     public static final String RETURN_CODE_NONE_SENT = "none_sent";
 
 
-    // ----------------------- Data keys and predefined values
+    // ----------------------- Data keys
 
     public static final String KEY_LOCATION = "location";
     static final String KEY_LOCATION_LAT = "locationLat";
@@ -52,6 +52,11 @@ public final class Constants {
     public static final String KEY_INVITING_EMAIL = "invitingEmail";
     public static final String KEY_SENDER_EMAIL = "senderEmail";
     public static final String KEY_MESSAGE_TYPE = "messageType";
+    public static final String KEY_IS_IN_ACTION_MODE = "isInActionMode";
+
+
+    // ----------------------- Message types
+
     public static final String MESSAGE_TYPE_INVITE = "invite";
     public static final String MESSAGE_TYPE_ACCEPT_INVITE = "acceptInvite";
     public static final String MESSAGE_TYPE_LOCATION = "location";

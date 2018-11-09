@@ -21,6 +21,8 @@ import com.github.sergemart.mobile.capybara.exceptions.ContactsException;
 
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -184,6 +186,13 @@ public class ContactsRepo {
                 }
             }
         }
+        Collections.sort(
+            mContacts,
+            (contactA, contactB) -> String.CASE_INSENSITIVE_ORDER.compare(
+                contactA.name,
+                contactB.name
+            )
+        );
     }
 
 

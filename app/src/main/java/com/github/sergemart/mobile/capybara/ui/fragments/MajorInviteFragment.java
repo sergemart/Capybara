@@ -1,7 +1,6 @@
 package com.github.sergemart.mobile.capybara.ui.fragments;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,13 +17,11 @@ import com.github.sergemart.mobile.capybara.events.GenericEvent;
 import com.github.sergemart.mobile.capybara.viewmodel.MajorSharedViewModel;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.ActionMode;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.selection.ItemDetailsLookup;
@@ -55,6 +52,7 @@ public class MajorInviteFragment
     private LayoutInflater mLayoutInflater;
     private MajorSharedViewModel mMajorSharedViewModel;
     private ActionMode mActionMode;
+    private boolean mIsInActionMode;                                                                // to remember the Action Mode state between the lives
 
 
     // --------------------------- Override fragment lifecycle event handlers
@@ -102,8 +100,14 @@ public class MajorInviteFragment
         )
             .build()
         ;
-        mSelectionTracker.onRestoreInstanceState(savedInstanceState);                               // recall selected items
         mContactsAdapter.setSelectionTracker(mSelectionTracker);
+
+        // Recall the previous life
+        mSelectionTracker.onRestoreInstanceState(savedInstanceState);                               // recall the selected items
+        if (savedInstanceState != null && savedInstanceState.getBoolean(Constants.KEY_IS_IN_ACTION_MODE, false)){ // recall the Action Mode
+            mIsInActionMode = true;
+            mActionMode = (Objects.requireNonNull(pActivity)).startSupportActionMode(new ActionModeCallback());
+        }
 
         this.setViewListeners();
 
@@ -131,6 +135,7 @@ public class MajorInviteFragment
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         mSelectionTracker.onSaveInstanceState(outState);                                            // remember selected items
+        outState.putBoolean(Constants.KEY_IS_IN_ACTION_MODE, mIsInActionMode);                      // remember Action Mode
     }
 
 
@@ -156,7 +161,7 @@ public class MajorInviteFragment
             public void onSelectionChanged() {
                 super.onSelectionChanged();
                 if (mSelectionTracker.hasSelection() && mActionMode == null) {                      // when an item selected and no menu shown...
-                    mActionMode = (Objects.requireNonNull(pActivity)).startSupportActionMode(new ActionModeController()); // ... show the menu
+                    mActionMode = (Objects.requireNonNull(pActivity)).startSupportActionMode(new ActionModeCallback()); // ... show the menu
                 } else if (!mSelectionTracker.hasSelection() && mActionMode != null) {              // when no selected items left and the menu is shown...
                     mActionMode.finish();                                                           // ... destroy the menu
                     mActionMode = null;
@@ -414,13 +419,14 @@ public class MajorInviteFragment
     }
 
 
-    // ============================== Inner classes: Context menu (ActionMode) controller
+    // ============================== Inner classes: Context menu controller (Action Mode callback)
 
-    public class ActionModeController implements ActionMode.Callback {
+    public class ActionModeCallback implements ActionMode.Callback {
 
         @Override
         public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
             actionMode.getMenuInflater().inflate(R.menu.menu_major_invite, menu);
+            mIsInActionMode = true;
             return true;
         }
 
@@ -446,6 +452,7 @@ public class MajorInviteFragment
         @Override
         public void onDestroyActionMode(ActionMode actionMode) {
             mSelectionTracker.clearSelection();
+            mIsInActionMode = false;
         }
     }
 }
