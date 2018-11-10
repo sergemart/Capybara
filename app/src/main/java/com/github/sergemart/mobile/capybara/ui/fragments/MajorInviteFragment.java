@@ -83,7 +83,6 @@ public class MajorInviteFragment
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View fragmentView = inflater.inflate(R.layout.fragment_major_invite, container, false);
-
         pBackgroundImageView = fragmentView.findViewById(R.id.imageView_background);
         mContactsRecyclerView = fragmentView.findViewById(R.id.recyclerView_contacts);
 

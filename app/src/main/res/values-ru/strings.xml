@@ -29,4 +29,5 @@
     <string name="msg_google_client_connection_error">Не могу войти в ваш аккаунт Google. Без этого ничего не будет работать. Попробовать ещё раз?</string>
     <string name="msg_firebase_client_connection_error">Не могу войти в ваш аккаунт Google. Без этого ничего не будет работать. Попробовать ещё раз?</string>
     <string name="msg_fatal_error">Не могу работать дальше</string>
+    <string name="word_someone">Кто-то</string>
 </resources>

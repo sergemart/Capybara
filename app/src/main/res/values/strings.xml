@@ -29,4 +29,5 @@
     <string name="msg_google_client_connection_error">Cannot connect to Google while signing in. The app cannot proceed. Retry?</string>
     <string name="msg_firebase_client_connection_error">Cannot connect to Google while signing in. The app cannot proceed. Retry?</string>
     <string name="msg_fatal_error">Cannot continue</string>
+    <string name="word_someone">Someone</string>
 </resources>

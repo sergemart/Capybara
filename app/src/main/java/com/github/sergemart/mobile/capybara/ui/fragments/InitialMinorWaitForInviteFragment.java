@@ -6,6 +6,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.github.sergemart.mobile.capybara.R;
+import com.github.sergemart.mobile.capybara.data.MessagingServiceRepo;
+import com.github.sergemart.mobile.capybara.events.GenericEvent;
+import com.github.sergemart.mobile.capybara.exceptions.FirebaseMessagingException;
 import com.github.sergemart.mobile.capybara.viewmodel.InitialMinorSharedViewModel;
 import com.google.android.material.button.MaterialButton;
 import com.jakewharton.rxbinding2.view.RxView;
@@ -15,6 +18,10 @@ import java.util.Objects;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.navigation.fragment.NavHostFragment;
+
+import static com.github.sergemart.mobile.capybara.events.Result.FAILURE;
+import static com.github.sergemart.mobile.capybara.events.Result.SUCCESS;
 
 
 public class InitialMinorWaitForInviteFragment
@@ -64,6 +71,19 @@ public class InitialMinorWaitForInviteFragment
      * Set listeners to view-unrelated events
      */
     private void setInstanceListeners() {
+
+        // Set a listener to the InviteReceived event
+        pInstanceDisposable.add(MessagingServiceRepo.get().getInviteReceivedSubject().subscribe(event -> {
+            switch (event.getResult()) {
+                case SUCCESS:
+                    this.navigateToNextPage();
+                    break;
+                case FAILURE:                                                                       // no way to get here, added just in case
+                    mInitialMinorSharedViewModel.getMinorSetupFinishedSubject().onNext(GenericEvent.of(FAILURE).setData(event.getData()).setException(new FirebaseMessagingException()));
+                    break;
+                default:
+            }
+        }));
     }
 
 
@@ -82,6 +102,12 @@ public class InitialMinorWaitForInviteFragment
 
     // --------------------------- Use cases
 
+    /**
+     * Navigate to the accept invitation page
+     */
+    private void navigateToNextPage() {
+        NavHostFragment.findNavController(this).navigate(R.id.action_initialMinorWaitForInvite_to_initialMinorAcceptInvite);
+    }
 
 
 }
