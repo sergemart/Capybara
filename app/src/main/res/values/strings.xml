@@ -21,12 +21,15 @@
     <string name="desc_thumbnail_image">Thumbnail Image</string>
     <string name="title_google_signin_canceled">Google Sign-In Canceled</string>
     <string name="title_google_signin_failed">Google Sign-In Failed</string>
+    <string name="title_create_family_failed">Creating The Family Failed</string>
+    <string name="title_join_family_failed">Joining The Family Failed</string>
     <string name="msg_invite_sent">Invite sent</string>
     <string name="msg_waiting_for_invite">Waiting for invite&#8230;</string>
     <string name="msg_invitation">%1$s has invited you to join the family</string>
     <string name="msg_google_unknown_error">Unknown error while signing in to Google. The app cannot proceed. Retry?</string>
     <string name="msg_google_signin_canceled_by_user">You have been canceled the Google sign-in. The app cannot proceed. Retry?</string>
     <string name="msg_google_client_connection_error">Cannot connect to Google while signing in. The app cannot proceed. Retry?</string>
+    <string name="msg_firebase_unknown_error">Unknown error while storing the data to Google. The app cannot proceed. Retry?</string>
     <string name="msg_firebase_client_connection_error">Cannot connect to Google while signing in. The app cannot proceed. Retry?</string>
     <string name="msg_fatal_error">Cannot continue</string>
     <string name="word_someone">Someone</string>

@@ -139,4 +139,16 @@
         <!--<item name="android:tint">#ffffff</item>-->
     </style>
 
+
+    <!-- ========================== Progress bar styles -->
+
+    <style name="App.ProgressBar" parent="android:Widget">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:scaleX">0.2</item>
+        <item name="android:scaleY">0.2</item>
+        <item name="android:background">@android:color/transparent</item>
+    </style>
+
+
 </resources>

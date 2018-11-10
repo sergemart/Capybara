@@ -182,7 +182,7 @@ public class InitialCommonSignInFragment
      */
     private void indicateSignInInProgress() {
         if (!mSignInStarted) return;
-        mSignInButton.setVisibility(View.INVISIBLE);
+        mSignInButton.setVisibility(View.GONE);
         mProgressBar.setVisibility(View.VISIBLE);
     }
 

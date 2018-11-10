@@ -66,7 +66,6 @@ public class InitialMajorCreateFamilyFragment
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View fragmentView = inflater.inflate(R.layout.fragment_initial_major_create_family, container, false);
-
         pBackgroundImageView = fragmentView.findViewById(R.id.imageView_background);
         mProgressBar = fragmentView.findViewById(R.id.progressBar_waiting);
 
@@ -88,6 +87,7 @@ public class InitialMajorCreateFamilyFragment
                     mInitialMajorSharedViewModel.getMajorSetupFinishedSubject().onNext(GenericEvent.of(FAILURE).setException(mCause));
                 }
                 break;
+            default:
         }
     }
 
@@ -119,6 +119,7 @@ public class InitialMajorCreateFamilyFragment
                     if (BuildConfig.DEBUG) Log.d(TAG, "CreateFamilyResult.BACKEND_ERROR event received; invoking retry dialog");
                     mCause = event.getException();
                     this.showCreateFamilyRetryDialog(mCause);
+                default:
             }
         }));
     }
@@ -146,25 +147,28 @@ public class InitialMajorCreateFamilyFragment
      * Show create family retry dialog
      */
     private void showCreateFamilyRetryDialog(Throwable cause) {
-        CreateFamilyRetryDialogFragment.newInstance(cause).show(Objects.requireNonNull(super.getChildFragmentManager()), TAG_CREATE_FAMILY_RETRY_DIALOG);
+        CreateFamilyRetryDialogFragment.newInstance(cause).show(
+            Objects.requireNonNull(super.getChildFragmentManager()),
+            TAG_CREATE_FAMILY_RETRY_DIALOG
+        );
     }
 
 
-    // --------------------------- Inner classes: Create family retry dialog fragment
+    // ============================== Inner classes: Create family retry dialog fragment
 
     public static class CreateFamilyRetryDialogFragment extends DialogFragment {
 
         private Throwable mCause;
 
 
-        // +++++++++++++++++++++++ Getters/ setters
+        // ============================== Getters/ setters
 
         void setCause(Throwable cause) {
             mCause = cause;
         }
 
 
-        // +++++++++++++++++++++++ Override dialog fragment lifecycle event handlers
+        // ============================== Override dialog fragment lifecycle event handlers
 
         /**
          * View-unrelated startup actions
@@ -225,7 +229,7 @@ public class InitialMajorCreateFamilyFragment
         }
 
 
-        // +++++++++++++++++++++++ Static encapsulation-leveraging methods
+        // ============================== Static encapsulation-leveraging methods
 
         /**
          * The dialog fragment factory

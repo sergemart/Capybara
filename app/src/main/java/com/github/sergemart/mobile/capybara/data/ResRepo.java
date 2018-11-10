@@ -94,7 +94,7 @@ public class ResRepo {
      * @return Create family retry dialog title resource id
      */
     public int getCreateFamilyRetryDialogTitleR(Throwable cause) {
-        return R.string.title_google_signin_failed;
+        return R.string.title_create_family_failed;
     }
 
 
@@ -102,7 +102,33 @@ public class ResRepo {
      * @return Create family retry dialog message resource id
      */
     public int getCreateFamilyRetryDialogMessageR(Throwable cause) {
-        return R.string.msg_google_unknown_error;
+        return R.string.msg_firebase_unknown_error;
+    }
+
+
+    // --------------------------- Repository interface: Join family retry dialog resources
+
+    /**
+     * @return  Join family retry dialog icon resource id
+     */
+    public int getJoinFamilyRetryDialogIconR(Throwable cause) {
+        return R.mipmap.capybara_profile; // TODO: Make dialog icons
+    }
+
+
+    /**
+     * @return Join family retry dialog title resource id
+     */
+    public int getJoinFamilyRetryDialogTitleR(Throwable cause) {
+        return R.string.title_join_family_failed;
+    }
+
+
+    /**
+     * @return Join family retry dialog message resource id
+     */
+    public int getJoinFamilyRetryDialogMessageR(Throwable cause) {
+        return R.string.msg_firebase_unknown_error;
     }
 
 }
