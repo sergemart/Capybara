@@ -72,7 +72,7 @@ public class CloudMessagingService
                 );
                 break;
             case Constants.MESSAGE_TYPE_ACCEPT_INVITE:                                              // a message is an invite acceptance
-                this.notifyOnAcceptInvite(
+                this.notifyOnInviteAccepted(
                     messageData.get(Constants.KEY_INVITEE_EMAIL)
                 );
                 break;
@@ -124,9 +124,9 @@ public class CloudMessagingService
 
 
     /**
-     * Notify about a received invite
+     * Notify about an accepted invite
      */
-    private void notifyOnAcceptInvite(String inviteeEmail) {
+    private void notifyOnInviteAccepted(String inviteeEmail) {
         if (inviteeEmail == null || inviteeEmail.isEmpty()) {
             if (BuildConfig.DEBUG) Log.e(TAG, "Message contains no invitee email; skipping");
             return;

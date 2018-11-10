@@ -7,8 +7,8 @@
     <string name="action_create_family_member">Новый житель капибарятника</string>
     <string name="action_delete_family_member">Убрать из капибарятника</string>
     <string name="action_send_invite">Пригласить</string>
-    <string name="action_accept_invite">Принять приглашение</string>
-    <string name="action_decline_invite">Отклонить приглашение</string>
+    <string name="action_accept_invite">Принять</string>
+    <string name="action_decline_invite">Отклонить</string>
     <string name="action_join_family">Присоединиться</string>
     <string name="action_i_am_major">Я родитель</string>
     <string name="action_i_am_minor">Я ребёнок</string>
@@ -23,6 +23,7 @@
     <string name="title_google_signin_failed">Не могу войти в ваш аккаунт Google</string>
     <string name="msg_invite_sent">Приглашение отправлено</string>
     <string name="msg_waiting_for_invite">Жду приглашения&#8230;</string>
+    <string name="msg_invitation">%1$s пригласил Вас присоединиться к капибарятнику</string>
     <string name="msg_google_unknown_error">Непонятно, что произошло. Попробовать ещё раз?</string>
     <string name="msg_google_signin_canceled_by_user">Вы отменили вход в свой аккаунт. Без этого ничего не будет работать. Попробовать ещё раз?</string>
     <string name="msg_google_client_connection_error">Не могу войти в ваш аккаунт Google. Без этого ничего не будет работать. Попробовать ещё раз?</string>

@@ -8,19 +8,18 @@ import android.util.Log;
 import com.github.sergemart.mobile.capybara.App;
 import com.github.sergemart.mobile.capybara.BuildConfig;
 import com.github.sergemart.mobile.capybara.R;
-import com.github.sergemart.mobile.capybara.data.CloudRepo;
-import com.github.sergemart.mobile.capybara.viewmodel.InitialMajorSharedViewModel;
+import com.github.sergemart.mobile.capybara.viewmodel.InitialMinorSharedViewModel;
 
 import java.lang.ref.WeakReference;
 
 import androidx.lifecycle.ViewModelProviders;
 
 
-public class InitialMajorActivity
+public class InitialMinorActivity
     extends AbstractActivity
 {
 
-    private InitialMajorSharedViewModel mInitialMajorSharedViewModel;
+    private InitialMinorSharedViewModel mInitialMinorSharedViewModel;
 
 
     // --------------------------- Override activity event handlers
@@ -31,9 +30,9 @@ public class InitialMajorActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        super.setContentView(R.layout.activity_initial_major);
+        super.setContentView(R.layout.activity_initial_minor);
 
-        mInitialMajorSharedViewModel = ViewModelProviders.of(this).get(InitialMajorSharedViewModel.class);
+        mInitialMinorSharedViewModel = ViewModelProviders.of(this).get(InitialMinorSharedViewModel.class);
 
         this.setInstanceListeners();
     }
@@ -45,7 +44,7 @@ public class InitialMajorActivity
     @Override
     protected void onStart() {
         super.onStart();
-        CloudRepo.get().createFamilyAsync();
+
     }
 
 
@@ -56,18 +55,24 @@ public class InitialMajorActivity
      */
     private void setInstanceListeners() {
 
-        // Set a listener to the "MajorSetupFinished" event
-        pInstanceDisposable.add(mInitialMajorSharedViewModel.getMajorSetupFinishedSubject().subscribe(event -> {
+        // Set a listener to the "MinorSetupFinished" event
+        pInstanceDisposable.add(mInitialMinorSharedViewModel.getMinorSetupFinishedSubject().subscribe(event -> {
             switch (event.getResult()) {
                 case SUCCESS:
-                    if (BuildConfig.DEBUG) Log.d(TAG, "MajorSetupFinished.SUCCESS event received; leaving nav graph and go further");
+                    if (BuildConfig.DEBUG) Log.d(TAG, "MinorSetupFinished.SUCCESS event received; leaving nav graph and go further");
                     this.leaveNavGraph();
                     break;
                 case FAILURE:
-                    if (BuildConfig.DEBUG) Log.d(TAG, "MajorSetupFinished.FAILURE event received; navigating to fatal error page");
+                    if (BuildConfig.DEBUG) Log.d(TAG, "MinorSetupFinished.FAILURE event received; navigating to fatal error page");
                     this.navigateToFatalErrorPage(event.getException());
             }
         }));
+
+        // Set a listener to the ExitRequested event
+        pInstanceDisposable.add(mInitialMinorSharedViewModel.getExitRequestedSubject().subscribe(
+            this::exitApplication
+        ));
+
     }
 
 
@@ -78,7 +83,7 @@ public class InitialMajorActivity
      */
     private void leaveNavGraph() {
         if (BuildConfig.DEBUG) Log.d(TAG, "Leaving the nav graph");
-        Intent intent = MajorActivity.newIntent(this);
+        Intent intent = MinorActivity.newIntent(this);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         super.startActivity(intent);
     }
@@ -93,13 +98,22 @@ public class InitialMajorActivity
     }
 
 
+    /**
+     * Exit the application and finalize its process
+     */
+    private void exitApplication() {
+        super.finishAffinity();
+        System.exit(0);
+    }
+
+
     // --------------------------- Static encapsulation-leveraging methods
 
     /**
      * Create properly configured intent intended to invoke this activity
      */
     public static Intent newIntent(Context packageContext) {
-        return new Intent(packageContext, InitialMajorActivity.class);
+        return new Intent(packageContext, InitialMinorActivity.class);
     }
 
 }

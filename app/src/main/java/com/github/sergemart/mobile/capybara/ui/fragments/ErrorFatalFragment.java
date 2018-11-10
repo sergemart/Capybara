@@ -51,7 +51,6 @@ public class ErrorFatalFragment
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View fragmentView = inflater.inflate(R.layout.fragment_error_fatal, container, false);
-
         pBackgroundImageView = fragmentView.findViewById(R.id.imageView_background);
         mErrorDetailsTextView = fragmentView.findViewById(R.id.textView_error_details);
         mExitApplicationButton = fragmentView.findViewById(R.id.button_exit_application);

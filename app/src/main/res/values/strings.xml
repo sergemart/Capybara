@@ -7,8 +7,8 @@
     <string name="action_create_family_member">New Family Member</string>
     <string name="action_delete_family_member">Remove Family Member</string>
     <string name="action_send_invite">Send Invite</string>
-    <string name="action_accept_invite">Accept Invite</string>
-    <string name="action_decline_invite">Decline Invite</string>
+    <string name="action_accept_invite">Accept</string>
+    <string name="action_decline_invite">Decline</string>
     <string name="action_join_family">Join The Family</string>
     <string name="action_i_am_major">I am a parent</string>
     <string name="action_i_am_minor">I am a child</string>
@@ -23,6 +23,7 @@
     <string name="title_google_signin_failed">Google Sign-In Failed</string>
     <string name="msg_invite_sent">Invite sent</string>
     <string name="msg_waiting_for_invite">Waiting for invite&#8230;</string>
+    <string name="msg_invitation">%1$s has invited you to join the family</string>
     <string name="msg_google_unknown_error">Unknown error while signing in to Google. The app cannot proceed. Retry?</string>
     <string name="msg_google_signin_canceled_by_user">You have been canceled the Google sign-in. The app cannot proceed. Retry?</string>
     <string name="msg_google_client_connection_error">Cannot connect to Google while signing in. The app cannot proceed. Retry?</string>

@@ -11,6 +11,9 @@
         android:name="com.github.sergemart.mobile.capybara.ui.fragments.InitialMinorWaitForInviteFragment"
         android:label="fragment_initial_minor_wait_for_invite"
         tools:layout="@layout/fragment_initial_minor_wait_for_invite" >
+        <action
+            android:id="@+id/action_initialMinorWaitForInvite_to_initialMinorAcceptInvite"
+            app:destination="@id/initialMinorAcceptInviteFragment" />
     </fragment>
 
     <fragment

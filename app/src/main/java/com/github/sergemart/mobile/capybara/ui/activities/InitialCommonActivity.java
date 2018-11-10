@@ -41,7 +41,7 @@ public class InitialCommonActivity
 
 
     /**
-     * Start up actions, incl. the app entry point routing
+     * Start up actions, including the app entry point routing
      */
     @Override
     protected void onStart() {
@@ -99,7 +99,7 @@ public class InitialCommonActivity
         if (PreferenceStore.getStoredAppMode() == Constants.APP_MODE_MAJOR) {
             intent = InitialMajorActivity.newIntent(this);
         } else {
-            intent = MinorActivity.newIntent(this);
+            intent = InitialMinorActivity.newIntent(this);
         }
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         super.startActivity(intent);

@@ -21,10 +21,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".ui.activities.InitialMajorActivity" />
+        <activity android:name=".ui.activities.InitialMinorActivity" />
         <activity android:name=".ui.activities.MajorActivity" />
         <activity android:name=".ui.activities.MinorActivity" />
         <activity android:name=".ui.activities.ErrorActivity" />
-        <activity android:name=".ui.activities.InitialMajorActivity" />
 
         <service android:name=".service.CloudMessagingService"
             android:stopWithTask="true"

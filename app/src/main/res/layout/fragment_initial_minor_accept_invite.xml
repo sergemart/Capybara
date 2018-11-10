@@ -17,6 +17,11 @@
         android:orientation="vertical"
         android:layout_gravity="center">
 
+        <TextView
+            android:id="@+id/textView_invitation"
+            style="@style/App.TextView"
+            android:text="@string/msg_invitation"/>
+
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button_accept_invite"
             style="@style/App.Button"

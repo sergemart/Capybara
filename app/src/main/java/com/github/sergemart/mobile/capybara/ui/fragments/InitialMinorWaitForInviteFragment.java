@@ -7,6 +7,8 @@ import android.view.ViewGroup;
 
 import com.github.sergemart.mobile.capybara.R;
 import com.github.sergemart.mobile.capybara.viewmodel.InitialMinorSharedViewModel;
+import com.google.android.material.button.MaterialButton;
+import com.jakewharton.rxbinding2.view.RxView;
 
 import java.util.Objects;
 
@@ -18,6 +20,8 @@ import androidx.lifecycle.ViewModelProviders;
 public class InitialMinorWaitForInviteFragment
     extends AbstractFragment
 {
+
+    private MaterialButton mExitApplicationButton;
 
     private InitialMinorSharedViewModel mInitialMinorSharedViewModel;
 
@@ -45,6 +49,7 @@ public class InitialMinorWaitForInviteFragment
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View fragmentView = inflater.inflate(R.layout.fragment_initial_minor_wait_for_invite, container, false);
+        mExitApplicationButton = fragmentView.findViewById(R.id.button_exit_application);
 
         pBackgroundImageView = fragmentView.findViewById(R.id.imageView_background);
 
@@ -66,10 +71,17 @@ public class InitialMinorWaitForInviteFragment
      * Set listeners to view-related events
      */
     private void setViewListeners() {
+
+        // Set a listener to the "Exit Application" button
+        pViewDisposable.add(RxView.clicks(mExitApplicationButton).subscribe(event ->
+            mInitialMinorSharedViewModel.getExitRequestedSubject().onComplete()                     // send ExitRequested event
+        ));
+
     }
 
 
     // --------------------------- Use cases
+
 
 
 }
