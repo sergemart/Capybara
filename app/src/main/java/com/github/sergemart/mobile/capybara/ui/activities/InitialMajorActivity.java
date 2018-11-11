@@ -39,16 +39,6 @@ public class InitialMajorActivity
     }
 
 
-    /**
-     * Start up actions, incl. entry point routing
-     */
-    @Override
-    protected void onStart() {
-        super.onStart();
-        CloudRepo.get().createFamilyAsync();
-    }
-
-
     // --------------------------- Activity lifecycle subroutines
 
     /**

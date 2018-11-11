@@ -75,6 +75,16 @@ public class InitialMajorCreateFamilyFragment
 
 
     /**
+     * Startup use cases
+     */
+    @Override
+    public void onStart() {
+        super.onStart();
+        CloudRepo.get().createFamilyAsync();
+    }
+
+
+    /**
      * Used uncommonly as a callback for the embedded dialog fragment
      */
     @Override

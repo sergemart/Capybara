@@ -38,16 +38,6 @@ public class InitialMinorActivity
     }
 
 
-    /**
-     * Start up actions, incl. entry point routing
-     */
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-    }
-
-
     // --------------------------- Activity lifecycle subroutines
 
     /**
