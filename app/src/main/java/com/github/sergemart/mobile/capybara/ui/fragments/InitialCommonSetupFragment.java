@@ -84,7 +84,6 @@ public class InitialCommonSetupFragment
         pViewDisposable.add(RxView.clicks(mIAmMajorButton).subscribe(
             event -> {
                 PreferenceStore.storeAppMode(Constants.APP_MODE_MAJOR);
-                PreferenceStore.storeIsAppModeSet(true);
                 this.navigateToNextPage();
             })
         );
@@ -93,7 +92,6 @@ public class InitialCommonSetupFragment
         pViewDisposable.add(RxView.clicks(mIAmMinorButton).subscribe(
             event -> {
                 PreferenceStore.storeAppMode(Constants.APP_MODE_MINOR);
-                PreferenceStore.storeIsAppModeSet(true);
                 this.navigateToNextPage();
             })
         );

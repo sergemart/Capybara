@@ -7,8 +7,8 @@ public final class Constants {
 
     // ----------------------- Hard-coded values
 
-    public static final boolean APP_MODE_MAJOR = true;
-    public static final boolean APP_MODE_MINOR = false;
+    public static final int APP_MODE_MAJOR = 1;
+    public static final int APP_MODE_MINOR = 2;
     public static final String DEFAULT_USERNAME = "anonymous";
     static final String CLOUD_MESSAGING_LOCATION_PROVIDER = "cloudMessagingProvider";
     public static final int INVITE_SENT = 1;

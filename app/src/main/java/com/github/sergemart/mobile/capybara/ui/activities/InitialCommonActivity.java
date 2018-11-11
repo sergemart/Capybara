@@ -41,14 +41,22 @@ public class InitialCommonActivity
 
 
     /**
-     * Start up actions, including the app entry point routing
+     * Start up use cases, including the app entry point routing
      */
     @Override
     protected void onStart() {
         super.onStart();
-        // Leave the common initial graph if the APP IS SET UP and the USER IS AUTHENTICATED.
+        // Leave the common initial graph if the APP MODE IS SET and the USER IS AUTHENTICATED.
         // Otherwise implicitly delegate control to the local nav AAC
-        if ( PreferenceStore.getStoredIsAppModeSet() && CloudRepo.get().isAuthenticated() ) this.leaveNavGraph();
+        if (
+            (
+                PreferenceStore.getStoredAppMode() == Constants.APP_MODE_MAJOR ||
+                PreferenceStore.getStoredAppMode() == Constants.APP_MODE_MINOR
+            ) &&
+                CloudRepo.get().isAuthenticated()
+        ){
+            this.leaveNavGraph();
+        }
     }
 
 
