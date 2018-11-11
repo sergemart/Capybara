@@ -10,6 +10,7 @@
     <string name="action_accept_invite">Принять</string>
     <string name="action_decline_invite">Отклонить</string>
     <string name="action_join_family">Присоединиться</string>
+    <string name="action_check_family_membership">Проверить, в капибарятнике ли я</string>
     <string name="action_i_am_major">Я родитель</string>
     <string name="action_i_am_minor">Я ребёнок</string>
     <string name="action_exit_application">Закрыть</string>

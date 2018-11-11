@@ -86,6 +86,7 @@ public class CloudRepo {
     private final PublishSubject<GenericEvent> mCreateFamilySubject = PublishSubject.create();
     private final PublishSubject<GenericEvent> mCreateFamilyMemberSubject = PublishSubject.create();
     private final PublishSubject<GenericEvent> mDeleteFamilyMemberSubject = PublishSubject.create();
+    private final PublishSubject<GenericEvent> mCheckFamilyMembershipSubject = PublishSubject.create();
     private final PublishSubject<GenericEvent> mSendInviteSubject = PublishSubject.create();
     private final PublishSubject<GenericEvent> mJoinFamilySubject = PublishSubject.create();
     private final PublishSubject<GenericEvent> mSendLocationSubject = PublishSubject.create();
@@ -130,6 +131,11 @@ public class CloudRepo {
 
     public PublishSubject<GenericEvent> getDeleteFamilyMemberSubject() {
         return mDeleteFamilyMemberSubject;
+    }
+
+
+    public PublishSubject<GenericEvent> getCheckFamilyMembershipSubject() {
+        return mCheckFamilyMembershipSubject;
     }
 
 
@@ -533,6 +539,69 @@ public class CloudRepo {
                     String errorMessage = mContext.getString(R.string.exception_firebase_family_member_not_deleted);
                     if (BuildConfig.DEBUG) Log.e(TAG, errorMessage);
                     mDeleteFamilyMemberSubject.onNext(GenericEvent.of(BACKEND_ERROR).setException( new FirebaseFunctionException(errorMessage) ));
+                }
+            })
+        ;
+    }
+
+
+    /**
+     * Check if the caller belongs to any family using custom Firebase callable function.
+     * Send an event notifying on success or failure, carrying a family owner email in case of success
+     */
+    @SuppressWarnings("unchecked")
+    public void checkFamilyMembershipAsync() {
+        if (mFirebaseUser == null) {
+            if (BuildConfig.DEBUG) Log.e(TAG, "User not authenticated while attempting to remove family member on backend; skipping");
+            return;
+        }
+
+        Map<String, Object> data = new HashMap<>();
+
+        mFirebaseFunctions
+            .getHttpsCallable("checkFamilyMembership")
+            .call(data)
+            .continueWith(task -> {
+                Map<String, Object> result = null;
+                try {
+                    result = (Map<String, Object>) Objects.requireNonNull(task.getResult()).getData(); // throws an exception on error
+                    // if success:
+                    String returnCode = (String)Objects.requireNonNull(result.get("returnCode"));
+                    switch (returnCode) {
+                        case Constants.RETURN_CODE_EXIST:
+                            if (BuildConfig.DEBUG) Log.d(TAG, "Family found");
+                            mCheckFamilyMembershipSubject.onNext(GenericEvent.of(EXIST).setData( Objects.requireNonNull(result.get("creatorEmail")) ));
+                            break;
+                        case Constants.RETURN_CODE_MORE_THAN_ONE_FAMILY:
+                            if (BuildConfig.DEBUG) Log.e(TAG, "The user belongs to more than one family record");
+                            mCheckFamilyMembershipSubject.onNext(GenericEvent.of(INTEGRITY_ERROR));
+                            break;
+                        case Constants.RETURN_CODE_NO_FAMILY:
+                            if (BuildConfig.DEBUG) Log.e(TAG, "The user has no family records");
+                            mCheckFamilyMembershipSubject.onNext(GenericEvent.of(NOT_FOUND));
+                            break;
+                        default:
+                            String errorMessage = mContext.getString(R.string.exception_firebase_function_unknown_response);
+                            if (BuildConfig.DEBUG) Log.e(TAG, errorMessage);
+                            mCheckFamilyMembershipSubject.onNext(GenericEvent.of(BACKEND_ERROR).setException( new FirebaseFunctionException(errorMessage) ));
+                    }
+                } catch (Exception e) {
+                    String errorMessage = mContext.getString(R.string.exception_firebase_family_membership_not_checked);
+                    if (BuildConfig.DEBUG) Log.e(TAG, errorMessage + ": " + e.getMessage());
+                    mCheckFamilyMembershipSubject.onNext(GenericEvent.of(BACKEND_ERROR).setException( new FirebaseFunctionException(errorMessage, e) ));
+                }
+                return result;
+            })
+            .addOnCompleteListener(task -> {
+                if (!task.isSuccessful() && task.getException() != null) {
+                    Exception e = task.getException();
+                    String errorMessage = mContext.getString(R.string.exception_firebase_family_membership_not_checked);
+                    if (BuildConfig.DEBUG) Log.e(TAG, errorMessage + ": " + e.getMessage());
+                    mCheckFamilyMembershipSubject.onNext(GenericEvent.of(BACKEND_ERROR).setException( new FirebaseFunctionException(errorMessage, e) ));
+                } else if (!task.isSuccessful()) {
+                    String errorMessage = mContext.getString(R.string.exception_firebase_family_membership_not_checked);
+                    if (BuildConfig.DEBUG) Log.e(TAG, errorMessage);
+                    mCheckFamilyMembershipSubject.onNext(GenericEvent.of(BACKEND_ERROR).setException( new FirebaseFunctionException(errorMessage) ));
                 }
             })
         ;

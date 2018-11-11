@@ -26,7 +26,7 @@ public class MinorDummyFragment extends Fragment {
     private static final String TAG = MinorDummyFragment.class.getSimpleName();
 
     private MaterialButton mSendMyLocationButton;
-    private MaterialButton mJoinFamilyButton;
+    private MaterialButton mCheckFamilyMembershipButton;
 
     private Location mCurrentLocation;
     private CompositeDisposable mViewDisposable;
@@ -62,7 +62,7 @@ public class MinorDummyFragment extends Fragment {
         View fragmentView = inflater.inflate(R.layout.fragment_minor_dummy, container, false);
 
         mSendMyLocationButton = fragmentView.findViewById(R.id.button_send_my_location);
-        mJoinFamilyButton = fragmentView.findViewById(R.id.button_join_family);
+        mCheckFamilyMembershipButton = fragmentView.findViewById(R.id.button_check_family_membership);
 
         this.setViewListeners();
         return fragmentView;
@@ -127,9 +127,9 @@ public class MinorDummyFragment extends Fragment {
             RxView.clicks(mSendMyLocationButton).subscribe(event -> this.sendMyLocation())
         );
 
-        // Set a listener to the "Join The Family" button
+        // Set a listener to the "Check Family Membership" button
         mViewDisposable.add(
-            RxView.clicks(mJoinFamilyButton).subscribe(event -> this.joinFamily())
+            RxView.clicks(mCheckFamilyMembershipButton).subscribe(event -> this.checkFamilyMembership())
         );
 
     }
@@ -170,10 +170,10 @@ public class MinorDummyFragment extends Fragment {
 
 
     /**
-     * Join the family
+     * Check family membership
      */
-    private void joinFamily() {
-        CloudRepo.get().joinFamilyAsync("serge.martynov@gmail.com");
+    private void checkFamilyMembership() {
+        CloudRepo.get().checkFamilyMembershipAsync();
     }
 
 

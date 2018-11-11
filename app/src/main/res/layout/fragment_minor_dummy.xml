@@ -23,9 +23,9 @@
             android:text="@string/action_send_location"/>
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/button_join_family"
+            android:id="@+id/button_check_family_membership"
             style="@style/App.Button"
-            android:text="@string/action_join_family"/>
+            android:text="@string/action_check_family_membership"/>
 
     </LinearLayout>
 
