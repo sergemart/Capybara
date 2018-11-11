@@ -10,14 +10,16 @@ import java.util.UUID;
 public class PreferenceStore {
 
     private static final String PREF_APP_MODE = "appMode";
+    private static final String PREF_FAMILY_CREATED = "familyCreated";
+    private static final String PREF_FAMILY_JOINED = "familyJoined";
 
 
-    // --------------------------- Public methods
+    // --------------------------- Repository interface
 
     /**
      * Get an app mode stored in shared preferences
      */
-    public static int getStoredAppMode() {
+    public static int getAppMode() {
         return getIntPreference(PREF_APP_MODE);
     }
 
@@ -25,8 +27,40 @@ public class PreferenceStore {
     /**
      * Store an app mode in shared preferences
      */
-    public static void storeAppMode(int appMode) {
-        storePreference(PREF_APP_MODE, appMode);
+    public static void storeAppMode(int value) {
+        storePreference(PREF_APP_MODE, value);
+    }
+
+
+    /**
+     * Get a 'Family Created' flag stored in shared preferences
+     */
+    public static boolean getFamilyCreated() {
+        return getBooleanPreference(PREF_FAMILY_CREATED);
+    }
+
+
+    /**
+     * Store a 'Family Created' flag in shared preferences
+     */
+    public static void storeFamilyCreated(boolean value) {
+        storePreference(PREF_FAMILY_CREATED, value);
+    }
+
+
+    /**
+     * Get a 'Family Joined' flag stored in shared preferences
+     */
+    public static boolean getFamilyJoined() {
+        return getBooleanPreference(PREF_FAMILY_JOINED);
+    }
+
+
+    /**
+     * Store a 'Family Joined' flag in shared preferences
+     */
+    public static void storeFamilyJoined(boolean value) {
+        storePreference(PREF_FAMILY_JOINED, value);
     }
 
 

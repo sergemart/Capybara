@@ -50,8 +50,8 @@ public class InitialCommonActivity
         // Otherwise implicitly delegate control to the local nav AAC
         if (
             (
-                PreferenceStore.getStoredAppMode() == Constants.APP_MODE_MAJOR ||
-                PreferenceStore.getStoredAppMode() == Constants.APP_MODE_MINOR
+                PreferenceStore.getAppMode() == Constants.APP_MODE_MAJOR ||
+                PreferenceStore.getAppMode() == Constants.APP_MODE_MINOR
             ) &&
                 CloudRepo.get().isAuthenticated()
         ){
@@ -104,7 +104,7 @@ public class InitialCommonActivity
     private void leaveNavGraph() {
         if (BuildConfig.DEBUG) Log.d(TAG, "Leaving the nav graph");
         Intent intent;
-        if (PreferenceStore.getStoredAppMode() == Constants.APP_MODE_MAJOR) {
+        if (PreferenceStore.getAppMode() == Constants.APP_MODE_MAJOR) {
             intent = InitialMajorActivity.newIntent(this);
         } else {
             intent = InitialMinorActivity.newIntent(this);

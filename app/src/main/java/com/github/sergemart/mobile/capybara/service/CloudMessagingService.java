@@ -107,7 +107,7 @@ public class CloudMessagingService
             if (BuildConfig.DEBUG) Log.e(TAG, "Message contains no inviting email; skipping");
             return;
         }
-        if (PreferenceStore.getStoredAppMode() != Constants.APP_MODE_MINOR) {
+        if (PreferenceStore.getAppMode() != Constants.APP_MODE_MINOR) {
             if (BuildConfig.DEBUG) Log.e(TAG, "App mode should be 'MINOR' to process the message; skipping");
             return;
         }
@@ -127,7 +127,7 @@ public class CloudMessagingService
             if (BuildConfig.DEBUG) Log.e(TAG, "Message contains no invitee email; skipping");
             return;
         }
-        if (PreferenceStore.getStoredAppMode() != Constants.APP_MODE_MAJOR) {
+        if (PreferenceStore.getAppMode() != Constants.APP_MODE_MAJOR) {
             if (BuildConfig.DEBUG) Log.e(TAG, "App mode should be 'MAJOR' to process the message; skipping");
             return;
         }
