@@ -17,6 +17,7 @@ import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
 import com.github.sergemart.mobile.capybara.data.CloudRepo;
 import com.github.sergemart.mobile.capybara.data.MessagingServiceRepo;
+import com.github.sergemart.mobile.capybara.data.PreferenceStore;
 import com.github.sergemart.mobile.capybara.data.ResRepo;
 import com.github.sergemart.mobile.capybara.events.GenericEvent;
 import com.github.sergemart.mobile.capybara.exceptions.FirebaseMessagingException;
@@ -118,10 +119,12 @@ public class InitialMinorAcceptInviteFragment
         pInstanceDisposable.add(CloudRepo.get().getJoinFamilySubject().subscribe(event -> {
             switch (event.getResult()) {
                 case SUCCESS:
+                    PreferenceStore.storeFamilyJoined(true);
                     if (BuildConfig.DEBUG) Log.d(TAG, "JoinFamily.SUCCESS event received; emitting MinorSetupFinished event");
                     mInitialMinorSharedViewModel.getMinorSetupFinishedSubject().onNext(GenericEvent.of(SUCCESS));
                     break;
                 case NOT_FOUND:
+                    PreferenceStore.storeFamilyJoined(false);
                     if (BuildConfig.DEBUG) Log.d(TAG, "JoinFamily.NOT_FOUND event received; emitting MinorSetupFinished event");
                     mCause = event.getException();
                     mInitialMinorSharedViewModel.getMinorSetupFinishedSubject().onNext(GenericEvent.of(FAILURE).setException(mCause));

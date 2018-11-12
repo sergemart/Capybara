@@ -9,6 +9,7 @@ import com.github.sergemart.mobile.capybara.App;
 import com.github.sergemart.mobile.capybara.BuildConfig;
 import com.github.sergemart.mobile.capybara.R;
 import com.github.sergemart.mobile.capybara.data.CloudRepo;
+import com.github.sergemart.mobile.capybara.data.PreferenceStore;
 import com.github.sergemart.mobile.capybara.viewmodel.InitialMajorSharedViewModel;
 
 import java.lang.ref.WeakReference;
@@ -36,6 +37,18 @@ public class InitialMajorActivity
         mInitialMajorSharedViewModel = ViewModelProviders.of(this).get(InitialMajorSharedViewModel.class);
 
         this.setInstanceListeners();
+    }
+
+
+    /**
+     * Start up use cases, including the nav graph entry point routing
+     */
+    @Override
+    protected void onStart() {
+        super.onStart();
+        // Leave the major initial graph if the FAMILY IS CREATED.
+        // Otherwise implicitly delegate control to the local nav AAC
+        if (PreferenceStore.getFamilyCreated()) this.leaveNavGraph();
     }
 
 

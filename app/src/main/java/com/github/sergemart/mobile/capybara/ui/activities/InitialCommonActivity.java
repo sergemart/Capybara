@@ -41,7 +41,7 @@ public class InitialCommonActivity
 
 
     /**
-     * Start up use cases, including the app entry point routing
+     * Start up use cases, including the nav graph entry point routing
      */
     @Override
     protected void onStart() {

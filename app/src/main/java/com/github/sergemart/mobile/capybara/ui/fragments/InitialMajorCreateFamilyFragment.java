@@ -15,6 +15,7 @@ import com.github.sergemart.mobile.capybara.BuildConfig;
 import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
 import com.github.sergemart.mobile.capybara.data.CloudRepo;
+import com.github.sergemart.mobile.capybara.data.PreferenceStore;
 import com.github.sergemart.mobile.capybara.data.ResRepo;
 import com.github.sergemart.mobile.capybara.events.GenericEvent;
 import com.github.sergemart.mobile.capybara.viewmodel.InitialMajorSharedViewModel;
@@ -113,10 +114,12 @@ public class InitialMajorCreateFamilyFragment
         pInstanceDisposable.add(CloudRepo.get().getCreateFamilySubject().subscribe(event -> {
             switch (event.getResult()) {
                 case SUCCESS:
+                    PreferenceStore.storeFamilyCreated(true);
                     if (BuildConfig.DEBUG) Log.d(TAG, "CreateFamilyResult.CREATED event received; emitting MajorSetupFinished event");
                     mInitialMajorSharedViewModel.getMajorSetupFinishedSubject().onNext(GenericEvent.of(SUCCESS));
                     break;
                 case EXIST:
+                    PreferenceStore.storeFamilyCreated(true);
                     if (BuildConfig.DEBUG) Log.d(TAG, "CreateFamilyResult.EXIST event received; emitting MajorSetupFinished event");
                     mInitialMajorSharedViewModel.getMajorSetupFinishedSubject().onNext(GenericEvent.of(SUCCESS));
                     break;
