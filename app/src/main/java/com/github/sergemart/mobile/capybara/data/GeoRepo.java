@@ -35,8 +35,8 @@ public class GeoRepo {
         mContext = App.getContext();
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(mContext);
         mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(5000);
-        mLocationRequest.setFastestInterval(5000);
+        mLocationRequest.setInterval(Constants.LOCATION_REQUEST_INTERVAL);
+        mLocationRequest.setFastestInterval(Constants.LOCATION_REQUEST_INTERVAL);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
         mLocationCallback = new LocationCallback() {

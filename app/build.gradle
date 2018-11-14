@@ -48,22 +48,22 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'androidx.appcompat:appcompat:1.0.0'
+    implementation 'androidx.appcompat:appcompat:1.0.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.0-alpha2'
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
     implementation 'androidx.recyclerview:recyclerview-selection:1.0.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'com.google.android.material:material:1.0.0'
     // AAC
-    def nav_version = "1.0.0-alpha06"
-    implementation "android.arch.navigation:navigation-fragment:$nav_version"
+    implementation 'android.arch.navigation:navigation-fragment:1.0.0-alpha07'
     def lifecycle_version = "2.0.0"
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version"
+    implementation 'android.arch.work:work-runtime:1.0.0-alpha11'
     // Testing
     testImplementation 'junit:junit:4.12'
     testImplementation 'androidx.test:core:1.0.0'                                                   // Robolectric
-    testImplementation "org.robolectric:robolectric:4.0"
+    testImplementation 'org.robolectric:robolectric:4.0'
     testImplementation 'org.mockito:mockito-core:2.20.1'
     testImplementation 'org.hamcrest:hamcrest-junit:2.0.0.0'
     testImplementation 'commons-io:commons-io:2.5'
@@ -78,7 +78,7 @@ dependencies {
     implementation 'com.google.android.gms:play-services-location:16.0.0'
     implementation 'com.google.android.gms:play-services-auth:16.0.1'
     // Firebase
-    implementation 'com.google.firebase:firebase-core:16.0.4'
+    implementation 'com.google.firebase:firebase-core:16.0.5'
     implementation 'com.google.firebase:firebase-auth:16.0.5'
     implementation 'com.google.firebase:firebase-messaging:17.3.4'
     //noinspection GradleDependency
@@ -87,6 +87,7 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.5'
     // Utilities
     implementation 'de.hdodenhof:circleimageview:2.2.0'
+    implementation 'com.firebase:firebase-jobdispatcher:0.8.5'
 }
 
 apply plugin: 'com.google.gms.google-services'

@@ -7,11 +7,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.firebase.jobdispatcher.FirebaseJobDispatcher;
+import com.firebase.jobdispatcher.GooglePlayDriver;
+import com.firebase.jobdispatcher.Job;
+import com.firebase.jobdispatcher.Lifetime;
+import com.firebase.jobdispatcher.RetryStrategy;
+import com.firebase.jobdispatcher.Trigger;
 import com.github.sergemart.mobile.capybara.BuildConfig;
 import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
 import com.github.sergemart.mobile.capybara.data.CloudRepo;
 import com.github.sergemart.mobile.capybara.data.GeoRepo;
+import com.github.sergemart.mobile.capybara.service.LocationSendAlarmController;
+import com.github.sergemart.mobile.capybara.service.LocationSendService;
 import com.google.android.material.button.MaterialButton;
 import com.jakewharton.rxbinding2.view.RxView;
 
@@ -28,7 +36,6 @@ public class MinorDummyFragment extends Fragment {
     private MaterialButton mSendMyLocationButton;
     private MaterialButton mCheckFamilyMembershipButton;
 
-    private Location mCurrentLocation;
     private CompositeDisposable mViewDisposable;
     private CompositeDisposable mInstanceDisposable;
 
@@ -76,7 +83,7 @@ public class MinorDummyFragment extends Fragment {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
             case Constants.REQUEST_CODE_LOCATION_PERMISSIONS:
-                if ( GeoRepo.get().isPermissionGranted() ) this.locateMe();                 // 2nd try, if granted
+                if ( GeoRepo.get().isPermissionGranted() ) this.startLocationTracking();            // 2nd try, if granted
             default:
                 super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
@@ -124,7 +131,7 @@ public class MinorDummyFragment extends Fragment {
 
         // Set a listener to the "Send My Location" button
         mViewDisposable.add(
-            RxView.clicks(mSendMyLocationButton).subscribe(event -> this.sendMyLocation())
+            RxView.clicks(mSendMyLocationButton).subscribe(event -> this.startLocationTracking())
         );
 
         // Set a listener to the "Check Family Membership" button
@@ -139,12 +146,6 @@ public class MinorDummyFragment extends Fragment {
      * Set listeners to view-unrelated events
      */
     private void setInstanceListeners() {
-
-        // Set a listener to the "GOT A LOCATION" event
-        mInstanceDisposable.add(GeoRepo.get().getLocationSubject()
-            .subscribe(location -> mCurrentLocation = location)
-        );
-
     }
 
 
@@ -153,20 +154,14 @@ public class MinorDummyFragment extends Fragment {
     /**
      * Send my location
      */
-    private void sendMyLocation() {
-        this.locateMe();
-        if (mCurrentLocation == null) return;
-        CloudRepo.get().sendLocationAsync(mCurrentLocation);
+    private void startLocationTracking() {
+        if (GeoRepo.get().isPermissionGranted() ) {
+            LocationSendAlarmController.get().setAlarm();
+        } else {
+            super.requestPermissions(Constants.LOCATION_PERMISSIONS, Constants.REQUEST_CODE_LOCATION_PERMISSIONS);
+        }
+
     }
-
-
-    /**
-     * Update the device token
-     */
-    private void updateDeviceToken() {
-        CloudRepo.get().publishDeviceTokenAsync();
-    }
-
 
 
     /**
@@ -176,16 +171,5 @@ public class MinorDummyFragment extends Fragment {
         CloudRepo.get().checkFamilyMembershipAsync();
     }
 
-
-    /**
-     *
-     */
-    private void locateMe() {
-        if (GeoRepo.get().isPermissionGranted() ) {
-            GeoRepo.get().startLocationUpdates();
-        } else {
-            super.requestPermissions(Constants.LOCATION_PERMISSIONS, Constants.REQUEST_CODE_LOCATION_PERMISSIONS);
-        }
-    }
 
 }

@@ -13,6 +13,8 @@ public final class Constants {
     static final String CLOUD_MESSAGING_LOCATION_PROVIDER = "cloudMessagingProvider";
     public static final int INVITE_SENT = 1;
     public static final int INVITE_NOT_SENT = 2;
+    public static final int LOCATION_REQUEST_INTERVAL = 3000;                                       // milliseconds
+    public static final int LOCATION_SEND_INTERVAL = 5;                                             // seconds
 
 
     // ----------------------- Request codes
@@ -21,6 +23,7 @@ public final class Constants {
     public static final int REQUEST_CODE_LOCATION_PERMISSIONS = 7020;
     public static final int REQUEST_CODE_READ_CONTACTS_PERMISSIONS = 7030;
     public static final int REQUEST_CODE_DIALOG_FRAGMENT = 7040;
+    public static final int REQUEST_CODE_SEND_LOCATION = 7050;
 
 
     // ----------------------- Return codes
@@ -58,6 +61,16 @@ public final class Constants {
     public static final String MESSAGE_TYPE_INVITE = "invite";
     public static final String MESSAGE_TYPE_ACCEPT_INVITE = "acceptInvite";
     public static final String MESSAGE_TYPE_LOCATION = "location";
+
+
+    // ----------------------- Job IDs
+
+    public static final int JOB_SEND_LOCATION = 1001;
+
+
+    // ----------------------- Intent actions
+
+    public static final String INTENT_ACTION_SEND_LOCATION = "com.github.sergemart.mobile.capybara.SEND_LOCATION";
 
 
     // ----------------------- Permissions
