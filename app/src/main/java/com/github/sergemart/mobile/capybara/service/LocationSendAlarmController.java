@@ -2,8 +2,10 @@ package com.github.sergemart.mobile.capybara.service;
 
 import android.app.AlarmManager;
 import android.content.Context;
+import android.os.SystemClock;
 
 import com.github.sergemart.mobile.capybara.App;
+import com.github.sergemart.mobile.capybara.Constants;
 
 
 // Singleton
@@ -37,10 +39,9 @@ public class LocationSendAlarmController {
      */
     public void setAlarm() {
         this.cancelAlarm();
-        long scheduleTime = System.currentTimeMillis() + (1000 * 30);                               // 30 sec from now
         mAlarmManager.set(                                                                          // one-time alarm; will be rescheduled from the service itself
-            AlarmManager.RTC_WAKEUP, // TODO: check ELAPSED
-            scheduleTime,
+            AlarmManager.ELAPSED_REALTIME_WAKEUP,
+            SystemClock.elapsedRealtime() + (1000 * Constants.LOCATION_SEND_INTERVAL),   // X sec from now
             LocationSendService.getPendingIntent()
         );
     }
