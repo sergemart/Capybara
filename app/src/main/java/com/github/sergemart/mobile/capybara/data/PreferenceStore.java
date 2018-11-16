@@ -77,7 +77,7 @@ public class PreferenceStore {
 
 
     /**
-     * Get a stored boolean preference
+     * Get a stored int preference
      */
     private static int getIntPreference(String preferenceKey) {
         return PreferenceManager
@@ -109,7 +109,7 @@ public class PreferenceStore {
 
 
     /**
-     * Store a boolean preference
+     * Store an int preference
      */
     private static void storePreference(String preferenceKey, int preference) {
         PreferenceManager

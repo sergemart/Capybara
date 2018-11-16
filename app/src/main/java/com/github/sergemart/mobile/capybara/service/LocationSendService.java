@@ -82,7 +82,7 @@ public class LocationSendService extends Service {
         mDisposable.add(GeoRepo.get().getLocationSubject().subscribe(location -> {
             GeoRepo.get().stopLocationUpdates();
             CloudRepo.get().sendLocationAsync(location);
-            LocationSendAlarmController.get().setAlarm();                                           // reschedule the alarm calling the service
+            LocationSendServiceController.get().setAlarm();                                           // reschedule the alarm calling the service
             super.stopSelf();                                                                       // all done, exit
         }));
 

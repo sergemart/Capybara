@@ -9,20 +9,20 @@ import com.github.sergemart.mobile.capybara.Constants;
 
 
 // Singleton
-public class LocationSendAlarmController {
+public class LocationSendServiceController {
 
-    private static LocationSendAlarmController sInstance = new LocationSendAlarmController();
+    private static LocationSendServiceController sInstance = new LocationSendServiceController();
 
 
     // Private constructor
-    private LocationSendAlarmController() {
+    private LocationSendServiceController() {
         mAlarmManager = (AlarmManager) App.getContext().getSystemService(Context.ALARM_SERVICE);
     }
 
 
     // Factory method
-    public static LocationSendAlarmController get() {
-        if(sInstance == null) sInstance = new LocationSendAlarmController();
+    public static LocationSendServiceController get() {
+        if(sInstance == null) sInstance = new LocationSendServiceController();
         return sInstance;
     }
 

@@ -1,25 +1,17 @@
 package com.github.sergemart.mobile.capybara.ui.fragments;
 
-import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.firebase.jobdispatcher.FirebaseJobDispatcher;
-import com.firebase.jobdispatcher.GooglePlayDriver;
-import com.firebase.jobdispatcher.Job;
-import com.firebase.jobdispatcher.Lifetime;
-import com.firebase.jobdispatcher.RetryStrategy;
-import com.firebase.jobdispatcher.Trigger;
 import com.github.sergemart.mobile.capybara.BuildConfig;
 import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
 import com.github.sergemart.mobile.capybara.data.CloudRepo;
 import com.github.sergemart.mobile.capybara.data.GeoRepo;
-import com.github.sergemart.mobile.capybara.service.LocationSendAlarmController;
-import com.github.sergemart.mobile.capybara.service.LocationSendService;
+import com.github.sergemart.mobile.capybara.service.LocationSendServiceController;
 import com.google.android.material.button.MaterialButton;
 import com.jakewharton.rxbinding2.view.RxView;
 
@@ -156,7 +148,7 @@ public class MinorDummyFragment extends Fragment {
      */
     private void startLocationTracking() {
         if (GeoRepo.get().isPermissionGranted() ) {
-            LocationSendAlarmController.get().setAlarm();
+            LocationSendServiceController.get().setAlarm();
         } else {
             super.requestPermissions(Constants.LOCATION_PERMISSIONS, Constants.REQUEST_CODE_LOCATION_PERMISSIONS);
         }
