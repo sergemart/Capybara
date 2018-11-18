@@ -1,5 +1,6 @@
 package com.github.sergemart.mobile.capybara.ui.dialogs;
 
+
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -17,7 +18,17 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 
 
-public class GrantPermissionRetryDialogFragment extends DialogFragment {
+public class SignInRetryDialogFragment extends DialogFragment {
+
+    private Throwable mCause;
+
+
+    // --------------------------- Getters/ setters
+
+    void setCause(Throwable cause) {
+        mCause = cause;
+    }
+
 
     // --------------------------- Override dialog fragment lifecycle event handlers
 
@@ -38,9 +49,9 @@ public class GrantPermissionRetryDialogFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         AlertDialog alertDialog = new AlertDialog.Builder(Objects.requireNonNull( super.getActivity() ))
-            .setTitle(ResRepo.get().getGrantPermissionRetryDialogTitleR())
-            .setMessage(ResRepo.get().getGrantPermissionRetryDialogMessageR())
-            .setIcon(ResRepo.get().getGrantPermissionRetryDialogIconR())
+            .setTitle(ResRepo.get().getSignInRetryDialogTitleR(mCause))
+            .setMessage(ResRepo.get().getSignInRetryDialogMessageR(mCause))
+            .setIcon(ResRepo.get().getSignInRetryDialogIconR(mCause))
             .setPositiveButton(R.string.action_retry, (dialog, button) ->
                 Objects.requireNonNull(super.getParentFragment()).onActivityResult(                 // use Fragment#onActivityResult() as a callback
                     Constants.REQUEST_CODE_DIALOG_FRAGMENT,
@@ -85,8 +96,11 @@ public class GrantPermissionRetryDialogFragment extends DialogFragment {
     /**
      * The dialog fragment factory
      */
-    public static GrantPermissionRetryDialogFragment newInstance() {
-        return new GrantPermissionRetryDialogFragment();
+    public static SignInRetryDialogFragment newInstance(Throwable cause) {
+        SignInRetryDialogFragment instance = new SignInRetryDialogFragment();
+        instance.setCause(cause);
+        return instance;
     }
 
 }
+

@@ -1,8 +1,6 @@
 package com.github.sergemart.mobile.capybara.ui.fragments;
 
 import android.app.Activity;
-import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,16 +14,14 @@ import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
 import com.github.sergemart.mobile.capybara.data.CloudRepo;
 import com.github.sergemart.mobile.capybara.data.PreferenceStore;
-import com.github.sergemart.mobile.capybara.data.ResRepo;
 import com.github.sergemart.mobile.capybara.events.GenericEvent;
+import com.github.sergemart.mobile.capybara.ui.dialogs.CreateFamilyRetryDialogFragment;
 import com.github.sergemart.mobile.capybara.viewmodel.InitialMajorSharedViewModel;
 
 import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.ViewModelProviders;
 
 import static com.github.sergemart.mobile.capybara.events.Result.FAILURE;
@@ -164,92 +160,4 @@ public class InitialMajorCreateFamilyFragment
         );
     }
 
-
-    // ============================== Inner classes: Create family retry dialog fragment
-
-    public static class CreateFamilyRetryDialogFragment extends DialogFragment {
-
-        private Throwable mCause;
-
-
-        // ============================== Getters/ setters
-
-        void setCause(Throwable cause) {
-            mCause = cause;
-        }
-
-
-        // ============================== Override dialog fragment lifecycle event handlers
-
-        /**
-         * View-unrelated startup actions
-         */
-        @Override
-        public void onCreate(@Nullable Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            setRetainInstance(true);
-        }
-
-
-        /**
-         * The dialog factory
-         */
-        @NonNull
-        @Override
-        public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-            AlertDialog alertDialog = new AlertDialog.Builder(Objects.requireNonNull( super.getActivity() ))
-                .setTitle(ResRepo.get().getCreateFamilyRetryDialogTitleR(mCause))
-                .setMessage(ResRepo.get().getCreateFamilyRetryDialogMessageR(mCause))
-                .setIcon(ResRepo.get().getCreateFamilyRetryDialogIconR(mCause))
-                .setPositiveButton(R.string.action_retry, (dialog, button) ->
-                    Objects.requireNonNull(super.getParentFragment()).onActivityResult(             // use Fragment#onActivityResult() as a callback
-                        Constants.REQUEST_CODE_DIALOG_FRAGMENT,
-                        Activity.RESULT_OK,
-                        super.getActivity().getIntent()
-                    )
-                )
-                .setNegativeButton(R.string.action_thanks_no, (dialog, button) -> dialog.cancel())
-                .create()
-            ;
-            alertDialog.setCanceledOnTouchOutside(false);
-            alertDialog.setCancelable(false);                                                       // a kind of modal (not really)
-            return alertDialog;
-        }
-
-
-        /**
-         * On cancel
-         */
-        @Override
-        public void onCancel(DialogInterface dialog) {
-            Objects.requireNonNull(super.getParentFragment()).onActivityResult(                     // use Fragment#onActivityResult() as a callback
-                Constants.REQUEST_CODE_DIALOG_FRAGMENT,
-                Activity.RESULT_CANCELED,
-                Objects.requireNonNull(super.getActivity()).getIntent()
-            );
-        }
-
-
-        /**
-         * Fix a compat lib bug causing the dialog dismiss on rotate
-         */
-        @Override
-        public void onDestroyView() {
-            if (super.getDialog() != null && super.getRetainInstance()) super.getDialog().setDismissMessage(null);
-            super.onDestroyView();
-        }
-
-
-        // ============================== Static encapsulation-leveraging methods
-
-        /**
-         * The dialog fragment factory
-         */
-        static CreateFamilyRetryDialogFragment newInstance(Throwable cause) {
-            CreateFamilyRetryDialogFragment instance = new CreateFamilyRetryDialogFragment();
-            instance.setCause(cause);
-            return instance;
-        }
-
-    }
 }

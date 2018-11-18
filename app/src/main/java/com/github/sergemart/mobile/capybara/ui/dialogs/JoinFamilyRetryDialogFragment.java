@@ -17,7 +17,17 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 
 
-public class GrantPermissionRetryDialogFragment extends DialogFragment {
+public class JoinFamilyRetryDialogFragment extends DialogFragment {
+
+    private Throwable mCause;
+
+
+    // --------------------------- Getters/ setters
+
+    void setCause(Throwable cause) {
+        mCause = cause;
+    }
+
 
     // --------------------------- Override dialog fragment lifecycle event handlers
 
@@ -38,9 +48,9 @@ public class GrantPermissionRetryDialogFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         AlertDialog alertDialog = new AlertDialog.Builder(Objects.requireNonNull( super.getActivity() ))
-            .setTitle(ResRepo.get().getGrantPermissionRetryDialogTitleR())
-            .setMessage(ResRepo.get().getGrantPermissionRetryDialogMessageR())
-            .setIcon(ResRepo.get().getGrantPermissionRetryDialogIconR())
+            .setTitle(ResRepo.get().getJoinFamilyRetryDialogTitleR(mCause))
+            .setMessage(ResRepo.get().getJoinFamilyRetryDialogMessageR(mCause))
+            .setIcon(ResRepo.get().getJoinFamilyRetryDialogIconR(mCause))
             .setPositiveButton(R.string.action_retry, (dialog, button) ->
                 Objects.requireNonNull(super.getParentFragment()).onActivityResult(                 // use Fragment#onActivityResult() as a callback
                     Constants.REQUEST_CODE_DIALOG_FRAGMENT,
@@ -85,8 +95,10 @@ public class GrantPermissionRetryDialogFragment extends DialogFragment {
     /**
      * The dialog fragment factory
      */
-    public static GrantPermissionRetryDialogFragment newInstance() {
-        return new GrantPermissionRetryDialogFragment();
+    public static JoinFamilyRetryDialogFragment newInstance(Throwable cause) {
+        JoinFamilyRetryDialogFragment instance = new JoinFamilyRetryDialogFragment();
+        instance.setCause(cause);
+        return instance;
     }
 
 }
