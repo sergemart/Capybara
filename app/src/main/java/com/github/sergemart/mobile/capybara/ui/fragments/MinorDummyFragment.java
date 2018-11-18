@@ -5,13 +5,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.github.sergemart.mobile.capybara.BuildConfig;
 import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
 import com.github.sergemart.mobile.capybara.data.CloudRepo;
 import com.github.sergemart.mobile.capybara.data.GeoRepo;
-import com.github.sergemart.mobile.capybara.service.LocationSendServiceController;
 import com.google.android.material.button.MaterialButton;
 import com.jakewharton.rxbinding2.view.RxView;
 
@@ -25,7 +25,7 @@ public class MinorDummyFragment extends Fragment {
 
     private static final String TAG = MinorDummyFragment.class.getSimpleName();
 
-    private MaterialButton mSendMyLocationButton;
+    private MaterialButton mRequestLocationsButton;
     private MaterialButton mCheckFamilyMembershipButton;
 
     private CompositeDisposable mViewDisposable;
@@ -60,7 +60,7 @@ public class MinorDummyFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View fragmentView = inflater.inflate(R.layout.fragment_minor_dummy, container, false);
 
-        mSendMyLocationButton = fragmentView.findViewById(R.id.button_send_my_location);
+        mRequestLocationsButton = fragmentView.findViewById(R.id.button_request_locations);
         mCheckFamilyMembershipButton = fragmentView.findViewById(R.id.button_check_family_membership);
 
         this.setViewListeners();
@@ -123,7 +123,7 @@ public class MinorDummyFragment extends Fragment {
 
         // Set a listener to the "Send My Location" button
         mViewDisposable.add(
-            RxView.clicks(mSendMyLocationButton).subscribe(event -> this.startLocationTracking())
+            RxView.clicks(mRequestLocationsButton).subscribe(event -> this.requestLocations())
         );
 
         // Set a listener to the "Check Family Membership" button
@@ -148,11 +148,18 @@ public class MinorDummyFragment extends Fragment {
      */
     private void startLocationTracking() {
         if (GeoRepo.get().isPermissionGranted() ) {
-            LocationSendServiceController.get().setAlarm();
+            Toast.makeText(super.getActivity(), "Not implemented!", Toast.LENGTH_LONG).show();
         } else {
             super.requestPermissions(Constants.LOCATION_PERMISSIONS, Constants.REQUEST_CODE_LOCATION_PERMISSIONS);
         }
+    }
 
+
+    /**
+     * Request locations
+     */
+    private void requestLocations() {
+        CloudRepo.get().requestLocationsAsync();
     }
 
 

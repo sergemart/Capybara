@@ -25,6 +25,32 @@ public class ResRepo {
     }
 
 
+    // --------------------------- Repository interface: Grant permission retry dialog resources
+
+    /**
+     * @return  Grant permission retry dialog icon resource id
+     */
+    public int getGrantPermissionRetryDialogIconR() {
+        return R.mipmap.capybara_profile; // TODO: Make dialog icons
+    }
+
+
+    /**
+     * @return Grant permission retry dialog title resource id
+     */
+    public int getGrantPermissionRetryDialogTitleR() {
+        return R.string.title_permission_not_granted;
+    }
+
+
+    /**
+     * @return Grant permission retry dialog message resource id
+     */
+    public int getGrantPermissionRetryDialogMessageR() {
+        return R.string.msg_permission_not_granted;
+    }
+
+
     // --------------------------- Repository interface: Sign-in retry dialog resources
 
     /**

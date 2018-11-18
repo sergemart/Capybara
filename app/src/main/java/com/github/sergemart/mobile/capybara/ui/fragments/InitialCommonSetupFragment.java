@@ -1,5 +1,7 @@
 package com.github.sergemart.mobile.capybara.ui.fragments;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,8 +10,10 @@ import android.view.ViewGroup;
 import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
 import com.github.sergemart.mobile.capybara.data.CloudRepo;
+import com.github.sergemart.mobile.capybara.data.GeoRepo;
 import com.github.sergemart.mobile.capybara.data.PreferenceStore;
 import com.github.sergemart.mobile.capybara.events.GenericEvent;
+import com.github.sergemart.mobile.capybara.ui.dialogs.GrantPermissionRetryDialogFragment;
 import com.github.sergemart.mobile.capybara.viewmodel.InitialCommonSharedViewModel;
 import com.google.android.material.button.MaterialButton;
 import com.jakewharton.rxbinding2.view.RxView;
@@ -67,6 +71,42 @@ public class InitialCommonSetupFragment
     }
 
 
+    /**
+     * A callback on process the runtime permission dialog
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case Constants.REQUEST_CODE_LOCATION_PERMISSIONS:
+                if ( GeoRepo.get().isPermissionGranted() ) {
+                    this.navigateToNextPage();
+                } else {
+                    this.showGrantPermissionRetryDialog();
+                }
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
+
+
+    /**
+     * Used uncommonly as a callback for the embedded dialog fragment
+     */
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch(requestCode) {
+            case Constants.REQUEST_CODE_DIALOG_FRAGMENT:
+                if (resultCode == Activity.RESULT_OK) {                                             // retry
+                    this.requestLocationPermissions();
+                } else if (resultCode == Activity.RESULT_CANCELED) {                                // no permission, go further
+                    this.navigateToNextPage();
+                }
+                break;
+            default:
+        }
+    }
+
+
     // --------------------------- Fragment lifecycle subroutines
 
     /**
@@ -84,7 +124,7 @@ public class InitialCommonSetupFragment
         pViewDisposable.add(RxView.clicks(mIAmMajorButton).subscribe(
             event -> {
                 PreferenceStore.storeAppMode(Constants.APP_MODE_MAJOR);
-                this.navigateToNextPage();
+                this.requestLocationPermissions();
             })
         );
 
@@ -92,7 +132,7 @@ public class InitialCommonSetupFragment
         pViewDisposable.add(RxView.clicks(mIAmMinorButton).subscribe(
             event -> {
                 PreferenceStore.storeAppMode(Constants.APP_MODE_MINOR);
-                this.navigateToNextPage();
+                this.requestLocationPermissions();
             })
         );
     }
@@ -102,7 +142,7 @@ public class InitialCommonSetupFragment
 
     /**
      * Navigate to the login page, if not authenticated.
-     * Otherwise, notify subscribers that the app is completely initialized
+     * Otherwise, notify subscribers (hosting activity) that the app is completely initialized
      */
     private void navigateToNextPage() {
         if (!CloudRepo.get().isAuthenticated()) {
@@ -112,5 +152,23 @@ public class InitialCommonSetupFragment
         }
     }
 
+
+    /**
+     * Request location permissions
+     */
+    private void requestLocationPermissions() {
+        super.requestPermissions(Constants.LOCATION_PERMISSIONS, Constants.REQUEST_CODE_LOCATION_PERMISSIONS);
+    }
+
+
+    /**
+     * Show grant permission retry dialog
+     */
+    private void showGrantPermissionRetryDialog() {
+        GrantPermissionRetryDialogFragment.newInstance().show(Objects.requireNonNull(
+            super.getChildFragmentManager()),
+            Constants.TAG_GRANT_PERMISSION_RETRY_DIALOG
+        );
+    }
 
 }

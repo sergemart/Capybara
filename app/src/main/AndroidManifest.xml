@@ -30,14 +30,19 @@
 
         <service android:name=".service.CloudMessagingService"
             android:stopWithTask="true"
-            tools:ignore="ExportedService"><!-- TODO: try to remove when everything is working -->
+            tools:ignore="ExportedService">                                                         <!-- security checks performed at runtime -->
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-        <service android:name=".service.LocationSendService"
+
+        <receiver android:name=".service.LocationSendBroadcastReceiver"
             android:exported="false">
-        </service>
+            <intent-filter>
+                <action android:name="com.github.sergemart.mobile.capybara.SEND_LOCATION" />
+            </intent-filter>
+        </receiver>
+
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"

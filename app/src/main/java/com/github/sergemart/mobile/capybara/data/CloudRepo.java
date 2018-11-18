@@ -90,6 +90,7 @@ public class CloudRepo {
     private final PublishSubject<GenericEvent> mSendInviteSubject = PublishSubject.create();
     private final PublishSubject<GenericEvent> mJoinFamilySubject = PublishSubject.create();
     private final PublishSubject<GenericEvent> mSendLocationSubject = PublishSubject.create();
+    private final PublishSubject<GenericEvent> mSendLocationRequestSubject = PublishSubject.create();
     private final PublishSubject<GenericEvent> mSignOutSubject = PublishSubject.create();
 
     private final Context mContext;
@@ -156,6 +157,11 @@ public class CloudRepo {
 
     public PublishSubject<GenericEvent> getSendLocationSubject() {
         return mSendLocationSubject;
+    }
+
+
+    public PublishSubject<GenericEvent> getSendLocationRequestSubject() {
+        return mSendLocationRequestSubject;
     }
 
 
@@ -744,7 +750,75 @@ public class CloudRepo {
 
 
     // --------------------------- Repository interface: Location
-    
+
+    /**
+     * Request locations of family members using custom Firebase callable function
+     * Send an event notifying on success or failure
+     */
+    @SuppressWarnings("unchecked")
+    public void requestLocationsAsync() {
+        if (mFirebaseUser == null) {
+            if (BuildConfig.DEBUG) Log.e(TAG, "User not authenticated while attempting to send location requests to a family; skipping");
+            return;
+        }
+
+        Map<String, Object> data = new HashMap<>();
+
+        mFirebaseFunctions
+            .getHttpsCallable("requestLocations")
+            .call(data)
+            .continueWith(task -> {
+                Map<String, Object> result = null;
+                try {
+                    result = (Map<String, Object>) Objects.requireNonNull(task.getResult()).getData(); // throws an exception on error
+                    // if success:
+                    String returnCode = (String)Objects.requireNonNull(result.get("returnCode"));
+                    switch (returnCode) {
+                        case Constants.RETURN_CODE_ALL_SENT: case Constants.RETURN_CODE_SOME_SENT:
+                            if (BuildConfig.DEBUG) Log.d(TAG, "Locations request sent");
+                            mSendLocationRequestSubject.onNext(GenericEvent.of(SUCCESS));
+                            break;
+                        case Constants.RETURN_CODE_MORE_THAN_ONE_FAMILY:
+                            if (BuildConfig.DEBUG) Log.e(TAG, "The user has more than one family record");
+                            mSendLocationRequestSubject.onNext(GenericEvent.of(INTEGRITY_ERROR));
+                            break;
+                        case Constants.RETURN_CODE_NO_FAMILY:
+                            if (BuildConfig.DEBUG) Log.e(TAG, "The user has no family records");
+                            mSendLocationRequestSubject.onNext(GenericEvent.of(NOT_FOUND));
+                            break;
+                        case Constants.RETURN_CODE_NONE_SENT:
+                            String errorMessage = mContext.getString(R.string.exception_firebase_location_requests_not_sent);
+                            if (BuildConfig.DEBUG) Log.e(TAG, errorMessage);
+                            mSendLocationRequestSubject.onNext(GenericEvent.of(BACKEND_ERROR).setException( new FirebaseFunctionException(errorMessage) ));
+                            break;
+                        default:
+                            errorMessage = mContext.getString(R.string.exception_firebase_function_unknown_response);
+                            if (BuildConfig.DEBUG) Log.e(TAG, errorMessage);
+                            mSendLocationRequestSubject.onNext(GenericEvent.of(BACKEND_ERROR).setException( new FirebaseFunctionException(errorMessage) ));
+                    }
+                } catch (Exception e) {
+                    String errorMessage = mContext.getString(R.string.exception_firebase_location_requests_not_sent);
+                    if (BuildConfig.DEBUG) Log.e(TAG, errorMessage + ": " + e.getMessage());
+                    mSendLocationRequestSubject.onNext(GenericEvent.of(BACKEND_ERROR).setException( new FirebaseFunctionException(errorMessage, e) ));
+                }
+                return result;
+            })
+            .addOnCompleteListener(task -> {
+                if (!task.isSuccessful() && task.getException() != null) {
+                    Exception e = task.getException();
+                    String errorMessage = mContext.getString(R.string.exception_firebase_location_requests_not_sent);
+                    if (BuildConfig.DEBUG) Log.e(TAG, errorMessage + ": " + e.getMessage());
+                    mSendLocationRequestSubject.onNext(GenericEvent.of(BACKEND_ERROR).setException( new FirebaseFunctionException(errorMessage, e) ));
+                } else if (!task.isSuccessful()) {
+                    String errorMessage = mContext.getString(R.string.exception_firebase_location_requests_not_sent);
+                    if (BuildConfig.DEBUG) Log.e(TAG, errorMessage);
+                    mSendLocationRequestSubject.onNext(GenericEvent.of(BACKEND_ERROR).setException( new FirebaseFunctionException(errorMessage) ));
+                }
+            })
+        ;
+    }
+
+
     /**
      * Send a location to family members using custom Firebase callable function
      * Send an event notifying on success or failure

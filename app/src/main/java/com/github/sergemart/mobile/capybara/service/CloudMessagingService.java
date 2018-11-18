@@ -1,5 +1,6 @@
 package com.github.sergemart.mobile.capybara.service;
 
+import android.content.Intent;
 import android.location.Location;
 import android.util.Log;
 
@@ -7,6 +8,7 @@ import com.github.sergemart.mobile.capybara.BuildConfig;
 import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.Tools;
 import com.github.sergemart.mobile.capybara.data.CloudRepo;
+import com.github.sergemart.mobile.capybara.data.GeoRepo;
 import com.github.sergemart.mobile.capybara.data.MessagingServiceRepo;
 import com.github.sergemart.mobile.capybara.data.PreferenceStore;
 import com.github.sergemart.mobile.capybara.events.GenericEvent;
@@ -82,9 +84,29 @@ public class CloudMessagingService
                     messageData.get(Constants.KEY_SENDER_EMAIL)
                 );
                 break;
+            case Constants.MESSAGE_TYPE_LOCATION_REQUEST:                                           // a message is a location request
+                this.notifyOnLocationRequest(
+                    messageData.get(Constants.KEY_SENDER_EMAIL)
+                );
+                break;
             default:
                 if (BuildConfig.DEBUG) Log.d(TAG, "Unknown message type; skipping");
         }
+    }
+
+
+    // --------------------------- Service lifecycle subroutines
+
+    /**
+     * Set instance listeners
+     */
+    private void setInstanceListeners() {
+
+        mDisposable.add(GeoRepo.get().getLocationSubject().subscribe(location -> {
+            GeoRepo.get().stopLocationUpdates();
+            CloudRepo.get().sendLocationAsync(location);
+        }));
+
     }
 
 
@@ -136,6 +158,23 @@ public class CloudMessagingService
             .of(SUCCESS)
             .setData(inviteeEmail)
         );
+    }
+
+
+    /**
+     * Notify about a received location request
+     */
+    private void notifyOnLocationRequest(String senderEmail) {
+        if (senderEmail == null || senderEmail.isEmpty()) {
+            if (BuildConfig.DEBUG) Log.e(TAG, "Message contains no sender email; skipping");
+            return;
+        }
+        if (BuildConfig.DEBUG) Log.d(TAG, "A location request message received, emitting a corresponding event");
+        MessagingServiceRepo.get().getLocationRequestReceivedSubject().onNext(GenericEvent
+            .of(SUCCESS)
+            .setData(senderEmail)
+        );
+        super.sendBroadcast(LocationSendBroadcastReceiver.getIntent());
     }
 
 

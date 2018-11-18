@@ -18,9 +18,9 @@
         android:layout_gravity="center">
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/button_send_my_location"
+            android:id="@+id/button_request_locations"
             style="@style/App.Button"
-            android:text="@string/action_send_location"/>
+            android:text="@string/action_request_locations"/>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button_check_family_membership"

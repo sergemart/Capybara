@@ -17,6 +17,14 @@ public final class Constants {
     public static final int LOCATION_SEND_INTERVAL = 30;                                            // seconds
 
 
+    // ----------------------- Dialog tags
+
+    public static final String TAG_GRANT_PERMISSION_RETRY_DIALOG = "grantPermissionRetryDialog";
+    public static final String TAG_SIGN_IN_RETRY_DIALOG = "signInRetryDialog";
+    public static final String TAG_CREATE_FAMILY_RETRY_DIALOG = "createFamilyRetryDialog";
+    public static final String TAG_JOIN_FAMILY_RETRY_DIALOG = "joinFamilyRetryDialog";
+
+
     // ----------------------- Request codes
 
     public static final int REQUEST_CODE_SIGN_IN = 7010;
@@ -61,6 +69,7 @@ public final class Constants {
     public static final String MESSAGE_TYPE_INVITE = "invite";
     public static final String MESSAGE_TYPE_ACCEPT_INVITE = "acceptInvite";
     public static final String MESSAGE_TYPE_LOCATION = "location";
+    public static final String MESSAGE_TYPE_LOCATION_REQUEST = "locationRequest";
 
 
     // ----------------------- Job IDs

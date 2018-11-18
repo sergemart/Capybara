@@ -94,10 +94,33 @@ public class GeoRepo {
 
 
     /**
+     * Start location updates with external callback
+     */
+    public void startLocationUpdates(LocationCallback locationCallback) {
+        try {
+            mFusedLocationClient.requestLocationUpdates(mLocationRequest, locationCallback,null);
+            if (BuildConfig.DEBUG) Log.d(TAG, "Location updates started");
+        } catch (SecurityException e) {
+            String errorMessage = mContext.getString(R.string.exception_location_no_permission);
+            if (BuildConfig.DEBUG) Log.e(TAG, errorMessage + ": " +  e.getMessage());
+        }
+    }
+
+
+    /**
      * Stop location updates
      */
     public void stopLocationUpdates() {
         mFusedLocationClient.removeLocationUpdates(mLocationCallback);
+        if (BuildConfig.DEBUG) Log.d(TAG, "Location updates stopped");
+    }
+
+
+    /**
+     * Stop location updates with external callback
+     */
+    public void stopLocationUpdates(LocationCallback locationCallback) {
+        mFusedLocationClient.removeLocationUpdates(locationCallback);
         if (BuildConfig.DEBUG) Log.d(TAG, "Location updates stopped");
     }
 

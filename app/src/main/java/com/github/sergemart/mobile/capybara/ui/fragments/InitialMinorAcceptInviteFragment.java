@@ -42,8 +42,6 @@ public class InitialMinorAcceptInviteFragment
     extends AbstractFragment
 {
 
-    private static final String TAG_JOIN_FAMILY_RETRY_DIALOG = "joinFamilyRetryDialog";
-
     private TextView mInvitationTextView;
     private MaterialButton mAcceptInviteButton;
     private MaterialButton mDeclineInviteButton;
@@ -206,7 +204,7 @@ public class InitialMinorAcceptInviteFragment
     private void showJoinFamilyRetryDialog(Throwable cause) {
         JoinFamilyRetryDialogFragment.newInstance(cause).show(
             Objects.requireNonNull(super.getChildFragmentManager()),
-            TAG_JOIN_FAMILY_RETRY_DIALOG
+            Constants.TAG_JOIN_FAMILY_RETRY_DIALOG
         );
     }
 

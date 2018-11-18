@@ -37,8 +37,6 @@ public class InitialCommonSignInFragment
     extends AbstractFragment
 {
 
-    private static final String TAG_SIGN_IN_RETRY_DIALOG = "signInRetryDialog";
-
     private MaterialButton mSignInButton;
     private ProgressBar mProgressBar;
 
@@ -96,6 +94,7 @@ public class InitialCommonSignInFragment
                     mInitialCommonSharedViewModel.getCommonSetupFinishedSubject().onNext(GenericEvent.of(FAILURE).setException(mCause));
                 }
                 break;
+            default:
         }
     }
 
@@ -191,7 +190,10 @@ public class InitialCommonSignInFragment
      * Show sign-in retry dialog
      */
     private void showSigninRetryDialog(Throwable cause) {
-        SignInRetryDialogFragment.newInstance(cause).show(Objects.requireNonNull(super.getChildFragmentManager()), TAG_SIGN_IN_RETRY_DIALOG);
+        SignInRetryDialogFragment.newInstance(cause).show(Objects.requireNonNull(
+            super.getChildFragmentManager()),
+            Constants.TAG_SIGN_IN_RETRY_DIALOG
+        );
     }
 
 
@@ -211,21 +213,21 @@ public class InitialCommonSignInFragment
     }
 
 
-    // --------------------------- Inner classes: Sign-in retry dialog fragment
+    // ============================== Inner classes: Sign-in retry dialog fragment
 
     public static class SignInRetryDialogFragment extends DialogFragment {
 
         private Throwable mCause;
 
 
-        // +++++++++++++++++++++++ Getters/ setters
+        // ============================== Getters/ setters
 
         void setCause(Throwable cause) {
             mCause = cause;
         }
 
 
-        // +++++++++++++++++++++++ Override dialog fragment lifecycle event handlers
+        // ============================== Override dialog fragment lifecycle event handlers
 
         /**
          * View-unrelated startup actions
@@ -286,7 +288,7 @@ public class InitialCommonSignInFragment
         }
 
 
-        // +++++++++++++++++++++++ Static encapsulation-leveraging methods
+        // ============================== Static encapsulation-leveraging methods
 
         /**
          * The dialog fragment factory

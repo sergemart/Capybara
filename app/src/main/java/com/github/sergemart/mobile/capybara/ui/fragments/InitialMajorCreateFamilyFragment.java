@@ -36,8 +36,6 @@ public class InitialMajorCreateFamilyFragment
     extends AbstractFragment
 {
 
-    private static final String TAG_CREATE_FAMILY_RETRY_DIALOG = "createFamilyRetryDialog";
-
     private ProgressBar mProgressBar;
 
     private InitialMajorSharedViewModel mInitialMajorSharedViewModel;
@@ -162,7 +160,7 @@ public class InitialMajorCreateFamilyFragment
     private void showCreateFamilyRetryDialog(Throwable cause) {
         CreateFamilyRetryDialogFragment.newInstance(cause).show(
             Objects.requireNonNull(super.getChildFragmentManager()),
-            TAG_CREATE_FAMILY_RETRY_DIALOG
+            Constants.TAG_CREATE_FAMILY_RETRY_DIALOG
         );
     }
 
