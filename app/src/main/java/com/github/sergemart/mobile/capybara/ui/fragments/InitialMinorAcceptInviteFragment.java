@@ -14,7 +14,7 @@ import com.github.sergemart.mobile.capybara.BuildConfig;
 import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
 import com.github.sergemart.mobile.capybara.data.CloudRepo;
-import com.github.sergemart.mobile.capybara.data.MessagingServiceRepo;
+import com.github.sergemart.mobile.capybara.data.MessagingRepo;
 import com.github.sergemart.mobile.capybara.data.PreferenceStore;
 import com.github.sergemart.mobile.capybara.events.GenericEvent;
 import com.github.sergemart.mobile.capybara.exceptions.FirebaseMessagingException;
@@ -158,7 +158,7 @@ public class InitialMinorAcceptInviteFragment
 
 
         // Set a listener to the InviteReceived event
-        pViewDisposable.add(MessagingServiceRepo.get().getInviteReceivedSubject().subscribe(event -> {
+        pViewDisposable.add(MessagingRepo.get().getInviteReceivedSubject().subscribe(event -> {
             switch (event.getResult()) {
                 case SUCCESS:                                                                       // update the UI with inviting email
                     mInvitingEmail = (String)event.getData();

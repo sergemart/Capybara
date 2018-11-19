@@ -6,7 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.github.sergemart.mobile.capybara.R;
-import com.github.sergemart.mobile.capybara.data.MessagingServiceRepo;
+import com.github.sergemart.mobile.capybara.data.MessagingRepo;
 import com.github.sergemart.mobile.capybara.events.GenericEvent;
 import com.github.sergemart.mobile.capybara.exceptions.FirebaseMessagingException;
 import com.github.sergemart.mobile.capybara.viewmodel.InitialMinorSharedViewModel;
@@ -21,7 +21,6 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.fragment.NavHostFragment;
 
 import static com.github.sergemart.mobile.capybara.events.Result.FAILURE;
-import static com.github.sergemart.mobile.capybara.events.Result.SUCCESS;
 
 
 public class InitialMinorWaitForInviteFragment
@@ -73,7 +72,7 @@ public class InitialMinorWaitForInviteFragment
     private void setInstanceListeners() {
 
         // Set a listener to the InviteReceived event
-        pInstanceDisposable.add(MessagingServiceRepo.get().getInviteReceivedSubject().subscribe(event -> {
+        pInstanceDisposable.add(MessagingRepo.get().getInviteReceivedSubject().subscribe(event -> {
             switch (event.getResult()) {
                 case SUCCESS:
                     this.navigateToNextPage();

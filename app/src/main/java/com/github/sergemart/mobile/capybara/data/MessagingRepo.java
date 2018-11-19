@@ -7,19 +7,19 @@ import io.reactivex.subjects.BehaviorSubject;
 
 
 // Singleton
-public class MessagingServiceRepo {
+public class MessagingRepo {
 
-    private static MessagingServiceRepo sInstance = new MessagingServiceRepo();
+    private static MessagingRepo sInstance = new MessagingRepo();
 
 
     // Private constructor
-    private MessagingServiceRepo() {
+    private MessagingRepo() {
     }
 
 
     // Factory method
-    public static MessagingServiceRepo get() {
-        if(sInstance == null) sInstance = new MessagingServiceRepo();
+    public static MessagingRepo get() {
+        if(sInstance == null) sInstance = new MessagingRepo();
         return sInstance;
     }
 

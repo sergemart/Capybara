@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.github.sergemart.mobile.capybara.BuildConfig;
-import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
 import com.github.sergemart.mobile.capybara.data.GeoRepo;
 import com.google.android.gms.maps.CameraUpdate;
@@ -37,7 +36,6 @@ public class MajorLocatorFragment
     private CompositeDisposable mInstanceDisposable;
 
 
-
     // --------------------------- Override fragment event handlers
 
     /**
@@ -64,24 +62,9 @@ public class MajorLocatorFragment
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        this.locateMe();
         this.setViewListeners();
+        if (GeoRepo.get().isPermissionGranted() ) GeoRepo.get().startLocationUpdates();
         return super.onCreateView(inflater, container, savedInstanceState);
-    }
-
-
-    /**
-     * A callback on process the runtime permission dialog
-     */
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case Constants.REQUEST_CODE_LOCATION_PERMISSIONS:
-                if ( GeoRepo.get().isPermissionGranted() ) this.locateMe();                 // 2nd try, if granted
-                //else {} // TODO: Notify about restricted functionality
-            default:
-                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        }
     }
 
 
@@ -133,9 +116,9 @@ public class MajorLocatorFragment
 
         // Set a listener to the "GOT A LOCATION" event
         mInstanceDisposable.add(GeoRepo.get().getLocationSubject().subscribe(location -> {
-            mCurrentLocation = location;// TODO: Implement onNext(SUCCESS)
+            mCurrentLocation = location;
             this.updateMap();
-        })); // TODO: Implement onNext(FAILURE)
+        }));
 
     }
 
@@ -149,10 +132,7 @@ public class MajorLocatorFragment
         if (mGoogleMap == null) return;
 
         LatLng myPosition = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
-
-        MarkerOptions myPositionMarkerOptions = new MarkerOptions()
-            .position(myPosition)
-        ;
+        MarkerOptions myPositionMarkerOptions = new MarkerOptions().position(myPosition);
         mGoogleMap.clear();
         mGoogleMap.addMarker(myPositionMarkerOptions);
 
@@ -164,19 +144,5 @@ public class MajorLocatorFragment
         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, margin);
         mGoogleMap.animateCamera(cameraUpdate);
     }
-
-
-    /**
-     *
-     */
-    private void locateMe() {
-        if (GeoRepo.get().isPermissionGranted() ) {
-            GeoRepo.get().startLocationUpdates();
-        } else {
-            super.requestPermissions(Constants.LOCATION_PERMISSIONS, Constants.REQUEST_CODE_LOCATION_PERMISSIONS);
-        }
-    }
-
-
 
 }

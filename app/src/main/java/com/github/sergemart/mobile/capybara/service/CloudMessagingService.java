@@ -1,6 +1,5 @@
 package com.github.sergemart.mobile.capybara.service;
 
-import android.content.Intent;
 import android.location.Location;
 import android.util.Log;
 
@@ -9,7 +8,7 @@ import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.Tools;
 import com.github.sergemart.mobile.capybara.data.CloudRepo;
 import com.github.sergemart.mobile.capybara.data.GeoRepo;
-import com.github.sergemart.mobile.capybara.data.MessagingServiceRepo;
+import com.github.sergemart.mobile.capybara.data.MessagingRepo;
 import com.github.sergemart.mobile.capybara.data.PreferenceStore;
 import com.github.sergemart.mobile.capybara.events.GenericEvent;
 import com.github.sergemart.mobile.capybara.events.LocationEvent;
@@ -134,7 +133,7 @@ public class CloudMessagingService
             return;
         }
         if (BuildConfig.DEBUG) Log.d(TAG, "An invite message received, emitting a corresponding event");
-        MessagingServiceRepo.get().getInviteReceivedSubject().onNext(GenericEvent
+        MessagingRepo.get().getInviteReceivedSubject().onNext(GenericEvent
             .of(SUCCESS)
             .setData(invitingEmail)
         );
@@ -154,7 +153,7 @@ public class CloudMessagingService
             return;
         }
         if (BuildConfig.DEBUG) Log.d(TAG, "An invite acceptance message received, emitting a corresponding event");
-        MessagingServiceRepo.get().getAcceptInviteReceivedSubject().onNext(GenericEvent
+        MessagingRepo.get().getAcceptInviteReceivedSubject().onNext(GenericEvent
             .of(SUCCESS)
             .setData(inviteeEmail)
         );
@@ -170,7 +169,7 @@ public class CloudMessagingService
             return;
         }
         if (BuildConfig.DEBUG) Log.d(TAG, "A location request message received, emitting a corresponding event");
-        MessagingServiceRepo.get().getLocationRequestReceivedSubject().onNext(GenericEvent
+        MessagingRepo.get().getLocationRequestReceivedSubject().onNext(GenericEvent
             .of(SUCCESS)
             .setData(senderEmail)
         );
@@ -192,7 +191,7 @@ public class CloudMessagingService
         }
         if (BuildConfig.DEBUG) Log.d(TAG, "A location message received, emitting a corresponding event");
         Location location = Tools.get().getLocationFromJson(locationJson);
-        MessagingServiceRepo.get().getLocationReceivedSubject().onNext(LocationEvent
+        MessagingRepo.get().getLocationReceivedSubject().onNext(LocationEvent
             .of(SUCCESS)
             .setLocation(location)
             .setSenderEmail(senderEmail)
