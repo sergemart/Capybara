@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph_major"
-    app:startDestination="@id/majorInviteFragment">
+    app:startDestination="@id/majorLocatorFragment">
 
     <fragment
         android:id="@+id/majorLocatorFragment"

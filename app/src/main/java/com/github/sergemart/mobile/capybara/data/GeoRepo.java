@@ -45,7 +45,7 @@ public class GeoRepo {
                 if (locationResult == null) return;
                 for (Location location : locationResult.getLocations()) {
                     if (BuildConfig.DEBUG) Log.d(TAG, "Got a fix: " + location + "; emitting");
-                    mLocationSubject.onNext(location);
+                    mLocateMeSubject.onNext(location);
                 }
             }
         };
@@ -61,7 +61,7 @@ public class GeoRepo {
 
     // --------------------------- Member variables
 
-    private final PublishSubject<Location> mLocationSubject = PublishSubject.create();
+    private final PublishSubject<Location> mLocateMeSubject = PublishSubject.create();
 
     private final Context mContext;
     private FusedLocationProviderClient mFusedLocationClient;
@@ -71,8 +71,8 @@ public class GeoRepo {
 
     // --------------------------- Observable getters
 
-    public PublishSubject<Location> getLocationSubject() {
-        return mLocationSubject;
+    public PublishSubject<Location> getLocateMeSubject() {
+        return mLocateMeSubject;
     }
 
 
@@ -88,7 +88,7 @@ public class GeoRepo {
         } catch (SecurityException e) {
             String errorMessage = mContext.getString(R.string.exception_location_no_permission);
             if (BuildConfig.DEBUG) Log.e(TAG, errorMessage + ": " +  e.getMessage());
-            mLocationSubject.onError(new PermissionException(errorMessage));
+            mLocateMeSubject.onError(new PermissionException(errorMessage));
         }
     }
 

@@ -14,7 +14,7 @@ public final class Constants {
     public static final int INVITE_SENT = 1;
     public static final int INVITE_NOT_SENT = 2;
     public static final int LOCATION_REQUEST_INTERVAL = 3000;                                       // milliseconds
-    public static final int LOCATION_SEND_INTERVAL = 30;                                            // seconds
+    public static final long LOCATION_POLL_INTERVAL = 30;                                           // seconds
 
 
     // ----------------------- Dialog tags

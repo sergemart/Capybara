@@ -101,7 +101,7 @@ public class CloudMessagingService
      */
     private void setInstanceListeners() {
 
-        mDisposable.add(GeoRepo.get().getLocationSubject().subscribe(location -> {
+        mDisposable.add(GeoRepo.get().getLocateMeSubject().subscribe(location -> {
             GeoRepo.get().stopLocationUpdates();
             CloudRepo.get().sendLocationAsync(location);
         }));

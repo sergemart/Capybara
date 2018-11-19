@@ -1,8 +1,12 @@
 package com.github.sergemart.mobile.capybara.data;
 
+import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.events.GenericEvent;
 import com.github.sergemart.mobile.capybara.events.LocationEvent;
 
+import java.util.concurrent.TimeUnit;
+
+import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
 
 
@@ -53,4 +57,8 @@ public class MessagingRepo {
         return mLocationRequestReceivedSubject;
     }
 
+
+    public Observable<Long> getPollLocationsTimerObservable() {
+        return Observable.interval(Constants.LOCATION_POLL_INTERVAL, TimeUnit.SECONDS);
+    }
 }
