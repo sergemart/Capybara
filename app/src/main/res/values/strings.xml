@@ -36,5 +36,9 @@
     <string name="msg_firebase_unknown_error">Unknown error while storing the data to Google. The app cannot proceed. Retry?</string>
     <string name="msg_firebase_client_connection_error">Cannot connect to Google while signing in. The app cannot proceed. Retry?</string>
     <string name="msg_fatal_error">Cannot continue</string>
+    <string name="notification_channel_general_name">General notifications</string>
+    <string name="notification_channel_general_description">General notifications</string>
+    <string name="notification_location_request_received_title">Location requested</string>
+    <string name="notification_location_request_received_text">Your family member has requested your location</string>
     <string name="word_someone">Someone</string>
 </resources>

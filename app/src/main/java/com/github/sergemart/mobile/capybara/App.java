@@ -2,13 +2,17 @@ package com.github.sergemart.mobile.capybara;
 
 import android.annotation.SuppressLint;
 import android.app.Application;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Context;
+import android.os.Build;
 import android.util.Log;
 
 import com.github.sergemart.mobile.capybara.data.CloudRepo;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.util.Objects;
 
 import io.reactivex.exceptions.UndeliverableException;
 import io.reactivex.plugins.RxJavaPlugins;
@@ -40,6 +44,7 @@ public class App extends Application {
 
         // App start-up actions
         CloudRepo.get().getTokenAsync();                                                            // make sense for non-initial start-ups
+        this.createNotificationChannels();
     }
 
 
@@ -68,5 +73,23 @@ public class App extends Application {
         sLastFatalException = lastFatalException;
     }
 
+
+    // --------------------------- Use cases
+
+    /**
+     * Create a notification channels for Oreo
+     */
+    private void createNotificationChannels() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = getString(R.string.notification_channel_general_name);
+            String description = getString(R.string.notification_channel_general_description);
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(Constants.NOTIFICATION_CHANNEL_GENERAL, name, importance);
+            channel.setDescription(description);
+            channel.setShowBadge(false);
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            Objects.requireNonNull(notificationManager).createNotificationChannel(channel);
+        }
+    }
 
 }

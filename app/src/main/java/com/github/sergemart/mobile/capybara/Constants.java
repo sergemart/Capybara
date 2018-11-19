@@ -31,7 +31,7 @@ public final class Constants {
     public static final int REQUEST_CODE_LOCATION_PERMISSIONS = 7020;
     public static final int REQUEST_CODE_READ_CONTACTS_PERMISSIONS = 7030;
     public static final int REQUEST_CODE_DIALOG_FRAGMENT = 7040;
-    public static final int REQUEST_CODE_SEND_LOCATION = 7050;
+    static final int REQUEST_CODE_NOTIFICATION_CONTENT = 7060;
 
 
     // ----------------------- Return codes
@@ -75,6 +75,11 @@ public final class Constants {
     // ----------------------- Job IDs
 
     public static final int JOB_SEND_LOCATION = 1001;
+
+
+    // ----------------------- Notification channel IDs (since Oreo)
+
+    static final String NOTIFICATION_CHANNEL_GENERAL = "com.github.sergemart.mobile.capybara.NOTIFICATION_CHANNEL_GENERAL";
 
 
     // ----------------------- Intent actions

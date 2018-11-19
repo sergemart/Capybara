@@ -9,12 +9,12 @@ import android.util.Log;
 import com.github.sergemart.mobile.capybara.App;
 import com.github.sergemart.mobile.capybara.BuildConfig;
 import com.github.sergemart.mobile.capybara.Constants;
+import com.github.sergemart.mobile.capybara.R;
+import com.github.sergemart.mobile.capybara.Tools;
 import com.github.sergemart.mobile.capybara.data.CloudRepo;
 import com.github.sergemart.mobile.capybara.data.GeoRepo;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationResult;
-
-import io.reactivex.disposables.Disposable;
 
 
 public class LocationSendBroadcastReceiver extends BroadcastReceiver {
@@ -26,22 +26,25 @@ public class LocationSendBroadcastReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        if (BuildConfig.DEBUG) Log.d(TAG, "onReceive() invoked, sendind the location");
+        Tools.get().showGeneralNotification(
+            App.getContext().getString(R.string.notification_location_request_received_title),
+            App.getContext().getString(R.string.notification_location_request_received_text)
+        );
         if ( !GeoRepo.get().isPermissionGranted() ) return;
+        if (BuildConfig.DEBUG) Log.d(TAG, "onReceive() invoked, sending the location");
 
         mLocationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {
+                GeoRepo.get().stopLocationUpdates(mLocationCallback);
                 if (locationResult == null) return;
                 for (Location location : locationResult.getLocations()) {
                     if (BuildConfig.DEBUG) Log.d(TAG, "Got a fix: " + location);
                     CloudRepo.get().sendLocationAsync(location);
-                    GeoRepo.get().stopLocationUpdates(mLocationCallback);
                 }
             }
         };
         GeoRepo.get().startLocationUpdates(mLocationCallback);
-
     }
 
 

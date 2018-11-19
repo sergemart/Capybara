@@ -1,7 +1,12 @@
 package com.github.sergemart.mobile.capybara;
 
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.location.Location;
 
+import com.github.sergemart.mobile.capybara.data.PreferenceStore;
+import com.github.sergemart.mobile.capybara.ui.activities.InitialMajorActivity;
+import com.github.sergemart.mobile.capybara.ui.activities.InitialMinorActivity;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -9,6 +14,9 @@ import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
 
 // Singleton
@@ -70,4 +78,36 @@ public class Tools {
 
         return location;
     }
+
+
+    /**
+     * Show a general notification
+     */
+    public void showGeneralNotification(String contentTitle, String contentText) {
+        Intent intent;
+        if (PreferenceStore.getAppMode() == Constants.APP_MODE_MAJOR) {
+            intent = InitialMajorActivity.newIntent(App.getContext());
+        } else {
+            intent = InitialMinorActivity.newIntent(App.getContext());
+        }
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(
+            App.getContext(),
+            Constants.REQUEST_CODE_NOTIFICATION_CONTENT,
+            intent,
+            0
+        );
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(
+            App.getContext(), Constants.NOTIFICATION_CHANNEL_GENERAL)
+            .setSmallIcon(R.drawable.icon_location_request)
+            .setBadgeIconType(NotificationCompat.BADGE_ICON_NONE)
+            .setContentTitle(contentTitle)
+            .setContentText(contentText)
+            .setContentIntent(pendingIntent)
+            .setAutoCancel(true)                                                                    // remove a notification on tap
+        ;
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(App.getContext());
+        notificationManager.notify(0, notificationBuilder.build());
+    }
+
 }
