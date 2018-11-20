@@ -4,7 +4,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph_minor"
-    app:startDestination="@id/fragment_minor_dummy">
+    app:startDestination="@id/fragment_common_locator">
+
+    <fragment
+        android:id="@+id/fragment_common_locator"
+        android:name="com.github.sergemart.mobile.capybara.ui.fragments.CommonLocatorFragment"
+        android:label="fragment_major_locator"
+        tools:layout="@layout/fragment_common_locator" />
 
     <fragment
         android:id="@+id/fragment_minor_dummy"

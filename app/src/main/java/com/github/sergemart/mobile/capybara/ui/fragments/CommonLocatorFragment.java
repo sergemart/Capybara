@@ -29,11 +29,11 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 
 
-public class MajorLocatorFragment
+public class CommonLocatorFragment
     extends SupportMapFragment
 {
 
-    private static final String TAG = MajorLocatorFragment.class.getSimpleName();
+    private static final String TAG = CommonLocatorFragment.class.getSimpleName();
 
     private GoogleMap mGoogleMap;
 
