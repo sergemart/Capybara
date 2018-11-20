@@ -36,6 +36,8 @@
     <string name="msg_firebase_unknown_error">Не могу сохранить данные. Без этого ничего не будет работать. Попробовать ещё раз?</string>
     <string name="msg_firebase_client_connection_error">Не могу войти в ваш аккаунт Google. Без этого ничего не будет работать. Попробовать ещё раз?</string>
     <string name="msg_fatal_error">Не могу работать дальше</string>
+    <string name="nav_action_invite">Пригласить в капибарятник</string>
+    <string name="nav_action_locate">Узнать, где все</string>
     <string name="notification_channel_general_name">Уведомления от приложения</string>
     <string name="notification_channel_general_description">Уведомления от приложения</string>
     <string name="notification_location_request_received_title">Где вы?</string>
