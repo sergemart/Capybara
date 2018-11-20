@@ -16,6 +16,7 @@ import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -177,7 +178,10 @@ public class CommonLocatorFragment
 
         // Add me onto the map
         LatLng myPosition = new LatLng(mMe.getLocation().getLatitude(), mMe.getLocation().getLongitude());
-        MarkerOptions myPositionMarkerOptions = new MarkerOptions().position(myPosition);
+        MarkerOptions myPositionMarkerOptions = new MarkerOptions()
+            .position(myPosition)
+            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
+        ;
         mGoogleMap.addMarker(myPositionMarkerOptions);
         LatLngBounds.Builder boundsBuilder = new LatLngBounds.Builder().include(myPosition);        // a rectangle around a set of points
 
@@ -186,7 +190,9 @@ public class CommonLocatorFragment
             FamilyMember familyMember = mTrackedFamilyMembers.get(familyMemberKey);
             if (familyMember == null) continue;
             LatLng familyMemberPosition = new LatLng(familyMember.getLocation().getLatitude(), familyMember.getLocation().getLongitude());
-            MarkerOptions familyMemberPositionMarkerOptions = new MarkerOptions().position(familyMemberPosition);
+            MarkerOptions familyMemberPositionMarkerOptions = new MarkerOptions()
+                .position(familyMemberPosition)
+            ;
             mGoogleMap.addMarker(familyMemberPositionMarkerOptions);
             boundsBuilder.include(familyMemberPosition);
         }
