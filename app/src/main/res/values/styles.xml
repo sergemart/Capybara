@@ -10,6 +10,7 @@
         <item name="android:windowBackground">@color/colorDefaultPageBackground</item>
         <item name="android:fontFamily">@string/font_default</item>                                 <!-- Fix Google issue 64053344-->
         <item name="android:textStyle">normal</item>
+        <item name="android:textColor">@color/colorText</item>
 
         <item name="windowActionModeOverlay">true</item>                                            <!-- w/o namespace for support version-->
         <item name="actionModeStyle">@style/App.ActionMode</item>
@@ -117,9 +118,25 @@
     </style>
 
 
+    <!-- ========================== Navigation Drawer styles -->
+
+    <style name="App.NavigationView" parent="android:Widget">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_gravity">start</item>
+        <!--<item name="android:textAppearance">@style/App.NavigationViewText</item>-->
+    </style>
+
+
+    <!--<style name="App.NavigationViewText" parent="@style/TextAppearance.AppCompat.Body2">-->
+    <style name="App.NavigationViewText" parent="">
+        <item name="android:textColor">@color/colorText</item>
+    </style>
+
+
     <!-- ========================== Action Mode styles -->
 
-    <style name="App.ActionBar" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar">     <!-- font settings here have a priority -->
+    <style name="App.ActionBar" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar">            <!-- font settings here have a priority -->
         <item name="colorControlNormal">@color/colorText</item>
     </style>
 

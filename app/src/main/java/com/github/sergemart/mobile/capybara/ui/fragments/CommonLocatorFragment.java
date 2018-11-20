@@ -107,31 +107,6 @@ public class CommonLocatorFragment
      * Set listeners to view-unrelated events
      */
     private void setInstanceListeners() {
-
-//        // Set a listener to the "LocateMe" event
-//        // Discover my location an update the map
-//        mInstanceDisposable.add(GeoRepo.get().getLocateMeSubject().subscribe(location -> {
-//            mMe.setLocation(location);
-//            this.updateMap();
-//        }));
-//
-//        // Set a listener to the "PollLocations" event
-//        // Send location requests to family members
-//        mInstanceDisposable.add(MessagingRepo.get().getPollLocationsTimerObservable().observeOn(AndroidSchedulers.mainThread()).subscribe(counter -> {
-//            if (BuildConfig.DEBUG) Log.d(TAG, "Poll locations tick is emitted");
-//            CloudRepo.get().requestLocationsAsync();
-//        }));
-//
-//        // Set a listener to the "LocationReceived" event
-//        // Add a responded family member into the collection and update the map
-//        mInstanceDisposable.add(MessagingRepo.get().getLocationReceivedSubject().subscribe(event -> {
-//            FamilyMember familyMember = new FamilyMember();
-//            familyMember.setEmail(event.getSenderEmail());
-//            familyMember.setLocation(event.getLocation());
-//            mTrackedFamilyMembers.put(event.getSenderEmail(), familyMember);                        // use email as a key
-//            this.updateMap();
-//        }));
-
     }
 
 

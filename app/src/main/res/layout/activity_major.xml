@@ -17,10 +17,8 @@
     <!-- Drawer container -->
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/navigationView_major"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="start"
         android:fitsSystemWindows="true"
+        style="@style/App.NavigationView"
         app:menu="@menu/menu_drawer_major"/>
 
 </androidx.drawerlayout.widget.DrawerLayout>
