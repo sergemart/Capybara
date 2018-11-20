@@ -4,20 +4,20 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph_initial_common"
-    app:startDestination="@id/initialCommonSetupFragment">
+    app:startDestination="@id/fragment_initial_common_setup">
 
     <fragment
-        android:id="@+id/initialCommonSetupFragment"
+        android:id="@+id/fragment_initial_common_setup"
         android:name="com.github.sergemart.mobile.capybara.ui.fragments.InitialCommonSetupFragment"
         android:label="fragment_initial_common_setup"
         tools:layout="@layout/fragment_initial_common_setup" >
         <action
             android:id="@+id/action_initialSetup_to_initialSignin"
-            app:destination="@id/initialCommonSignInFragment" />
+            app:destination="@id/fragment_initial_common_sign_in" />
     </fragment>
 
     <fragment
-        android:id="@+id/initialCommonSignInFragment"
+        android:id="@+id/fragment_initial_common_sign_in"
         android:name="com.github.sergemart.mobile.capybara.ui.fragments.InitialCommonSignInFragment"
         android:label="fragment_initial_common_sign_in"
         tools:layout="@layout/fragment_initial_common_sign_in" />

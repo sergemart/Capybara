@@ -4,10 +4,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph_initial_major"
-    app:startDestination="@id/initialMajorCreateFamilyFragment">
+    app:startDestination="@id/fragment_initial_major_create_family">
 
     <fragment
-        android:id="@+id/initialMajorCreateFamilyFragment"
+        android:id="@+id/fragment_initial_major_create_family"
         android:name="com.github.sergemart.mobile.capybara.ui.fragments.InitialMajorCreateFamilyFragment"
         android:label="fragment_initial_major_create_family"
         tools:layout="@layout/fragment_initial_major_create_family" >

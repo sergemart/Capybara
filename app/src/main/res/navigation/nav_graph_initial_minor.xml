@@ -4,20 +4,20 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph_initial_minor"
-    app:startDestination="@id/initialMinorWaitForInviteFragment">
+    app:startDestination="@id/fragment_initial_minor_wait_for_invite">
 
     <fragment
-        android:id="@+id/initialMinorWaitForInviteFragment"
+        android:id="@+id/fragment_initial_minor_wait_for_invite"
         android:name="com.github.sergemart.mobile.capybara.ui.fragments.InitialMinorWaitForInviteFragment"
         android:label="fragment_initial_minor_wait_for_invite"
         tools:layout="@layout/fragment_initial_minor_wait_for_invite" >
         <action
             android:id="@+id/action_initialMinorWaitForInvite_to_initialMinorAcceptInvite"
-            app:destination="@id/initialMinorAcceptInviteFragment" />
+            app:destination="@id/fragment_initial_minor_accept_invite" />
     </fragment>
 
     <fragment
-        android:id="@+id/initialMinorAcceptInviteFragment"
+        android:id="@+id/fragment_initial_minor_accept_invite"
         android:name="com.github.sergemart.mobile.capybara.ui.fragments.InitialMinorAcceptInviteFragment"
         android:label="fragment_initial_minor_accept_invite"
         tools:layout="@layout/fragment_initial_minor_accept_invite" >

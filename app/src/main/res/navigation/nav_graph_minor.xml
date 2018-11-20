@@ -4,10 +4,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph_minor"
-    app:startDestination="@id/minorDummyFragment">
+    app:startDestination="@id/fragment_minor_dummy">
 
     <fragment
-        android:id="@+id/minorDummyFragment"
+        android:id="@+id/fragment_minor_dummy"
         android:name="com.github.sergemart.mobile.capybara.ui.fragments.MinorDummyFragment"
         android:label="fragment_minor_dummy"
         tools:layout="@layout/fragment_minor_dummy" >

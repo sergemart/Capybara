@@ -4,23 +4,23 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph_major"
-    app:startDestination="@id/majorLocatorFragment">
+    app:startDestination="@id/fragment_major_locator">
 
     <fragment
-        android:id="@+id/majorLocatorFragment"
+        android:id="@+id/fragment_major_locator"
         android:name="com.github.sergemart.mobile.capybara.ui.fragments.MajorLocatorFragment"
         android:label="fragment_major_locator"
         tools:layout="@layout/fragment_major_locator" />
 
     <fragment
-        android:id="@+id/majorDummyFragment"
+        android:id="@+id/fragment_major_dummy"
         android:name="com.github.sergemart.mobile.capybara.ui.fragments.MajorDummyFragment"
         android:label="fragment_major_dummy"
         tools:layout="@layout/fragment_major_dummy" >
     </fragment>
 
     <fragment
-        android:id="@+id/majorInviteFragment"
+        android:id="@+id/fragment_major_invite"
         android:name="com.github.sergemart.mobile.capybara.ui.fragments.MajorInviteFragment"
         android:label="fragment_major_invite"
         tools:layout="@layout/fragment_major_invite" />
