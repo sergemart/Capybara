@@ -13,7 +13,7 @@ public final class Constants {
     static final String CLOUD_MESSAGING_LOCATION_PROVIDER = "cloudMessagingProvider";
     public static final int INVITE_SENT = 1;
     public static final int INVITE_NOT_SENT = 2;
-    public static final int LOCATION_REQUEST_INTERVAL = 3000;                                       // milliseconds
+    public static final int LOCATION_REQUEST_INTERVAL = 10 * 1000;                                  // milliseconds
     public static final long LOCATION_POLL_INTERVAL = 30;                                           // seconds
 
 

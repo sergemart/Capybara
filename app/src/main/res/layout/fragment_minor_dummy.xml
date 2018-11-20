@@ -11,22 +11,4 @@
         style="@style/App.ImageView.Background"
         android:contentDescription="@string/desc_page_background"/>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_gravity="center">
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/button_request_locations"
-            style="@style/App.Button"
-            android:text="@string/action_request_locations"/>
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/button_check_family_membership"
-            style="@style/App.Button"
-            android:text="@string/action_check_family_membership"/>
-
-    </LinearLayout>
-
 </FrameLayout>

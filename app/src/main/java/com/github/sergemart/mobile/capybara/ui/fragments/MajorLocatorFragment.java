@@ -1,6 +1,5 @@
 package com.github.sergemart.mobile.capybara.ui.fragments;
 
-import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,11 +20,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -82,22 +78,13 @@ public class MajorLocatorFragment
 
 
     /**
-     * Pause
-     */
-    @Override
-    public void onPause() {
-        GeoRepo.get().stopLocationUpdates();
-        super.onPause();
-    }
-
-
-    /**
      * View clean-up
      */
     @Override
     public void onDestroyView() {
+        GeoRepo.get().stopLocationUpdates();
         mViewDisposable.clear();
-        if (BuildConfig.DEBUG) Log.d(TAG, "View-related subscriptions are disposed");
+        if (BuildConfig.DEBUG) Log.d(TAG, "onDestroyView() called, view-related subscriptions disposed");
         super.onDestroyView();
     }
 
@@ -108,7 +95,7 @@ public class MajorLocatorFragment
     @Override
     public void onDestroy() {
         mInstanceDisposable.clear();
-        if (BuildConfig.DEBUG) Log.d(TAG, "View-unrelated subscriptions are disposed");
+        if (BuildConfig.DEBUG) Log.d(TAG, "onDestroy() called, instance subscriptions disposed");
         super.onDestroy();
     }
 
@@ -120,28 +107,29 @@ public class MajorLocatorFragment
      */
     private void setInstanceListeners() {
 
-        // Set a listener to the "LocateMe" event
-        // Discover my location an update the map
-        mInstanceDisposable.add(GeoRepo.get().getLocateMeSubject().subscribe(location -> {
-            mMe.setLocation(location);
-            this.updateMap();
-        }));
-
-        // Set a listener to the "PollLocations" event
-        // Send location requests to family members
-        mInstanceDisposable.add(MessagingRepo.get().getPollLocationsTimerObservable().observeOn(AndroidSchedulers.mainThread()).subscribe(counter ->
-            CloudRepo.get().requestLocationsAsync()
-        ));
-
-        // Set a listener to the "LocationReceived" event
-        // Add a responded family member into the collection and update the map
-        mInstanceDisposable.add(MessagingRepo.get().getLocationReceivedSubject().subscribe(event -> {
-            FamilyMember familyMember = new FamilyMember();
-            familyMember.setEmail(event.getSenderEmail());
-            familyMember.setLocation(event.getLocation());
-            mTrackedFamilyMembers.put(event.getSenderEmail(), familyMember);                        // use email as a key
-            this.updateMap();
-        }));
+//        // Set a listener to the "LocateMe" event
+//        // Discover my location an update the map
+//        mInstanceDisposable.add(GeoRepo.get().getLocateMeSubject().subscribe(location -> {
+//            mMe.setLocation(location);
+//            this.updateMap();
+//        }));
+//
+//        // Set a listener to the "PollLocations" event
+//        // Send location requests to family members
+//        mInstanceDisposable.add(MessagingRepo.get().getPollLocationsTimerObservable().observeOn(AndroidSchedulers.mainThread()).subscribe(counter -> {
+//            if (BuildConfig.DEBUG) Log.d(TAG, "Poll locations tick is emitted");
+//            CloudRepo.get().requestLocationsAsync();
+//        }));
+//
+//        // Set a listener to the "LocationReceived" event
+//        // Add a responded family member into the collection and update the map
+//        mInstanceDisposable.add(MessagingRepo.get().getLocationReceivedSubject().subscribe(event -> {
+//            FamilyMember familyMember = new FamilyMember();
+//            familyMember.setEmail(event.getSenderEmail());
+//            familyMember.setLocation(event.getLocation());
+//            mTrackedFamilyMembers.put(event.getSenderEmail(), familyMember);                        // use email as a key
+//            this.updateMap();
+//        }));
 
     }
 
@@ -150,6 +138,31 @@ public class MajorLocatorFragment
      * Set listeners to view-related events
      */
     private void setViewListeners() {
+
+        // Set a listener to the "LocateMe" event
+        // Discover my location an update the map
+        mViewDisposable.add(GeoRepo.get().getLocateMeSubject().subscribe(location -> {
+            mMe.setLocation(location);
+            this.updateMap();
+        }));
+
+        // Set a listener to the "PollLocations" event
+        // Send location requests to family members
+        mViewDisposable.add(MessagingRepo.get().getPollLocationsTimerObservable().observeOn(AndroidSchedulers.mainThread()).subscribe(counter -> {
+            if (BuildConfig.DEBUG) Log.d(TAG, "Poll locations tick is emitted");
+            CloudRepo.get().requestLocationsAsync();
+        }));
+
+        // Set a listener to the "LocationReceived" event
+        // Add a responded family member into the collection and update the map
+        mViewDisposable.add(MessagingRepo.get().getLocationReceivedSubject().subscribe(event -> {
+            FamilyMember familyMember = new FamilyMember();
+            familyMember.setEmail(event.getSenderEmail());
+            familyMember.setLocation(event.getLocation());
+            mTrackedFamilyMembers.put(event.getSenderEmail(), familyMember);                        // use email as a key
+            this.updateMap();
+        }));
+
     }
 
 
