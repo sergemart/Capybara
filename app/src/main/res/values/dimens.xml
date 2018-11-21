@@ -13,6 +13,9 @@
     <dimen name="imageViewThumbnail_border_width">1dp</dimen>
     <dimen name="imageViewThumbnail_marginEnd">10dp</dimen>
 
+    <dimen name="fAB_layout_margin">16dp</dimen>
+    <dimen name="fAB_elevation">8dp</dimen>
+
     <dimen name="layoutListItem_paddingTop">10dp</dimen>
     <dimen name="layoutListItem_paddingBottom">10dp</dimen>
     <dimen name="layoutListItem_paddingStart">16dp</dimen>

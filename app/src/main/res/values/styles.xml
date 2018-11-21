@@ -22,7 +22,7 @@
 
     <!-- ========================== Image styles -->
 
-    <style name="App.ImageView.Background" parent="android:Widget">
+    <style name="App.ImageView.Background" parent="">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">match_parent</item>
         <item name="android:scaleType">centerCrop</item>
@@ -35,7 +35,7 @@
     </style>
 
 
-    <style name="App.ImageView.Thumbnail" parent="android:Widget">
+    <style name="App.ImageView.Thumbnail" parent="">
         <item name="android:layout_width">@dimen/imageViewThumbnail_width</item>
         <item name="android:layout_height">@dimen/imageViewThumbnail_height</item>
         <item name="android:layout_centerVertical">true</item>
@@ -47,7 +47,7 @@
 
     <!-- ========================== Layout styles -->
 
-    <style name="App.Layout" parent="android:Widget">
+    <style name="App.Layout" parent="">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
     </style>
@@ -88,9 +88,21 @@
     </style>
 
 
+    <!-- ========================== FAB styles -->
+
+    <style name="App.FAB" parent="">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">bottom|end</item>
+        <item name="android:layout_margin">@dimen/fAB_layout_margin</item>
+        <item name="elevation">@dimen/fAB_elevation</item>
+        <item name="fabSize">normal</item>
+    </style>
+
+
     <!-- ========================== TextView styles -->
 
-    <style name="App.TextView" parent="android:Widget">
+    <style name="App.TextView" parent="">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">match_parent</item>
         <item name="android:textAlignment">center</item>
@@ -120,7 +132,7 @@
 
     <!-- ========================== Navigation Drawer styles -->
 
-    <style name="App.NavigationView" parent="android:Widget">
+    <style name="App.NavigationView" parent="">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">match_parent</item>
         <item name="android:layout_gravity">start</item>
@@ -159,7 +171,7 @@
 
     <!-- ========================== Progress bar styles -->
 
-    <style name="App.ProgressBar" parent="android:Widget">
+    <style name="App.ProgressBar" parent="">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">match_parent</item>
         <item name="android:scaleX">0.2</item>
