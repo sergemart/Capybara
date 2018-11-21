@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
 import com.github.sergemart.mobile.capybara.data.GeoRepo;
 import com.github.sergemart.mobile.capybara.data.MessagingRepo;
@@ -66,7 +67,10 @@ public class CommonLocatorFragment
         mRequestLocationsFab = fragmentView.findViewById(R.id.fab_request_locations);
 
         SupportMapFragment mapFragment = (SupportMapFragment) super.getChildFragmentManager().findFragmentById(R.id.fragment_map);
-        if (mapFragment != null ) mapFragment.getMapAsync(googleMap -> mGoogleMap = googleMap);
+        if (mapFragment != null ) mapFragment.getMapAsync(googleMap -> {
+            mGoogleMap = googleMap;
+            mGoogleMap.setMaxZoomPreference(Constants.MAP_MAX_ZOOM);
+        });
 
         this.setViewListeners();
         if (GeoRepo.get().isPermissionGranted() ) GeoRepo.get().startLocationUpdates();

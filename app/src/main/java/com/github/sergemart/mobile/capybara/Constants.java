@@ -14,6 +14,7 @@ public final class Constants {
     public static final int INVITE_SENT = 1;
     public static final int INVITE_NOT_SENT = 2;
     public static final int LOCATION_REQUEST_INTERVAL = 10 * 1000;                                  // milliseconds
+    public static final float MAP_MAX_ZOOM = 18;
 
 
     // ----------------------- Dialog tags
