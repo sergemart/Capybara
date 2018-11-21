@@ -26,10 +26,6 @@ public class LocationSendBroadcastReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Tools.get().showGeneralNotification(
-            App.getContext().getString(R.string.notification_location_request_received_title),
-            App.getContext().getString(R.string.notification_location_request_received_text)
-        );
         if ( !GeoRepo.get().isPermissionGranted() ) return;
         if (BuildConfig.DEBUG) Log.d(TAG, "onReceive() invoked, sending the location");
 
