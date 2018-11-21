@@ -122,12 +122,12 @@ public class CommonLocatorFragment
             this.updateMap();
         }));
 
-        // Set a listener to the "PollLocations" event
-        // Send location requests to family members
-        mViewDisposable.add(MessagingRepo.get().getPollLocationsTimerObservable().observeOn(AndroidSchedulers.mainThread()).subscribe(counter -> {
-            if (BuildConfig.DEBUG) Log.d(TAG, "Poll locations tick is emitted");
-            CloudRepo.get().requestLocationsAsync();
-        }));
+//        // Set a listener to the "PollLocations" event
+//        // Send location requests to family members
+//        mViewDisposable.add(MessagingRepo.get().getPollLocationsTimerObservable().observeOn(AndroidSchedulers.mainThread()).subscribe(counter -> {
+//            if (BuildConfig.DEBUG) Log.d(TAG, "Poll locations tick is emitted");
+//            CloudRepo.get().requestLocationsAsync();
+//        }));
 
         // Set a listener to the "LocationReceived" event
         // Add a responded family member into the collection and update the map

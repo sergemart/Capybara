@@ -57,8 +57,4 @@ public class MessagingRepo {
         return mLocationRequestReceivedSubject;
     }
 
-
-    public Observable<Long> getPollLocationsTimerObservable() {
-        return Observable.interval(Constants.LOCATION_POLL_INTERVAL, TimeUnit.SECONDS);
-    }
 }
