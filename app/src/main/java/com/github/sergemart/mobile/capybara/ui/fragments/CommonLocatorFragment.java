@@ -1,14 +1,11 @@
 package com.github.sergemart.mobile.capybara.ui.fragments;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.github.sergemart.mobile.capybara.BuildConfig;
 import com.github.sergemart.mobile.capybara.R;
-import com.github.sergemart.mobile.capybara.data.CloudRepo;
 import com.github.sergemart.mobile.capybara.data.GeoRepo;
 import com.github.sergemart.mobile.capybara.data.MessagingRepo;
 import com.github.sergemart.mobile.capybara.model.FamilyMember;
@@ -20,28 +17,26 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
 
 
 public class CommonLocatorFragment
-    extends SupportMapFragment
+    extends AbstractFragment
 {
 
     private static final String TAG = CommonLocatorFragment.class.getSimpleName();
 
     private GoogleMap mGoogleMap;
+    private FloatingActionButton mRequestLocationsFab;
 
     private FamilyMember mMe;
     private Map<String, FamilyMember> mTrackedFamilyMembers;
-    private CompositeDisposable mViewDisposable;
-    private CompositeDisposable mInstanceDisposable;
 
 
     // --------------------------- Override fragment event handlers
@@ -52,14 +47,9 @@ public class CommonLocatorFragment
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (BuildConfig.DEBUG) Log.d(TAG, "onCreate() called");
-        super.setRetainInstance(true);
 
-        super.getMapAsync(googleMap -> mGoogleMap = googleMap);
         mMe = new FamilyMember();
         mTrackedFamilyMembers = new ConcurrentHashMap<>();
-        mViewDisposable = new CompositeDisposable();
-        mInstanceDisposable = new CompositeDisposable();
 
         this.setInstanceListeners();
     }
@@ -72,9 +62,15 @@ public class CommonLocatorFragment
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View fragmentView = inflater.inflate(R.layout.fragment_common_locator, container, false);
+        mRequestLocationsFab = fragmentView.findViewById(R.id.fab_request_locations);
+
+        SupportMapFragment mapFragment = (SupportMapFragment) super.getChildFragmentManager().findFragmentById(R.id.fragment_map);
+        if (mapFragment != null ) mapFragment.getMapAsync(googleMap -> mGoogleMap = googleMap);
+
         this.setViewListeners();
         if (GeoRepo.get().isPermissionGranted() ) GeoRepo.get().startLocationUpdates();
-        return super.onCreateView(inflater, container, savedInstanceState);
+        return fragmentView;
     }
 
 
@@ -84,20 +80,7 @@ public class CommonLocatorFragment
     @Override
     public void onDestroyView() {
         GeoRepo.get().stopLocationUpdates();
-        mViewDisposable.clear();
-        if (BuildConfig.DEBUG) Log.d(TAG, "onDestroyView() called, view-related subscriptions disposed");
         super.onDestroyView();
-    }
-
-
-    /**
-     * Instance clean-up
-     */
-    @Override
-    public void onDestroy() {
-        mInstanceDisposable.clear();
-        if (BuildConfig.DEBUG) Log.d(TAG, "onDestroy() called, instance subscriptions disposed");
-        super.onDestroy();
     }
 
 
@@ -116,8 +99,8 @@ public class CommonLocatorFragment
     private void setViewListeners() {
 
         // Set a listener to the "LocateMe" event
-        // Discover my location an update the map
-        mViewDisposable.add(GeoRepo.get().getLocateMeSubject().subscribe(location -> {
+        // Discover my location and update the map
+        pViewDisposable.add(GeoRepo.get().getLocateMeSubject().subscribe(location -> {
             mMe.setLocation(location);
             this.updateMap();
         }));
@@ -131,7 +114,7 @@ public class CommonLocatorFragment
 
         // Set a listener to the "LocationReceived" event
         // Add a responded family member into the collection and update the map
-        mViewDisposable.add(MessagingRepo.get().getLocationReceivedSubject().subscribe(event -> {
+        pViewDisposable.add(MessagingRepo.get().getLocationReceivedSubject().subscribe(event -> {
             FamilyMember familyMember = new FamilyMember();
             familyMember.setEmail(event.getSenderEmail());
             familyMember.setLocation(event.getLocation());
