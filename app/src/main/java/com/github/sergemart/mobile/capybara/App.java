@@ -35,12 +35,16 @@ public class App extends Application {
         if (BuildConfig.DEBUG) Log.d(TAG, "onCreate() called");
         sContext = super.getApplicationContext();
 
-        RxJavaPlugins.setErrorHandler(e -> {
-            if (e instanceof UndeliverableException) e = e.getCause();
-            if (e instanceof IOException) return;                                                   // skip, irrelevant network problem or API that throws on cancellation
-            if (e instanceof InterruptedException) return;                                          // skip, some blocking code was interrupted by a dispose call
-            if (BuildConfig.DEBUG) Log.e(TAG, "Undeliverable exception: " + e.getMessage());
-        });
+        if (!BuildConfig.DEBUG) {                                                                   // do not intercept when debugging
+            RxJavaPlugins.setErrorHandler(e -> {
+                if (e instanceof UndeliverableException) e = e.getCause();
+                if (e instanceof IOException)
+                    return;                                                                         // skip, irrelevant network problem or API that throws on cancellation
+                if (e instanceof InterruptedException)
+                    return;                                                                         // skip, some blocking code was interrupted by a dispose call
+                Log.e(TAG, "Undeliverable exception: " + e.getMessage());
+            });
+        }
 
         // App start-up actions
         CloudRepo.get().getTokenAsync();                                                            // make sense for non-initial start-ups

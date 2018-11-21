@@ -113,6 +113,8 @@ public class InitialCommonSignInFragment
                     if (BuildConfig.DEBUG) Log.d(TAG, "SignInResult.FAILURE event received; invoking retry dialog");
                     mCause = event.getException();
                     this.showSigninRetryDialog(mCause);
+                    break;
+                default:
             }
         }));
 
@@ -127,6 +129,8 @@ public class InitialCommonSignInFragment
                     if (BuildConfig.DEBUG) Log.d(TAG, "GetDeviceTokenResult.FAILURE event received; invoking retry dialog");
                     mCause = event.getException();
                     this.showSigninRetryDialog(mCause);
+                    break;
+                default:
             }
         }));
 
@@ -141,6 +145,8 @@ public class InitialCommonSignInFragment
                     if (BuildConfig.DEBUG) Log.d(TAG, "PublishDeviceTokenResult.FAILURE event received; invoking retry dialog");
                     mCause = event.getException();
                     this.showSigninRetryDialog(mCause);
+                    break;
+                default:
             }
         }));
 
@@ -153,8 +159,8 @@ public class InitialCommonSignInFragment
     private void setViewListeners() {
 
         // Set a listener to the "Sign In" button
-        pViewDisposable.add(RxView.clicks(mSignInButton).subscribe(
-            event -> this.signIn()
+        pViewDisposable.add(RxView.clicks(mSignInButton).subscribe(event ->
+            this.signIn()
         ));
 
     }

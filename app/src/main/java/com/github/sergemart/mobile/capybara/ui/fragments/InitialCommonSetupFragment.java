@@ -120,21 +120,18 @@ public class InitialCommonSetupFragment
      * Set listeners to view-related events
      */
     private void setViewListeners() {
+
         // Set a listener to the "I Am a Major" button
-        pViewDisposable.add(RxView.clicks(mIAmMajorButton).subscribe(
-            event -> {
-                PreferenceStore.storeAppMode(Constants.APP_MODE_MAJOR);
-                this.requestLocationPermissions();
-            })
-        );
+        pViewDisposable.add(RxView.clicks(mIAmMajorButton).subscribe(event -> {
+            PreferenceStore.storeAppMode(Constants.APP_MODE_MAJOR);
+            this.requestLocationPermissions();
+        }));
 
         // Set a listener to the "I Am a Minor" button
-        pViewDisposable.add(RxView.clicks(mIAmMinorButton).subscribe(
-            event -> {
-                PreferenceStore.storeAppMode(Constants.APP_MODE_MINOR);
-                this.requestLocationPermissions();
-            })
-        );
+        pViewDisposable.add(RxView.clicks(mIAmMinorButton).subscribe(event -> {
+            PreferenceStore.storeAppMode(Constants.APP_MODE_MINOR);
+            this.requestLocationPermissions();
+        }));
     }
 
 

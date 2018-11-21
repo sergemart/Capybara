@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 
 import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
+import com.github.sergemart.mobile.capybara.data.CloudRepo;
 import com.github.sergemart.mobile.capybara.data.GeoRepo;
 import com.github.sergemart.mobile.capybara.data.MessagingRepo;
 import com.github.sergemart.mobile.capybara.model.FamilyMember;
@@ -19,12 +20,14 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.jakewharton.rxbinding2.view.RxView;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 
 
 public class CommonLocatorFragment
@@ -70,6 +73,7 @@ public class CommonLocatorFragment
         if (mapFragment != null ) mapFragment.getMapAsync(googleMap -> {
             mGoogleMap = googleMap;
             mGoogleMap.setMaxZoomPreference(Constants.MAP_MAX_ZOOM);
+            mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         });
 
         this.setViewListeners();
@@ -102,6 +106,12 @@ public class CommonLocatorFragment
      */
     private void setViewListeners() {
 
+        // Set a listener to the "Request Locations" FAB
+        // Make it send a request for family members' locations
+        pViewDisposable.add(RxView.clicks(mRequestLocationsFab).subscribe(event ->
+            CloudRepo.get().requestLocationsAsync()
+        ));
+
         // Set a listener to the "LocateMe" event
         // Discover my location and update the map
         pViewDisposable.add(GeoRepo.get().getLocateMeSubject().subscribe(location -> {
@@ -109,22 +119,18 @@ public class CommonLocatorFragment
             this.updateMap();
         }));
 
-//        // Set a listener to the "PollLocations" event
-//        // Send location requests to family members
-//        mViewDisposable.add(MessagingRepo.get().getPollLocationsTimerObservable().observeOn(AndroidSchedulers.mainThread()).subscribe(counter -> {
-//            if (BuildConfig.DEBUG) Log.d(TAG, "Poll locations tick is emitted");
-//            CloudRepo.get().requestLocationsAsync();
-//        }));
-
         // Set a listener to the "LocationReceived" event
         // Add a responded family member into the collection and update the map
-        pViewDisposable.add(MessagingRepo.get().getLocationReceivedSubject().subscribe(event -> {
-            FamilyMember familyMember = new FamilyMember();
-            familyMember.setEmail(event.getSenderEmail());
-            familyMember.setLocation(event.getLocation());
-            mTrackedFamilyMembers.put(event.getSenderEmail(), familyMember);                        // use email as a key
-            this.updateMap();
-        }));
+        pViewDisposable.add(MessagingRepo.get().getLocationReceivedSubject()
+            .observeOn(AndroidSchedulers.mainThread())                                              // Maps API requires it
+            .subscribe(event -> {
+                FamilyMember familyMember = new FamilyMember();
+                familyMember.setEmail(event.getSenderEmail());
+                familyMember.setLocation(event.getLocation());
+                mTrackedFamilyMembers.put(event.getSenderEmail(), familyMember);                    // use email as a key
+                this.updateMap();
+            })
+        );
 
     }
 
