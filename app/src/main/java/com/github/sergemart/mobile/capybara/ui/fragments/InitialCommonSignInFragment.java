@@ -34,7 +34,6 @@ public class InitialCommonSignInFragment
 {
 
     private MaterialButton mSignInButton;
-    private ProgressBar mProgressBar;
 
     private InitialCommonSharedViewModel mInitialCommonSharedViewModel;
     private Throwable mCause;
@@ -64,11 +63,9 @@ public class InitialCommonSignInFragment
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View fragmentView = inflater.inflate(R.layout.fragment_initial_common_sign_in, container, false);
+        View fragmentView = super.inflateFragment(R.layout.fragment_initial_common_sign_in, inflater, container);
 
-        pBackgroundImageView = fragmentView.findViewById(R.id.imageView_background);
         mSignInButton = fragmentView.findViewById(R.id.button_sign_in);
-        mProgressBar = fragmentView.findViewById(R.id.progressBar_waiting);
 
         this.indicateSignInInProgress();
 
@@ -183,8 +180,8 @@ public class InitialCommonSignInFragment
      */
     private void indicateSignInInProgress() {
         if (!mSignInStarted) return;
+        super.showWaitingState();
         mSignInButton.setVisibility(View.GONE);
-        mProgressBar.setVisibility(View.VISIBLE);
     }
 
 

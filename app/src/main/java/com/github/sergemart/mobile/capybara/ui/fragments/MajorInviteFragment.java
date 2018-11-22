@@ -1,6 +1,5 @@
 package com.github.sergemart.mobile.capybara.ui.fragments;
 
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -16,7 +15,6 @@ import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
 import com.github.sergemart.mobile.capybara.data.CloudRepo;
 import com.github.sergemart.mobile.capybara.data.ContactsRepo;
-import com.github.sergemart.mobile.capybara.data.GeoRepo;
 import com.github.sergemart.mobile.capybara.events.GenericEvent;
 import com.github.sergemart.mobile.capybara.viewmodel.MajorSharedViewModel;
 
@@ -83,8 +81,7 @@ public class MajorInviteFragment
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View fragmentView = inflater.inflate(R.layout.fragment_major_invite, container, false);
-        pBackgroundImageView = fragmentView.findViewById(R.id.imageView_background);
+        View fragmentView = super.inflateFragment(R.layout.fragment_major_invite, inflater, container);
         mContactsRecyclerView = fragmentView.findViewById(R.id.recyclerView_contacts);
 
         // Set up the RecyclerView

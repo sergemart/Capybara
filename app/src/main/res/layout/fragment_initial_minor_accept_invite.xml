@@ -6,15 +6,15 @@
     android:layout_height="match_parent"
     tools:context=".ui.fragments.InitialMinorAcceptInviteFragment">
 
+    <include
+        layout="@layout/content_waiting"
+        android:id="@+id/layout_waiting"
+        android:visibility="gone"/>
+
     <ImageView
         android:id="@+id/imageView_background"
         style="@style/App.ImageView.Background"
         android:contentDescription="@string/desc_page_background"/>
-
-    <ProgressBar
-        android:id="@+id/progressBar_waiting"
-        style="@style/App.ProgressBar"
-        android:visibility="gone" />
 
     <LinearLayout
         android:id="@+id/layout_content_container"

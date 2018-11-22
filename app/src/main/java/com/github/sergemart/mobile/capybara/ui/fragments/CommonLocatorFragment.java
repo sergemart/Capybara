@@ -66,7 +66,7 @@ public class CommonLocatorFragment
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View fragmentView = inflater.inflate(R.layout.fragment_common_locator, container, false);
+        View fragmentView = super.inflateFragment(R.layout.fragment_common_locator, inflater, container);
         mRequestLocationsFab = fragmentView.findViewById(R.id.fab_request_locations);
 
         SupportMapFragment mapFragment = (SupportMapFragment) super.getChildFragmentManager().findFragmentById(R.id.fragment_map);

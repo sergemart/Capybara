@@ -45,9 +45,7 @@ public class TemplateFragment
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View fragmentView = inflater.inflate(R.layout.fragment_major_invite, container, false);
-
-        pBackgroundImageView = fragmentView.findViewById(R.id.imageView_background);
+        View fragmentView = super.inflateFragment(R.layout.fragment_major_invite, inflater, container);
 
         this.setViewListeners();
         return fragmentView;

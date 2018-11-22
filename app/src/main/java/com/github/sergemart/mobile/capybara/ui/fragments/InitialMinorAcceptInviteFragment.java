@@ -41,7 +41,6 @@ public class InitialMinorAcceptInviteFragment
     private TextView mInvitationTextView;
     private MaterialButton mAcceptInviteButton;
     private MaterialButton mDeclineInviteButton;
-    private ProgressBar mProgressBar;
     private ViewGroup mContentContainerLayout;
 
     private InitialMinorSharedViewModel mInitialMinorSharedViewModel;
@@ -72,12 +71,10 @@ public class InitialMinorAcceptInviteFragment
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View fragmentView = inflater.inflate(R.layout.fragment_initial_minor_accept_invite, container, false);
+        View fragmentView = super.inflateFragment(R.layout.fragment_initial_minor_accept_invite, inflater, container);
         mInvitationTextView = fragmentView.findViewById(R.id.textView_invitation);
         mAcceptInviteButton = fragmentView.findViewById(R.id.button_accept_invite);
         mDeclineInviteButton = fragmentView.findViewById(R.id.button_decline_invite);
-        pBackgroundImageView = fragmentView.findViewById(R.id.imageView_background);
-        mProgressBar = fragmentView.findViewById(R.id.progressBar_waiting);
         mContentContainerLayout = fragmentView.findViewById(R.id.layout_content_container);
 
         this.setViewListeners();
@@ -189,7 +186,7 @@ public class InitialMinorAcceptInviteFragment
      */
     private void joinFamily() {
         mContentContainerLayout.setVisibility(View.GONE);
-        mProgressBar.setVisibility(View.VISIBLE);
+        super.showWaitingState();
         CloudRepo.get().joinFamilyAsync(mInvitingEmail);
     }
 

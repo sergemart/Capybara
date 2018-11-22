@@ -7,7 +7,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
 
 import com.github.sergemart.mobile.capybara.BuildConfig;
 import com.github.sergemart.mobile.capybara.Constants;
@@ -31,8 +30,6 @@ import static com.github.sergemart.mobile.capybara.events.Result.SUCCESS;
 public class InitialMajorCreateFamilyFragment
     extends AbstractFragment
 {
-
-    private ProgressBar mProgressBar;
 
     private InitialMajorSharedViewModel mInitialMajorSharedViewModel;
     private Throwable mCause;
@@ -60,10 +57,7 @@ public class InitialMajorCreateFamilyFragment
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View fragmentView = inflater.inflate(R.layout.fragment_initial_major_create_family, container, false);
-        pBackgroundImageView = fragmentView.findViewById(R.id.imageView_background);
-        mProgressBar = fragmentView.findViewById(R.id.progressBar_waiting);
-
+        View fragmentView = super.inflateFragment(R.layout.fragment_initial_major_create_family, inflater, container);
         this.setViewListeners();
         return fragmentView;
     }
@@ -75,7 +69,7 @@ public class InitialMajorCreateFamilyFragment
     @Override
     public void onStart() {
         super.onStart();
-        CloudRepo.get().createFamilyAsync();
+        this.createFamily();
     }
 
 
@@ -145,7 +139,7 @@ public class InitialMajorCreateFamilyFragment
      * Create family data on backend
      */
     private void createFamily() {
-        mProgressBar.setVisibility(View.VISIBLE);
+        super.showWaitingState();
         CloudRepo.get().createFamilyAsync();
     }
 

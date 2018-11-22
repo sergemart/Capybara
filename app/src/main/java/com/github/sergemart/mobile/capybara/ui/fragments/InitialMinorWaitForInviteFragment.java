@@ -54,10 +54,8 @@ public class InitialMinorWaitForInviteFragment
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View fragmentView = inflater.inflate(R.layout.fragment_initial_minor_wait_for_invite, container, false);
+        View fragmentView = super.inflateFragment(R.layout.fragment_initial_minor_wait_for_invite, inflater, container);
         mExitApplicationButton = fragmentView.findViewById(R.id.button_exit_application);
-
-        pBackgroundImageView = fragmentView.findViewById(R.id.imageView_background);
 
         this.setViewListeners();
         return fragmentView;

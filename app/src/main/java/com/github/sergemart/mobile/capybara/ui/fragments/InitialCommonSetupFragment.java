@@ -60,9 +60,8 @@ public class InitialCommonSetupFragment
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View fragmentView = inflater.inflate(R.layout.fragment_initial_common_setup, container, false);
+        View fragmentView = super.inflateFragment(R.layout.fragment_initial_common_setup, inflater, container);
 
-        pBackgroundImageView = fragmentView.findViewById(R.id.imageView_background);
         mIAmMajorButton = fragmentView.findViewById(R.id.button_i_am_major);
         mIAmMinorButton = fragmentView.findViewById(R.id.button_i_am_minor);
 
