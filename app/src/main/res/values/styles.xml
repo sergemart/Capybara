@@ -149,13 +149,15 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">match_parent</item>
         <item name="android:layout_gravity">start</item>
-        <!--<item name="android:textAppearance">@style/App.NavigationViewText</item>-->
+        <item name="android:fitsSystemWindows">true</item>
+        <item name="itemTextAppearance">@style/App.NavigationViewText</item>
+        <item name="itemTextColor">@color/colorText</item>
+        <item name="itemIconTint">@color/colorText</item>
     </style>
 
 
-    <!--<style name="App.NavigationViewText" parent="@style/TextAppearance.AppCompat.Body2">-->
     <style name="App.NavigationViewText" parent="">
-        <item name="android:textColor">@color/colorText</item>
+        <item name="android:textStyle">bold</item>
     </style>
 
 
