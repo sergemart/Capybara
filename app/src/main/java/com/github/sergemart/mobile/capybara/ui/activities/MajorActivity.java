@@ -3,9 +3,13 @@ package com.github.sergemart.mobile.capybara.ui.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.github.sergemart.mobile.capybara.R;
+import com.github.sergemart.mobile.capybara.data.CloudRepo;
 import com.google.android.material.navigation.NavigationView;
+import com.squareup.picasso.Picasso;
 
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
@@ -21,7 +25,6 @@ public class MajorActivity
     private NavigationView mNavigationView;
 
     private NavController mNavController;
-    private NavOptions mDefaultNavOptions;
 
 
     // --------------------------- Override activity event handlers
@@ -36,12 +39,15 @@ public class MajorActivity
 
         mDrawerLayout = findViewById(R.id.layout_fragment_container_major);
         mNavigationView = findViewById(R.id.navigationView_major);
+        ImageView thumbnailImageView = mNavigationView.getHeaderView(0).findViewById(R.id.imageView_thumbnail);
+        TextView userNameTextView = mNavigationView.getHeaderView(0).findViewById(R.id.textView_user_name);
+        TextView userEmailTextView = mNavigationView.getHeaderView(0).findViewById(R.id.textView_user_email);
+
+        userNameTextView.setText(CloudRepo.get().getCurrentUsername());
+        userEmailTextView.setText(CloudRepo.get().getCurrentUser().getEmail());
+        Picasso.get().load(CloudRepo.get().getCurrentUser().getPhotoUrl()).into(thumbnailImageView);
 
         mNavController = Navigation.findNavController(this, R.id.nav_host_fragment_major);
-        mDefaultNavOptions = new NavOptions.Builder()
-            .setLaunchSingleTop(true)
-            .build()
-        ;
 
         this.setInstanceListeners();
     }

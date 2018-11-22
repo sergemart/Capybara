@@ -176,7 +176,15 @@ public class CloudRepo {
 
 
     /**
-     * Get current username
+     * @return Current user
+     */
+    public FirebaseUser getCurrentUser() {
+        return mFirebaseUser;
+    }
+
+
+    /**
+     * @return Current username
      */
     public String getCurrentUsername() {
         if (mUsername.equals(Constants.DEFAULT_USERNAME)) return "";
