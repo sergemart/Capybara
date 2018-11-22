@@ -6,9 +6,7 @@
 
     <ImageView
         android:id="@+id/imageView_waiting"
-        android:layout_height="300dp"
-        android:layout_width="300dp"
-        android:layout_gravity="center"
+        style="@style/App.ImageView.Waiting"
         android:contentDescription="@string/desc_front_image"/>
 
     <ProgressBar

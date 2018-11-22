@@ -45,6 +45,12 @@
     </style>
 
 
+    <style name="App.ImageView.Waiting" parent="">
+        <item name="android:layout_width">@dimen/imageViewWaiting_width</item>
+        <item name="android:layout_height">@dimen/imageViewWaiting_height</item>
+        <item name="android:layout_gravity">center</item>
+    </style>
+
     <!-- ========================== Layout styles -->
 
     <style name="App.Layout" parent="">
