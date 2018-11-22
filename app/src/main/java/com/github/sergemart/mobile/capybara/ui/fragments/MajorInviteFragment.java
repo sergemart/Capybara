@@ -343,8 +343,8 @@ public class MajorInviteFragment
             super(itemView);
             mmItemView = itemView;
             mmThumbnailImageView = itemView.findViewById(R.id.imageView_thumbnail);
-            mmSuccessImageView = itemView.findViewById(R.id.imageView_success);
-            mmFailureImageView = itemView.findViewById(R.id.imageView_failure);
+            mmSuccessImageView = itemView.findViewById(R.id.imageView_thumbnail_overlay_success);
+            mmFailureImageView = itemView.findViewById(R.id.imageView_thumbnail_overlay_failure);
             mmContactNameTextView = itemView.findViewById(R.id.textView_contact_name);
             mmContactEmailTextView = itemView.findViewById(R.id.textView_contact_email);
         }

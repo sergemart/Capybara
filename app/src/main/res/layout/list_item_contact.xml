@@ -7,11 +7,11 @@
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/imageView_thumbnail"
         style="@style/App.ImageView.Thumbnail"
+        android:contentDescription="@string/desc_thumbnail_image"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
-        android:contentDescription="@string/desc_thumbnail_image"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/textView_contact_name"
         app:layout_constraintStart_toStartOf="parent"
@@ -19,11 +19,10 @@
         tools:srcCompat="@mipmap/capybara_profile" />
 
     <ImageView
-        android:id="@+id/imageView_success"
+        android:id="@+id/imageView_thumbnail_overlay_success"
+        style="@style/App.ImageView.ThumbnailOverlay"
         android:contentDescription="@string/desc_thumbnail_image"
         android:visibility="gone"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
         app:layout_constraintBottom_toBottomOf="@+id/imageView_thumbnail"
         app:layout_constraintEnd_toEndOf="@+id/imageView_thumbnail"
         app:srcCompat="@drawable/icon_success"
@@ -31,11 +30,10 @@
         tools:srcCompat="@drawable/icon_success"/>
 
     <ImageView
-        android:id="@+id/imageView_failure"
+        android:id="@+id/imageView_thumbnail_overlay_failure"
+        style="@style/App.ImageView.ThumbnailOverlay"
         android:contentDescription="@string/desc_thumbnail_image"
         android:visibility="gone"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
         app:layout_constraintBottom_toBottomOf="@+id/imageView_thumbnail"
         app:layout_constraintEnd_toEndOf="@+id/imageView_thumbnail"
         app:srcCompat="@drawable/icon_failure"
@@ -44,6 +42,7 @@
 
     <TextView
         android:id="@+id/textView_contact_name"
+        style="@style/App.TextView.ListItem"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -51,7 +50,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/imageView_thumbnail"
         app:layout_constraintTop_toTopOf="parent"
-        style="@style/App.TextView.ListItem"
         tools:text="Jane Doe" />
 
     <TextView
