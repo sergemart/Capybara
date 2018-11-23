@@ -18,10 +18,10 @@ import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
 import com.github.sergemart.mobile.capybara.events.GenericEvent;
 import com.github.sergemart.mobile.capybara.exceptions.ContactsException;
+import com.github.sergemart.mobile.capybara.model.ContactData;
 
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -68,7 +68,7 @@ public class ContactsRepo {
 
     private Context mContext;
     private ContentResolver mContentResolver;
-    private List<Contact> mContacts;
+    private List<ContactData> mContacts;
     private Map<String, Bitmap> mBitmapCache;
     private Map<String, String> mIdsByEmail;
 
@@ -106,19 +106,19 @@ public class ContactsRepo {
      */
     public Observable<GenericEvent> getEnrichedContactObservable(String contactEmail) {
         return Observable.create(emitter -> {
-            Contact auxContactData = new Contact();
+            ContactData auxContactData = new ContactData();
             String contactId = mIdsByEmail.get(contactEmail);
-            auxContactData.id = Objects.requireNonNull(contactId);
-            auxContactData.email = contactEmail;
+            auxContactData.setId(Objects.requireNonNull(contactId));
+            auxContactData.setEmail(contactEmail);
 
             if (mBitmapCache.containsKey(contactId) && mBitmapCache.get(contactId) != null) {
-                auxContactData.photo = mBitmapCache.get(contactId);
+                auxContactData.setPhoto(mBitmapCache.get(contactId));
                 emitter.onNext(GenericEvent.of(SUCCESS).setData(auxContactData));                   // emit a cached bitmap
             } else {
                 try {
                     Bitmap contactPhoto = this.getContactPhoto(contactId);                          // data provider op
                     mBitmapCache.put(contactId, contactPhoto);                                      // cache the bitmap
-                    auxContactData.photo = contactPhoto;
+                    auxContactData.setPhoto(contactPhoto);
                     emitter.onNext(GenericEvent.of(SUCCESS).setData(auxContactData));               // emit a fetched bitmap
                 } catch (SecurityException e) {
                     String errorMessage = mContext.getString(R.string.exception_contacts_no_permission);
@@ -173,12 +173,12 @@ public class ContactsRepo {
                             while (emailCursor.moveToNext()) {                                      // could be more than one email
                                 String contactEmail = emailCursor.getString(emailCursor.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA));
 
-                                Contact contact = new Contact();
-                                contact.id = contactId;
-                                contact.name = contactName;
-                                contact.email = contactEmail;
-                                contact.photo = BitmapFactory.decodeResource(mContext.getResources(), R.mipmap.capybara_bighead); // a placeholder
-                                mContacts.add(contact);
+                                ContactData contactData = new ContactData();
+                                contactData.setId(contactId);
+                                contactData.setName(contactName);
+                                contactData.setEmail(contactEmail);
+                                contactData.setPhoto(BitmapFactory.decodeResource(mContext.getResources(), R.mipmap.capybara_bighead)); // a placeholder
+                                mContacts.add(contactData);
                                 mIdsByEmail.put(contactEmail, contactId);
                             }
                         }
@@ -189,8 +189,8 @@ public class ContactsRepo {
         Collections.sort(
             mContacts,
             (contactA, contactB) -> String.CASE_INSENSITIVE_ORDER.compare(
-                contactA.name,
-                contactB.name
+                contactA.getName(),
+                contactB.getName()
             )
         );
     }
@@ -221,19 +221,6 @@ public class ContactsRepo {
             }
         }
         return result;
-    }
-
-
-    // --------------------------- Inner classes: A structure to carry contact attributes
-
-    public class Contact {
-
-        public String id;
-        public String name;
-        public String email;
-        public Bitmap photo;
-        public int position;
-        public int inviteSendResult;
     }
 
 

@@ -16,6 +16,7 @@ import com.github.sergemart.mobile.capybara.R;
 import com.github.sergemart.mobile.capybara.data.CloudRepo;
 import com.github.sergemart.mobile.capybara.data.ContactsRepo;
 import com.github.sergemart.mobile.capybara.events.GenericEvent;
+import com.github.sergemart.mobile.capybara.model.ContactData;
 import com.github.sergemart.mobile.capybara.viewmodel.MajorSharedViewModel;
 
 import java.util.ArrayList;
@@ -48,7 +49,7 @@ public class MajorInviteFragment
 
     private RecyclerView mContactsRecyclerView;
 
-    private final List<ContactsRepo.Contact> mContacts = Collections.synchronizedList(new ArrayList<>());
+    private final List<ContactData> mContacts = Collections.synchronizedList(new ArrayList<>());
     private ContactsAdapter mContactsAdapter;
     private SelectionTracker<String> mSelectionTracker;
     private LayoutInflater mLayoutInflater;
@@ -160,8 +161,8 @@ public class MajorInviteFragment
             public void onItemStateChanged(@NonNull String key, boolean selected) {
                 super.onItemStateChanged(key, selected);
                 int position = getContactIndexByEmail(key);
-                if (mContacts.get(position).inviteSendResult != Constants.INVITE_NONE) {
-                    mContacts.get(position).inviteSendResult = Constants.INVITE_NONE;
+                if (mContacts.get(position).getInviteSendResult() != Constants.INVITE_NONE) {
+                    mContacts.get(position).setInviteSendResult(Constants.INVITE_NONE);
                 }
             }
 
@@ -187,10 +188,10 @@ public class MajorInviteFragment
                 int position = this.getContactIndexByEmail((String)inviteResult.getData());
                 switch (inviteResult.getResult()) {
                     case SUCCESS:
-                        mContacts.get(position).inviteSendResult = Constants.INVITE_SENT;
+                        mContacts.get(position).setInviteSendResult(Constants.INVITE_SENT);
                         break;
                     case FAILURE:
-                        mContacts.get(position).inviteSendResult = Constants.INVITE_NOT_SENT;
+                        mContacts.get(position).setInviteSendResult(Constants.INVITE_NOT_SENT);
                         break;
                     default:
                 }
@@ -230,16 +231,16 @@ public class MajorInviteFragment
             pInstanceDisposable.add(ContactsRepo.get().getContactsObservable()
                 .flatMap(event ->  Observable.fromIterable( (List)event.getData() ))
                 .flatMap(contact -> {
-                    String contactEmail = ((ContactsRepo.Contact) contact).email;
+                    String contactEmail = ((ContactData) contact).getEmail();
                     return ContactsRepo.get().getEnrichedContactObservable(contactEmail);
                 })
                 .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
                 .subscribe(bitmapEvent -> {
                     switch ( ((GenericEvent)bitmapEvent).getResult() ) {
                         case SUCCESS:
-                            ContactsRepo.Contact auxContactData = (ContactsRepo.Contact) ((GenericEvent)bitmapEvent).getData();
-                            int position = this.getContactIndexByEmail(auxContactData.email);
-                            mContacts.get(position).photo = auxContactData.photo;
+                            ContactData auxContactData = (ContactData) ((GenericEvent)bitmapEvent).getData();
+                            int position = this.getContactIndexByEmail(auxContactData.getEmail());
+                            mContacts.get(position).setPhoto(auxContactData.getPhoto());
                             mContactsAdapter.notifyItemChanged(position);
                             break;
                         case FAILURE:
@@ -276,8 +277,8 @@ public class MajorInviteFragment
     private int getContactIndexByEmail(String contactEmail) {
         synchronized (mContacts) {
             for (int i = 0; i < mContacts.size(); i++) {
-                ContactsRepo.Contact contact = mContacts.get(i);
-                if (contact.email.equals(contactEmail)) return i;
+                ContactData contact = mContacts.get(i);
+                if (contact.getEmail().equals(contactEmail)) return i;
             }
         }
         return -1;
@@ -294,7 +295,7 @@ public class MajorInviteFragment
         if (itemDetails.getSelectionKey() != null) mSelectionTracker.select(itemDetails.getSelectionKey()); // select on short tap
 
         int position = itemDetails.getPosition();
-        mContacts.get(position).inviteSendResult = Constants.INVITE_NONE;                           // hide an overlay on short tap
+        mContacts.get(position).setInviteSendResult(Constants.INVITE_NONE);                         // hide an overlay on short tap
         mContactsAdapter.notifyItemChanged(position);
         return true;
     }
@@ -330,8 +331,8 @@ public class MajorInviteFragment
          */
         @Override
         public void onBindViewHolder(@NonNull ContactHolder holder, int position) {
-            ContactsRepo.Contact item = mContacts.get(position);
-            holder.bind(item, mmSelectionTracker.isSelected(item.email));
+            ContactData item = mContacts.get(position);
+            holder.bind(item, mmSelectionTracker.isSelected(item.getEmail()));
         }
 
 
@@ -380,12 +381,12 @@ public class MajorInviteFragment
         }
 
 
-        void bind(ContactsRepo.Contact item, boolean isActive) {
+        void bind(ContactData item, boolean isActive) {
             mmItemView.setActivated(isActive);
-            mmContactNameTextView.setText(item.name);
-            mmContactEmailTextView.setText(item.email);
-            mmThumbnailImageView.setImageBitmap(item.photo);
-            switch (item.inviteSendResult) {
+            mmContactNameTextView.setText(item.getName());
+            mmContactEmailTextView.setText(item.getEmail());
+            mmThumbnailImageView.setImageBitmap(item.getPhoto());
+            switch (item.getInviteSendResult()) {
                 case Constants.INVITE_SENT:
                     mmSuccessImageView.setVisibility(View.VISIBLE);
                     mmFailureImageView.setVisibility(View.GONE);
@@ -408,7 +409,7 @@ public class MajorInviteFragment
          */
         ContactDetails getItemDetails() {
             int position = super.getAdapterPosition();
-            return new ContactDetails(position, mContacts.get(position).email);
+            return new ContactDetails(position, mContacts.get(position).getEmail());
         }
 
     }
@@ -432,7 +433,7 @@ public class MajorInviteFragment
         @Nullable
         @Override
         public String getKey(int position) {
-            return mContacts.get(position).email;
+            return mContacts.get(position).getEmail();
         }
 
 
