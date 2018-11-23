@@ -11,6 +11,7 @@ public final class Constants {
     public static final int APP_MODE_MINOR = 2;
     public static final String DEFAULT_USERNAME = "anonymous";
     static final String CLOUD_MESSAGING_LOCATION_PROVIDER = "cloudMessagingProvider";
+    public static final int INVITE_NONE = 0;
     public static final int INVITE_SENT = 1;
     public static final int INVITE_NOT_SENT = 2;
     public static final int LOCATION_REQUEST_INTERVAL = 10 * 1000;                                  // milliseconds

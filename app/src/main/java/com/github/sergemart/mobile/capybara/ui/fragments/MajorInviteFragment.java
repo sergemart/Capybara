@@ -96,6 +96,7 @@ public class MajorInviteFragment
             new MajorInviteFragment.ContactLookup(),
             StorageStrategy.createStringStorage()                                                   // key type is String (email)
         )
+            .withOnItemActivatedListener( this::onItemActivated )
             .build()
         ;
         mContactsAdapter.setSelectionTracker(mSelectionTracker);
@@ -154,7 +155,18 @@ public class MajorInviteFragment
         // Add listeners to selection events
         mSelectionTracker.addObserver(new SelectionTracker.SelectionObserver<String>() {
 
-            // Manage a context menu depending on the selection
+            // Hide a thumbnail overlay when select an item with the overlay
+            @Override
+            public void onItemStateChanged(@NonNull String key, boolean selected) {
+                super.onItemStateChanged(key, selected);
+                int position = getContactIndexByEmail(key);
+                if (mContacts.get(position).inviteSendResult != Constants.INVITE_NONE) {
+                    mContacts.get(position).inviteSendResult = Constants.INVITE_NONE;
+                }
+            }
+
+
+            // Show/hide a context menu depending on whether selection is made or not
             @Override
             public void onSelectionChanged() {
                 super.onSelectionChanged();
@@ -166,7 +178,6 @@ public class MajorInviteFragment
                 }
             }
         });
-
 
         // Add a listener to SendInvite event
         // Update a list item with a transaction result
@@ -271,6 +282,23 @@ public class MajorInviteFragment
         }
         return -1;
     }
+
+
+    /**
+     * Handle item events, besides the selection ones, which are managed by a SelectionTracker (see the listeners section).
+     * Method signature allows to use one as the method reference in place of OnItemActivatedListener callback
+     * - Selects an item on tap, when not selected
+     * - Hides the thumbnail overlay on tap, when displayed
+     */
+    private boolean onItemActivated(ItemDetailsLookup.ItemDetails<String> itemDetails, MotionEvent motionEvent) {
+        if (itemDetails.getSelectionKey() != null) mSelectionTracker.select(itemDetails.getSelectionKey()); // select on short tap
+
+        int position = itemDetails.getPosition();
+        mContacts.get(position).inviteSendResult = Constants.INVITE_NONE;                           // hide an overlay on short tap
+        mContactsAdapter.notifyItemChanged(position);
+        return true;
+    }
+
 
 
     // ============================== Inner classes: Recycler View Adapter
