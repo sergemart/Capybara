@@ -112,6 +112,26 @@ public abstract class AbstractFragment extends Fragment {
     }
 
 
+    // --------------------------- Use cases
+
+    /**
+     * Show widgets indicating a waiting state
+     */
+    void showWaitingState() {
+        if (mWaitingLayout != null) mWaitingLayout.setVisibility(View.VISIBLE);
+        if (mWaitingAnimationDrawable != null) mWaitingAnimationDrawable.start();
+    }
+
+
+    /**
+     * Hide widgets indicating a waiting state
+     */
+    void hideWaitingState() {
+        if (mWaitingAnimationDrawable != null) mWaitingAnimationDrawable.stop();
+        if (mWaitingLayout != null) mWaitingLayout.setVisibility(View.GONE);
+    }
+
+
     // --------------------------- Inheritance helpers
 
     /**
@@ -132,21 +152,4 @@ public abstract class AbstractFragment extends Fragment {
         return fragmentView;
     }
 
-
-    /**
-     * Show widgets indicating a waiting state
-     */
-    void showWaitingState() {
-        if (mWaitingLayout != null) mWaitingLayout.setVisibility(View.VISIBLE);
-        if (mWaitingAnimationDrawable != null) mWaitingAnimationDrawable.start();
-    }
-
-
-    /**
-     * Hide widgets indicating a waiting state
-     */
-    void hideWaitingState() {
-        if (mWaitingAnimationDrawable != null) mWaitingAnimationDrawable.stop();
-        if (mWaitingLayout != null) mWaitingLayout.setVisibility(View.GONE);
-    }
 }

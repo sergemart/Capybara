@@ -1,6 +1,7 @@
 package com.github.sergemart.mobile.capybara.ui.fragments;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -11,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.sergemart.mobile.capybara.BuildConfig;
 import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
 import com.github.sergemart.mobile.capybara.data.CloudRepo;
@@ -111,6 +113,7 @@ public class MajorInviteFragment
 
         this.setViewListeners();
 
+        super.showWaitingState();
         this.getContacts();
 
         return fragmentView;
@@ -213,28 +216,30 @@ public class MajorInviteFragment
         if (ContactsRepo.get().isPermissionGranted() ) {
 
             pInstanceDisposable.add(ContactsRepo.get().getContactsObservable()
-                .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                .subscribe(contactsResult -> {
+                .observeOn(Schedulers.io())                                                         // switch to background
+                .doOnNext(contactsResult -> {
                     switch (contactsResult.getResult()) {
                         case SUCCESS:
                             mContacts.clear();
                             mContacts.addAll( (List)contactsResult.getData() );
-                            mContactsAdapter.notifyDataSetChanged();
                             break;
                         case FAILURE:
                             break;
                         default:
                     }
                 })
-            );
-
-            pInstanceDisposable.add(ContactsRepo.get().getContactsObservable()
-                .flatMap(event ->  Observable.fromIterable( (List)event.getData() ))
+                .observeOn(AndroidSchedulers.mainThread())                                          // UI operations follows, main thread required
+                .doOnNext(contactsResult -> {
+                    super.hideWaitingState();
+                    mContactsAdapter.notifyDataSetChanged();
+                })
+                .observeOn(Schedulers.io())                                                         // switch to background
+                .flatMap(contactsResult ->  Observable.fromIterable( (List)((GenericEvent)contactsResult).getData() ))
                 .flatMap(contact -> {
                     String contactEmail = ((ContactData) contact).getEmail();
                     return ContactsRepo.get().getEnrichedContactObservable(contactEmail);
                 })
-                .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .observeOn(AndroidSchedulers.mainThread())                                          // UI operations follows, main thread required
                 .subscribe(bitmapEvent -> {
                     switch ( ((GenericEvent)bitmapEvent).getResult() ) {
                         case SUCCESS:
@@ -249,7 +254,6 @@ public class MajorInviteFragment
                     }
                 })
             );
-
             ContactsRepo.get().getContactsObservable().connect();                                   // init multicasting
 
         } else {

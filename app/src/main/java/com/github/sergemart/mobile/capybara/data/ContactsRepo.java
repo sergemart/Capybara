@@ -31,6 +31,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import androidx.core.content.ContextCompat;
 import io.reactivex.Observable;
 import io.reactivex.observables.ConnectableObservable;
+import io.reactivex.schedulers.Schedulers;
 
 import static com.github.sergemart.mobile.capybara.events.Result.FAILURE;
 import static com.github.sergemart.mobile.capybara.events.Result.SUCCESS;
@@ -51,7 +52,6 @@ public class ContactsRepo {
         // Init member variables
         mContext = App.getContext();
         mContentResolver = mContext.getContentResolver();
-        mContacts = new ArrayList<>();
         mBitmapCache = new ConcurrentHashMap<>();
         mIdsByEmail = new ConcurrentHashMap<>();
     }
@@ -68,7 +68,7 @@ public class ContactsRepo {
 
     private Context mContext;
     private ContentResolver mContentResolver;
-    private List<ContactData> mContacts;
+    private final List<ContactData> mContacts = Collections.synchronizedList(new ArrayList<>());
     private Map<String, Bitmap> mBitmapCache;
     private Map<String, String> mIdsByEmail;
 
@@ -96,7 +96,10 @@ public class ContactsRepo {
                 emitter.onNext(GenericEvent.of(FAILURE).setException(new ContactsException(e)));
             }
         });
-        mContactsObservable = observable.replay();                                                  // last operator in the chain: here occurs the multicasting
+        mContactsObservable = observable
+            .subscribeOn(Schedulers.io())                                                           // takes effect only before turning into connectable
+            .replay()                                                                               // last operator in the chain: here occurs the multicasting
+        ;
         return mContactsObservable;
     }
 
