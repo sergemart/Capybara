@@ -217,7 +217,7 @@ public class MajorInviteFragment
 
             pInstanceDisposable.add(ContactsRepo.get().getContactsObservable()
                 .observeOn(Schedulers.io())                                                         // switch to background
-                .doOnNext(contactsResult -> {
+                .doOnNext(contactsResult -> {                                                       // load contacts
                     switch (contactsResult.getResult()) {
                         case SUCCESS:
                             mContacts.clear();
@@ -234,13 +234,13 @@ public class MajorInviteFragment
                     mContactsAdapter.notifyDataSetChanged();
                 })
                 .observeOn(Schedulers.io())                                                         // switch to background
-                .flatMap(contactsResult ->  Observable.fromIterable( (List)((GenericEvent)contactsResult).getData() ))
-                .flatMap(contact -> {
+                .flatMap(contactsResult ->  Observable.fromIterable( (List)((GenericEvent)contactsResult).getData() )) // split contacts
+                .flatMap(contact -> {                                                               // map every contact to bitmap observable
                     String contactEmail = ((ContactData) contact).getEmail();
                     return ContactsRepo.get().getEnrichedContactObservable(contactEmail);
                 })
                 .observeOn(AndroidSchedulers.mainThread())                                          // UI operations follows, main thread required
-                .subscribe(bitmapEvent -> {
+                .subscribe(bitmapEvent -> {                                                         // update contact list with thumbnails
                     switch ( ((GenericEvent)bitmapEvent).getResult() ) {
                         case SUCCESS:
                             ContactData auxContactData = (ContactData) ((GenericEvent)bitmapEvent).getData();
