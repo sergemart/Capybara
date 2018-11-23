@@ -19,6 +19,7 @@ import com.github.sergemart.mobile.capybara.events.GenericEvent;
 import com.github.sergemart.mobile.capybara.viewmodel.MajorSharedViewModel;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -47,7 +48,7 @@ public class MajorInviteFragment
 
     private RecyclerView mContactsRecyclerView;
 
-    private List<ContactsRepo.Contact> mContacts;
+    private final List<ContactsRepo.Contact> mContacts = Collections.synchronizedList(new ArrayList<>());
     private ContactsAdapter mContactsAdapter;
     private SelectionTracker<String> mSelectionTracker;
     private LayoutInflater mLayoutInflater;
@@ -65,7 +66,6 @@ public class MajorInviteFragment
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mContacts = new ArrayList<>();
         mContactsAdapter = new ContactsAdapter();
         mLayoutInflater = LayoutInflater.from(pActivity);
         mMajorSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(pActivity)).get(MajorSharedViewModel.class);
@@ -263,9 +263,11 @@ public class MajorInviteFragment
      * Get a contact list index by its email
      */
     private int getContactIndexByEmail(String contactEmail) {
-        for (int i = 0; i < mContacts.size(); i++) {
-            ContactsRepo.Contact contact = mContacts.get(i);
-            if (contact.email.equals(contactEmail)) return i;
+        synchronized (mContacts) {
+            for (int i = 0; i < mContacts.size(); i++) {
+                ContactsRepo.Contact contact = mContacts.get(i);
+                if (contact.email.equals(contactEmail)) return i;
+            }
         }
         return -1;
     }

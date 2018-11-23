@@ -69,14 +69,14 @@ public class MajorActivity
             switch ( menuItem.getItemId() ) {
                 case R.id.nav_action_invite:
                     navOptions = new NavOptions.Builder()
-                        .setPopUpTo(R.id.fragment_major_invite, true)                         // clear the entire task
+                        .setPopUpTo(R.id.fragment_major_invite, true)                       // clear the entire task
                         .build()
                     ;
                     mNavController.navigate(R.id.fragment_major_invite, null, navOptions);
                     return true;                                                                    // no further processing needed
                 case R.id.nav_action_locate:
                     navOptions = new NavOptions.Builder()
-                        .setPopUpTo(R.id.fragment_common_locator, true)                        // clear the entire task
+                        .setPopUpTo(R.id.fragment_common_locator, true)                     // clear the entire task
                         .build()
                     ;
                     mNavController.navigate(R.id.fragment_common_locator, null, navOptions);
