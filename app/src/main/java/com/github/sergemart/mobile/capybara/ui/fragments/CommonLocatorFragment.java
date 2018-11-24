@@ -74,6 +74,11 @@ public class CommonLocatorFragment
             mGoogleMap = googleMap;
             mGoogleMap.setMaxZoomPreference(Constants.MAP_MAX_ZOOM);
             mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+            mGoogleMap.setOnMarkerClickListener(marker -> {
+                mRequestLocationsFab.hide();
+                return false;                                                                       // default behavior should also occur
+            });
+            mGoogleMap.setOnMapClickListener(point -> mRequestLocationsFab.show());
         });
 
         this.setViewListeners();
@@ -168,6 +173,7 @@ public class CommonLocatorFragment
         int margin = getResources().getDimensionPixelSize(R.dimen.map_inset_margin);
         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, margin);
         mGoogleMap.animateCamera(cameraUpdate);
+        mRequestLocationsFab.show();
     }
 
 }
