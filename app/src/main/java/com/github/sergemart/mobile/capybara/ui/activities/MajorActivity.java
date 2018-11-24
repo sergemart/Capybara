@@ -47,7 +47,11 @@ public class MajorActivity
 
         userNameTextView.setText(CloudRepo.get().getCurrentUsername());
         userEmailTextView.setText(CloudRepo.get().getCurrentUser().getEmail());
-        Picasso.get().load(CloudRepo.get().getCurrentUser().getPhotoUrl()).into(thumbnailImageView);
+        Picasso.get()
+            .load(CloudRepo.get().getCurrentUser().getPhotoUrl())
+            .placeholder(R.mipmap.capybara_bighead)
+            .into(thumbnailImageView)
+        ;
 
         mNavController = Navigation.findNavController(this, R.id.fragment_nav_host_major);
 
@@ -68,7 +72,7 @@ public class MajorActivity
             mDrawerLayout.closeDrawers();                                                           // close drawer when item is tapped
 
             NavOptions navOptions = new NavOptions.Builder()
-                .setPopUpTo(                                                                        // clear the entire task TODO: Works not as expected: clears nav graph also. Action nav could be broken!
+                .setPopUpTo(                                                                        // clear the entire task TODO: Works not as expected: clears nav graph fragment also. Action-based nav could be broken!
                     Objects.requireNonNull(mNavController.getCurrentDestination()).getId(),         // docs recommend use nav graph id here. Does not work
                     true
                 )
