@@ -7,7 +7,7 @@
 
     <!-- Navigation graph container -->
     <fragment
-        android:id="@+id/nav_host_fragment_initial_minor"
+        android:id="@+id/fragment_nav_host_initial_minor"
         android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

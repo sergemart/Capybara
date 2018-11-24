@@ -11,6 +11,8 @@ import com.github.sergemart.mobile.capybara.data.CloudRepo;
 import com.google.android.material.navigation.NavigationView;
 import com.squareup.picasso.Picasso;
 
+import java.util.Objects;
+
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
 import androidx.navigation.NavOptions;
@@ -47,7 +49,7 @@ public class MajorActivity
         userEmailTextView.setText(CloudRepo.get().getCurrentUser().getEmail());
         Picasso.get().load(CloudRepo.get().getCurrentUser().getPhotoUrl()).into(thumbnailImageView);
 
-        mNavController = Navigation.findNavController(this, R.id.nav_host_fragment_major);
+        mNavController = Navigation.findNavController(this, R.id.fragment_nav_host_major);
 
         this.setInstanceListeners();
     }
@@ -65,20 +67,18 @@ public class MajorActivity
             menuItem.setChecked(true);                                                              // set item as selected to persist highlight
             mDrawerLayout.closeDrawers();                                                           // close drawer when item is tapped
 
-            NavOptions navOptions;
+            NavOptions navOptions = new NavOptions.Builder()
+                .setPopUpTo(                                                                        // clear the entire task TODO: Works not as expected: clears nav graph also. Action nav could be broken!
+                    Objects.requireNonNull(mNavController.getCurrentDestination()).getId(),         // docs recommend use nav graph id here. Does not work
+                    true
+                )
+                .build()
+            ;
             switch ( menuItem.getItemId() ) {
                 case R.id.nav_action_invite:
-                    navOptions = new NavOptions.Builder()
-                        .setPopUpTo(R.id.fragment_major_invite, true)                       // clear the entire task
-                        .build()
-                    ;
                     mNavController.navigate(R.id.fragment_major_invite, null, navOptions);
                     return true;                                                                    // no further processing needed
                 case R.id.nav_action_locate:
-                    navOptions = new NavOptions.Builder()
-                        .setPopUpTo(R.id.fragment_common_locator, true)                     // clear the entire task
-                        .build()
-                    ;
                     mNavController.navigate(R.id.fragment_common_locator, null, navOptions);
                     return true;                                                                    // no further processing needed
                 default:
