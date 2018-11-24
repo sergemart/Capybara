@@ -146,6 +146,7 @@ public class CommonLocatorFragment
      * Update the map
      */
     private void updateMap() {
+        if (mMe.getLocation() == null) return;
         if (mGoogleMap == null) return;
         mGoogleMap.clear();
 

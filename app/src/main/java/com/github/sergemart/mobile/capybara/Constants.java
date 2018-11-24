@@ -3,6 +3,7 @@ package com.github.sergemart.mobile.capybara;
 import android.Manifest;
 
 
+@SuppressWarnings("WeakerAccess")
 public final class Constants {
 
     // ----------------------- Hard-coded values
@@ -10,7 +11,7 @@ public final class Constants {
     public static final int APP_MODE_MAJOR = 1;
     public static final int APP_MODE_MINOR = 2;
     public static final String DEFAULT_USERNAME = "anonymous";
-    static final String CLOUD_MESSAGING_LOCATION_PROVIDER = "cloudMessagingProvider";
+    public static final String CLOUD_MESSAGING_LOCATION_PROVIDER = "cloudMessagingProvider";
     public static final int INVITE_NONE = 0;
     public static final int INVITE_SENT = 1;
     public static final int INVITE_NOT_SENT = 2;
@@ -32,7 +33,7 @@ public final class Constants {
     public static final int REQUEST_CODE_LOCATION_PERMISSIONS = 7020;
     public static final int REQUEST_CODE_READ_CONTACTS_PERMISSIONS = 7030;
     public static final int REQUEST_CODE_DIALOG_FRAGMENT = 7040;
-    static final int REQUEST_CODE_NOTIFICATION_CONTENT = 7060;
+    public static final int REQUEST_CODE_NOTIFICATION_CONTENT = 7060;
 
 
     // ----------------------- Return codes
@@ -53,9 +54,9 @@ public final class Constants {
     // ----------------------- Data keys
 
     public static final String KEY_LOCATION = "location";
-    static final String KEY_LOCATION_LAT = "locationLat";
-    static final String KEY_LOCATION_LON = "locationLon";
-    static final String KEY_LOCATION_TIME = "locationTime";
+    public static final String KEY_LOCATION_LAT = "locationLat";
+    public static final String KEY_LOCATION_LON = "locationLon";
+    public static final String KEY_LOCATION_TIME = "locationTime";
     public static final String KEY_DEVICE_TOKEN = "deviceToken";
     public static final String KEY_FAMILY_MEMBER_EMAIL = "familyMemberEmail";
     public static final String KEY_INVITEE_EMAIL = "inviteeEmail";
@@ -80,7 +81,7 @@ public final class Constants {
 
     // ----------------------- Notification channel IDs (since Oreo)
 
-    static final String NOTIFICATION_CHANNEL_GENERAL = "com.github.sergemart.mobile.capybara.NOTIFICATION_CHANNEL_GENERAL";
+    public static final String NOTIFICATION_CHANNEL_GENERAL = "com.github.sergemart.mobile.capybara.NOTIFICATION_CHANNEL_GENERAL";
 
 
     // ----------------------- Intent actions
