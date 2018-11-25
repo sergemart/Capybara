@@ -6,9 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".ui.fragments.MinorDummyFragment">
 
-    <ImageView
-        android:id="@+id/imageView_background"
-        style="@style/App.ImageView.Background"
-        android:contentDescription="@string/desc_page_background"/>
+    <include
+        layout="@layout/content_background_general"/>
 
 </FrameLayout>

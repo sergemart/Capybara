@@ -7,13 +7,11 @@
     tools:context=".ui.fragments.InitialMajorCreateFamilyFragment">
 
     <include
+        layout="@layout/content_background_general"/>
+
+    <include
         layout="@layout/content_waiting"
         android:id="@+id/layout_waiting"
         android:visibility="gone"/>
-
-    <ImageView
-        android:id="@+id/imageView_background"
-        style="@style/App.ImageView.Background"
-        android:contentDescription="@string/desc_page_background"/>
 
 </FrameLayout>
