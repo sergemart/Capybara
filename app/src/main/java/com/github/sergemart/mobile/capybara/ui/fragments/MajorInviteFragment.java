@@ -142,6 +142,13 @@ public class MajorInviteFragment
     }
 
 
+    @Override
+    public void onDestroy() {
+        if (mActionMode != null) mActionMode.finish();
+        super.onDestroy();
+    }
+
+
     // --------------------------- Fragment lifecycle subroutines
 
     /**
