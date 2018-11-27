@@ -19,3 +19,15 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+-keep class com.google.firebase.components.ComponentContainer { *; }
+-keep class com.google.firebase.** { *; }
+-keep class com.squareup.okhttp.** { *; }
+-keep class okio.** { *; }
+
+-dontwarn okhttp3.internal.platform.**
+-dontnote okhttp3.internal.platform.**
+-dontnote com.squareup.okhttp.internal.**
+-dontnote com.google.android.gms.**
+-dontnote com.google.android.material.**
+-dontnote com.google.gson.internal.**

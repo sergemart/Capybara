@@ -6,7 +6,6 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />                    <!-- for Firebase Job Dispatcher over-reboot survival -->
 
     <application
         android:name=".App"

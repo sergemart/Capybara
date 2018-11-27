@@ -21,14 +21,12 @@ android {
     }
     buildTypes {
         debug {
-            minifyEnabled false
+            minifyEnabled false                                                                      // turn ProGuard off
             zipAlignEnabled false
-            shrinkResources false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             versionNameSuffix 'd'
         }
         release {
-            minifyEnabled true
+            minifyEnabled true                                                                      // turn ProGuard on
             zipAlignEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
@@ -55,9 +53,8 @@ dependencies {
     implementation 'com.google.android.material:material:1.0.0'
     // AAC
     implementation 'android.arch.navigation:navigation-fragment:1.0.0-alpha07'
-    def lifecycle_version = "2.0.0"
-    implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
-    implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-extensions:2.0.0"
+    implementation "androidx.lifecycle:lifecycle-common-java8:2.0.0"
     // Testing
     testImplementation 'junit:junit:4.12'
     testImplementation 'androidx.test:core:1.0.0'                                                   // Robolectric
