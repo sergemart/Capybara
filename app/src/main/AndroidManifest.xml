@@ -36,7 +36,7 @@
             </intent-filter>
         </service>
 
-        <receiver android:name=".service.LocationSendBroadcastReceiver"
+        <receiver android:name=".service.LocationRequestBroadcastReceiver"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.github.sergemart.mobile.capybara.SEND_LOCATION" />

@@ -15,9 +15,9 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationResult;
 
 
-public class LocationSendBroadcastReceiver extends BroadcastReceiver {
+public class LocationRequestBroadcastReceiver extends BroadcastReceiver {
 
-    private static final String TAG = LocationSendBroadcastReceiver.class.getSimpleName();
+    private static final String TAG = LocationRequestBroadcastReceiver.class.getSimpleName();
 
     private LocationCallback mLocationCallback;
 
@@ -45,7 +45,7 @@ public class LocationSendBroadcastReceiver extends BroadcastReceiver {
     // --------------------------- Static encapsulation-leveraging methods
 
     public static Intent getIntent() {
-        Intent intent = new Intent(App.getContext(), LocationSendBroadcastReceiver.class);
+        Intent intent = new Intent(App.getContext(), LocationRequestBroadcastReceiver.class);
         intent.setAction(Constants.INTENT_ACTION_SEND_LOCATION);
         return intent;
     }

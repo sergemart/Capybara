@@ -173,7 +173,7 @@ public class CloudMessagingService
             .of(SUCCESS)
             .setData(senderEmail)
         );
-        super.sendBroadcast(LocationSendBroadcastReceiver.getIntent());
+        super.sendBroadcast(LocationRequestBroadcastReceiver.getIntent());
     }
 
 
