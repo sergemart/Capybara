@@ -1,7 +1,6 @@
 package com.github.sergemart.mobile.capybara.ui.fragments;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -12,7 +11,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.github.sergemart.mobile.capybara.BuildConfig;
 import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
 import com.github.sergemart.mobile.capybara.data.CloudRepo;
@@ -47,14 +45,11 @@ public class MajorInviteFragment
     extends AbstractFragment
 {
 
-    private static final String SELECTION_ID = "selection_id";
-
     private RecyclerView mContactsRecyclerView;
 
     private final List<ContactData> mContacts = Collections.synchronizedList(new ArrayList<>());
     private ContactsAdapter mContactsAdapter;
     private SelectionTracker<String> mSelectionTracker;
-    private LayoutInflater mLayoutInflater;
     private MajorSharedViewModel mMajorSharedViewModel;
     private ActionMode mActionMode;
     private boolean mIsInActionMode;                                                                // to remember the Action Mode state between the lives
@@ -70,7 +65,6 @@ public class MajorInviteFragment
         super.onCreate(savedInstanceState);
 
         mContactsAdapter = new ContactsAdapter();
-        mLayoutInflater = LayoutInflater.from(pActivity);
         mMajorSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(pActivity)).get(MajorSharedViewModel.class);
 
         this.setInstanceListeners();
@@ -93,7 +87,7 @@ public class MajorInviteFragment
         mContactsRecyclerView.addItemDecoration(new DividerItemDecoration(Objects.requireNonNull(pActivity), DividerItemDecoration.VERTICAL));
         mContactsRecyclerView.setAdapter(mContactsAdapter);
         mSelectionTracker = new SelectionTracker.Builder<>(                                         // a main engine of the selection library
-            SELECTION_ID,
+            Constants.SELECTION_ID,
             mContactsRecyclerView,
             new MajorInviteFragment.ContactsKeyProvider(ItemKeyProvider.SCOPE_MAPPED),              // scope = all list data
             new MajorInviteFragment.ContactLookup(),
@@ -332,7 +326,7 @@ public class MajorInviteFragment
         @NonNull
         @Override
         public ContactHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View itemView = mLayoutInflater.inflate(R.layout.list_item_contact, parent, false);
+            View itemView = pLayoutInflater.inflate(R.layout.list_item_contact, parent, false);
             return new ContactHolder(itemView);
         }
 
@@ -387,7 +381,7 @@ public class MajorInviteFragment
             mmThumbnailImageView = itemView.findViewById(R.id.imageView_thumbnail);
             mmSuccessImageView = itemView.findViewById(R.id.imageView_thumbnail_overlay_success);
             mmFailureImageView = itemView.findViewById(R.id.imageView_thumbnail_overlay_failure);
-            mmContactNameTextView = itemView.findViewById(R.id.textView_contact_name);
+            mmContactNameTextView = itemView.findViewById(R.id.textView_minor_name);
             mmContactEmailTextView = itemView.findViewById(R.id.textView_contact_email);
         }
 

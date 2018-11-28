@@ -74,14 +74,9 @@ public final class Constants {
     public static final String MESSAGE_TYPE_LOCATION_REQUEST = "locationRequest";
 
 
-    // ----------------------- Job IDs
-
-    public static final int JOB_SEND_LOCATION = 1001;
-
-
-    // ----------------------- Notification channel IDs (since Oreo)
-
-    public static final String NOTIFICATION_CHANNEL_GENERAL = "com.github.sergemart.mobile.capybara.NOTIFICATION_CHANNEL_GENERAL";
+    // ----------------------- Miscellaneous IDs
+    public static final String NOTIFICATION_CHANNEL_GENERAL = "com.github.sergemart.mobile.capybara.NOTIFICATION_CHANNEL_GENERAL"; // Notification channel ID (since Oreo)
+    public static final String SELECTION_ID = "selection_id";                                       // used by the RecyclerView Selection Library
 
 
     // ----------------------- Intent actions

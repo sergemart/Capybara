@@ -30,6 +30,7 @@ public abstract class AbstractFragment extends Fragment {
     private ViewGroup mWaitingLayout;
 
     AppCompatActivity pActivity;
+    LayoutInflater pLayoutInflater;
     CompositeDisposable pViewDisposable;
     CompositeDisposable pInstanceDisposable;
 
@@ -57,6 +58,7 @@ public abstract class AbstractFragment extends Fragment {
         if (BuildConfig.DEBUG) Log.d(TAG, "onCreate() called");
         super.setRetainInstance(true);
 
+        pLayoutInflater = LayoutInflater.from(pActivity);
         pViewDisposable = new CompositeDisposable();
         pInstanceDisposable = new CompositeDisposable();
     }
