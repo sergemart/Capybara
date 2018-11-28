@@ -13,5 +13,9 @@
             android:id="@+id/nav_action_locate"
             android:icon="@drawable/icon_locate"
             android:title="@string/nav_action_locate" />
+        <item
+            android:id="@+id/nav_action_show_budget"
+            android:icon="@drawable/icon_budget"
+            android:title="@string/nav_action_budget" />
     </group>
 </menu>

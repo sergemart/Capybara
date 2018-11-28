@@ -16,13 +16,18 @@
         android:id="@+id/fragment_major_dummy"
         android:name="com.github.sergemart.mobile.capybara.ui.fragments.MajorDummyFragment"
         android:label="fragment_major_dummy"
-        tools:layout="@layout/fragment_major_dummy" >
-    </fragment>
+        tools:layout="@layout/fragment_major_dummy" />
 
     <fragment
         android:id="@+id/fragment_major_invite"
         android:name="com.github.sergemart.mobile.capybara.ui.fragments.MajorInviteFragment"
         android:label="fragment_major_invite"
         tools:layout="@layout/fragment_major_invite" />
+
+    <fragment
+        android:id="@+id/fragment_major_budget_list"
+        android:name="com.github.sergemart.mobile.capybara.ui.fragments.MajorBudgetListFragment"
+        android:label="fragment_major_budget_list"
+        tools:layout="@layout/fragment_major_budget_list" />
 
 </navigation>

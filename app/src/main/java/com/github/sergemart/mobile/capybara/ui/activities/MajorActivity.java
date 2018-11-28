@@ -85,6 +85,9 @@ public class MajorActivity
                 case R.id.nav_action_locate:
                     mNavController.navigate(R.id.fragment_common_locator, null, navOptions);
                     return true;                                                                    // no further processing needed
+                case R.id.nav_action_show_budget:
+                    mNavController.navigate(R.id.fragment_major_budget_list, null, navOptions);
+                    return true;                                                                    // no further processing needed
                 default:
                     return true;                                                                    // no further processing needed
             }

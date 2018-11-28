@@ -38,6 +38,7 @@
     <string name="msg_fatal_error">Cannot continue</string>
     <string name="nav_action_invite">Invite</string>
     <string name="nav_action_locate">Locate</string>
+    <string name="nav_action_budget">Budget</string>
     <string name="notification_channel_general_name">General notifications</string>
     <string name="notification_channel_general_description">General notifications</string>
     <string name="notification_location_request_received_title">Location requested</string>
