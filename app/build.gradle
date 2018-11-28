@@ -44,6 +44,8 @@ android {
 }
 
 dependencies {
+    def room_version = "2.1.0-alpha02"
+
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'androidx.appcompat:appcompat:1.0.2'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.0-alpha2'
@@ -53,11 +55,15 @@ dependencies {
     implementation 'com.google.android.material:material:1.0.0'
     // AAC
     implementation 'android.arch.navigation:navigation-fragment:1.0.0-alpha07'
-    implementation "androidx.lifecycle:lifecycle-extensions:2.0.0"
-    implementation "androidx.lifecycle:lifecycle-common-java8:2.0.0"
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
+    implementation 'androidx.lifecycle:lifecycle-common-java8:2.0.0'
+    implementation "androidx.room:room-runtime:$room_version"
+    implementation "androidx.room:room-rxjava2:$room_version"
+    annotationProcessor "androidx.room:room-compiler:$room_version"
     // Testing
     testImplementation 'junit:junit:4.12'
-    testImplementation 'androidx.test:core:1.0.0'                                                   // Robolectric
+    testImplementation 'androidx.test:core:1.0.0'
+    testImplementation "androidx.room:room-testing:$room_version"
     testImplementation 'org.robolectric:robolectric:4.0'
     testImplementation 'org.mockito:mockito-core:2.20.1'
     testImplementation 'org.hamcrest:hamcrest-junit:2.0.0.0'
