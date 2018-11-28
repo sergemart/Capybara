@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 
 import com.github.sergemart.mobile.capybara.R;
 import com.github.sergemart.mobile.capybara.data.MessagingRepo;
-import com.github.sergemart.mobile.capybara.events.GenericEvent;
+import com.github.sergemart.mobile.capybara.data.events.GenericEvent;
 import com.github.sergemart.mobile.capybara.exceptions.FirebaseMessagingException;
 import com.github.sergemart.mobile.capybara.viewmodel.InitialMinorSharedViewModel;
 import com.google.android.material.button.MaterialButton;
@@ -20,7 +20,7 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.fragment.NavHostFragment;
 
-import static com.github.sergemart.mobile.capybara.events.Result.FAILURE;
+import static com.github.sergemart.mobile.capybara.data.events.Result.FAILURE;
 
 
 public class InitialMinorWaitForInviteFragment

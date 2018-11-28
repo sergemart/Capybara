@@ -1,4 +1,4 @@
-package com.github.sergemart.mobile.capybara.model;
+package com.github.sergemart.mobile.capybara.data.model;
 
 import android.graphics.Bitmap;
 

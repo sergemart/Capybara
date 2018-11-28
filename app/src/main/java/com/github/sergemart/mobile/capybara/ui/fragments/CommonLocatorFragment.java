@@ -10,7 +10,7 @@ import com.github.sergemart.mobile.capybara.R;
 import com.github.sergemart.mobile.capybara.data.CloudRepo;
 import com.github.sergemart.mobile.capybara.data.GeoRepo;
 import com.github.sergemart.mobile.capybara.data.MessagingRepo;
-import com.github.sergemart.mobile.capybara.model.FamilyMember;
+import com.github.sergemart.mobile.capybara.data.model.FamilyMember;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;

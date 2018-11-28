@@ -6,12 +6,12 @@ import android.os.Bundle;
 
 import com.github.sergemart.mobile.capybara.App;
 import com.github.sergemart.mobile.capybara.R;
-import com.github.sergemart.mobile.capybara.events.GenericEvent;
+import com.github.sergemart.mobile.capybara.data.events.GenericEvent;
 import com.github.sergemart.mobile.capybara.viewmodel.ErrorSharedViewModel;
 
 import androidx.lifecycle.ViewModelProviders;
 
-import static com.github.sergemart.mobile.capybara.events.Result.SUCCESS;
+import static com.github.sergemart.mobile.capybara.data.events.Result.SUCCESS;
 
 
 public class ErrorActivity

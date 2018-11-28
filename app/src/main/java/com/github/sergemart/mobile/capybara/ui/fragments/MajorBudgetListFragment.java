@@ -11,8 +11,8 @@ import android.widget.TextView;
 
 import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
-import com.github.sergemart.mobile.capybara.model.ContactData;
-import com.github.sergemart.mobile.capybara.model.FamilyMember;
+import com.github.sergemart.mobile.capybara.data.model.ContactData;
+import com.github.sergemart.mobile.capybara.data.model.FamilyMember;
 import com.github.sergemart.mobile.capybara.viewmodel.MajorSharedViewModel;
 
 import java.util.ArrayList;

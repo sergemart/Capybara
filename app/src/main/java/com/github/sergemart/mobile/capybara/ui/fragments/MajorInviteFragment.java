@@ -15,8 +15,8 @@ import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
 import com.github.sergemart.mobile.capybara.data.CloudRepo;
 import com.github.sergemart.mobile.capybara.data.ContactsRepo;
-import com.github.sergemart.mobile.capybara.events.GenericEvent;
-import com.github.sergemart.mobile.capybara.model.ContactData;
+import com.github.sergemart.mobile.capybara.data.events.GenericEvent;
+import com.github.sergemart.mobile.capybara.data.model.ContactData;
 import com.github.sergemart.mobile.capybara.viewmodel.MajorSharedViewModel;
 
 import java.util.ArrayList;

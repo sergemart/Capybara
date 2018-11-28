@@ -17,6 +17,9 @@ public final class Constants {
     public static final int INVITE_NOT_SENT = 2;
     public static final int LOCATION_REQUEST_INTERVAL = 10 * 1000;                                  // milliseconds
     public static final float MAP_MAX_ZOOM = 18;
+    public static final String DB_NAME = "capybara.db";
+    public static final String NOTIFICATION_CHANNEL_GENERAL = "com.github.sergemart.mobile.capybara.NOTIFICATION_CHANNEL_GENERAL"; // Notification channel ID (since Oreo)
+    public static final String SELECTION_ID = "selection_id";                                       // used by the RecyclerView Selection Library
 
 
     // ----------------------- Dialog tags
@@ -72,11 +75,6 @@ public final class Constants {
     public static final String MESSAGE_TYPE_ACCEPT_INVITE = "acceptInvite";
     public static final String MESSAGE_TYPE_LOCATION = "location";
     public static final String MESSAGE_TYPE_LOCATION_REQUEST = "locationRequest";
-
-
-    // ----------------------- Miscellaneous IDs
-    public static final String NOTIFICATION_CHANNEL_GENERAL = "com.github.sergemart.mobile.capybara.NOTIFICATION_CHANNEL_GENERAL"; // Notification channel ID (since Oreo)
-    public static final String SELECTION_ID = "selection_id";                                       // used by the RecyclerView Selection Library
 
 
     // ----------------------- Intent actions

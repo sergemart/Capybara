@@ -1,4 +1,4 @@
-package com.github.sergemart.mobile.capybara.events;
+package com.github.sergemart.mobile.capybara.data.events;
 
 import android.location.Location;
 

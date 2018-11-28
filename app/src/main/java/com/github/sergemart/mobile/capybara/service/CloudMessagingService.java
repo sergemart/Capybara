@@ -10,8 +10,8 @@ import com.github.sergemart.mobile.capybara.data.CloudRepo;
 import com.github.sergemart.mobile.capybara.data.GeoRepo;
 import com.github.sergemart.mobile.capybara.data.MessagingRepo;
 import com.github.sergemart.mobile.capybara.data.PreferenceStore;
-import com.github.sergemart.mobile.capybara.events.GenericEvent;
-import com.github.sergemart.mobile.capybara.events.LocationEvent;
+import com.github.sergemart.mobile.capybara.data.events.GenericEvent;
+import com.github.sergemart.mobile.capybara.data.events.LocationEvent;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -20,7 +20,7 @@ import java.util.Objects;
 
 import io.reactivex.disposables.CompositeDisposable;
 
-import static com.github.sergemart.mobile.capybara.events.Result.SUCCESS;
+import static com.github.sergemart.mobile.capybara.data.events.Result.SUCCESS;
 
 
 public class CloudMessagingService

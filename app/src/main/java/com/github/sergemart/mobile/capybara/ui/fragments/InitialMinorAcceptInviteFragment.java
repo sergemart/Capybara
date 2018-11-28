@@ -7,7 +7,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.github.sergemart.mobile.capybara.BuildConfig;
@@ -16,7 +15,7 @@ import com.github.sergemart.mobile.capybara.R;
 import com.github.sergemart.mobile.capybara.data.CloudRepo;
 import com.github.sergemart.mobile.capybara.data.MessagingRepo;
 import com.github.sergemart.mobile.capybara.data.PreferenceStore;
-import com.github.sergemart.mobile.capybara.events.GenericEvent;
+import com.github.sergemart.mobile.capybara.data.events.GenericEvent;
 import com.github.sergemart.mobile.capybara.exceptions.FirebaseMessagingException;
 import com.github.sergemart.mobile.capybara.ui.dialogs.JoinFamilyRetryDialogFragment;
 import com.github.sergemart.mobile.capybara.viewmodel.InitialMinorSharedViewModel;
@@ -30,8 +29,8 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.fragment.NavHostFragment;
 
-import static com.github.sergemart.mobile.capybara.events.Result.FAILURE;
-import static com.github.sergemart.mobile.capybara.events.Result.SUCCESS;
+import static com.github.sergemart.mobile.capybara.data.events.Result.FAILURE;
+import static com.github.sergemart.mobile.capybara.data.events.Result.SUCCESS;
 
 
 public class InitialMinorAcceptInviteFragment

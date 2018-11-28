@@ -21,7 +21,7 @@ android {
     }
     buildTypes {
         debug {
-            minifyEnabled false                                                                      // turn ProGuard off
+            minifyEnabled false                                                                     // turn ProGuard off
             zipAlignEnabled false
             versionNameSuffix 'd'
         }
@@ -44,19 +44,22 @@ android {
 }
 
 dependencies {
+    def recyclerview_version = "1.0.0"
     def room_version = "2.1.0-alpha02"
+    def lifecycle_version = "2.0.0"
+    def firebase_version = "16.0.5"
 
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'androidx.appcompat:appcompat:1.0.2'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.0-alpha2'
-    implementation 'androidx.recyclerview:recyclerview:1.0.0'
-    implementation 'androidx.recyclerview:recyclerview-selection:1.0.0'
+    implementation "androidx.recyclerview:recyclerview:$recyclerview_version"
+    implementation "androidx.recyclerview:recyclerview-selection:$recyclerview_version"
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'com.google.android.material:material:1.0.0'
     // AAC
     implementation 'android.arch.navigation:navigation-fragment:1.0.0-alpha07'
-    implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
-    implementation 'androidx.lifecycle:lifecycle-common-java8:2.0.0'
+    implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version"
     implementation "androidx.room:room-runtime:$room_version"
     implementation "androidx.room:room-rxjava2:$room_version"
     annotationProcessor "androidx.room:room-compiler:$room_version"
@@ -79,8 +82,8 @@ dependencies {
     implementation 'com.google.android.gms:play-services-location:16.0.0'
     implementation 'com.google.android.gms:play-services-auth:16.0.1'
     // Firebase
-    implementation 'com.google.firebase:firebase-core:16.0.5'
-    implementation 'com.google.firebase:firebase-auth:16.0.5'
+    implementation "com.google.firebase:firebase-core:$firebase_version"
+    implementation "com.google.firebase:firebase-auth:$firebase_version"
     implementation 'com.google.firebase:firebase-messaging:17.3.4'
     //noinspection GradleDependency
     implementation 'com.google.firebase:firebase-functions:16.1.0'                                  // corresponds to core:16.0.3

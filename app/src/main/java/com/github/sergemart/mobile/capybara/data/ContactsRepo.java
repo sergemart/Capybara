@@ -16,9 +16,9 @@ import com.github.sergemart.mobile.capybara.App;
 import com.github.sergemart.mobile.capybara.BuildConfig;
 import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
-import com.github.sergemart.mobile.capybara.events.GenericEvent;
+import com.github.sergemart.mobile.capybara.data.events.GenericEvent;
 import com.github.sergemart.mobile.capybara.exceptions.ContactsException;
-import com.github.sergemart.mobile.capybara.model.ContactData;
+import com.github.sergemart.mobile.capybara.data.model.ContactData;
 
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
@@ -33,8 +33,8 @@ import io.reactivex.Observable;
 import io.reactivex.observables.ConnectableObservable;
 import io.reactivex.schedulers.Schedulers;
 
-import static com.github.sergemart.mobile.capybara.events.Result.FAILURE;
-import static com.github.sergemart.mobile.capybara.events.Result.SUCCESS;
+import static com.github.sergemart.mobile.capybara.data.events.Result.FAILURE;
+import static com.github.sergemart.mobile.capybara.data.events.Result.SUCCESS;
 
 
 // Singleton

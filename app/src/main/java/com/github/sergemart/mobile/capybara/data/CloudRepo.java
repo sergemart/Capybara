@@ -12,7 +12,7 @@ import com.github.sergemart.mobile.capybara.BuildConfig;
 import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
 import com.github.sergemart.mobile.capybara.Tools;
-import com.github.sergemart.mobile.capybara.events.GenericEvent;
+import com.github.sergemart.mobile.capybara.data.events.GenericEvent;
 import com.github.sergemart.mobile.capybara.exceptions.FirebaseFunctionException;
 import com.github.sergemart.mobile.capybara.exceptions.FirebaseSigninException;
 import com.github.sergemart.mobile.capybara.exceptions.GoogleSigninException;
@@ -35,12 +35,12 @@ import java.util.Objects;
 
 import io.reactivex.subjects.PublishSubject;
 
-import static com.github.sergemart.mobile.capybara.events.Result.BACKEND_ERROR;
-import static com.github.sergemart.mobile.capybara.events.Result.EXIST;
-import static com.github.sergemart.mobile.capybara.events.Result.INTEGRITY_ERROR;
-import static com.github.sergemart.mobile.capybara.events.Result.FAILURE;
-import static com.github.sergemart.mobile.capybara.events.Result.NOT_FOUND;
-import static com.github.sergemart.mobile.capybara.events.Result.SUCCESS;
+import static com.github.sergemart.mobile.capybara.data.events.Result.BACKEND_ERROR;
+import static com.github.sergemart.mobile.capybara.data.events.Result.EXIST;
+import static com.github.sergemart.mobile.capybara.data.events.Result.INTEGRITY_ERROR;
+import static com.github.sergemart.mobile.capybara.data.events.Result.FAILURE;
+import static com.github.sergemart.mobile.capybara.data.events.Result.NOT_FOUND;
+import static com.github.sergemart.mobile.capybara.data.events.Result.SUCCESS;
 
 
 // Singleton
