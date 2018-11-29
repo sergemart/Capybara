@@ -14,11 +14,12 @@ import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.Objects;
 
+import androidx.multidex.MultiDexApplication;
 import io.reactivex.exceptions.UndeliverableException;
 import io.reactivex.plugins.RxJavaPlugins;
 
 
-public class App extends Application {
+public class App extends MultiDexApplication {
 
     private static final String TAG = App.class.getSimpleName();
 
