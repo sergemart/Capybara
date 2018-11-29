@@ -124,8 +124,9 @@ public class FunctionsService {
     // --------------------------- The interface: Manage the device token
 
     /**
-     * Publish device token on a backend using custom Firebase callable function
-     * Send an event notifying on success or failure
+     * Publish device token on a backend using custom Firebase callable function.
+     * Send an event notifying on success or failure.
+     * REPLACED TO THE DIRECT FIRESTORE CALL
      */
     @SuppressWarnings("unchecked")
     public void publishDeviceTokenAsync(String deviceToken) {

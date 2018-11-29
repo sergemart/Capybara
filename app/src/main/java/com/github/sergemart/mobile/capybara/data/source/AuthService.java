@@ -242,7 +242,7 @@ public class AuthService {
             return;
         }
         mDeviceToken = deviceToken;
-        FunctionsService.get().publishDeviceTokenAsync(deviceToken);
+        FirestoreService.get().publishDeviceTokenAsync(deviceToken);
     }
 
 

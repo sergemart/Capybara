@@ -14,6 +14,7 @@ import com.github.sergemart.mobile.capybara.R;
 import com.github.sergemart.mobile.capybara.controller.dialog.SignInRetryDialogFragment;
 import com.github.sergemart.mobile.capybara.data.events.GenericEvent;
 import com.github.sergemart.mobile.capybara.data.source.AuthService;
+import com.github.sergemart.mobile.capybara.data.source.FirestoreService;
 import com.github.sergemart.mobile.capybara.data.source.FunctionsService;
 import com.github.sergemart.mobile.capybara.viewmodel.InitialCommonSharedViewModel;
 import com.google.android.material.button.MaterialButton;
@@ -99,7 +100,7 @@ public class InitialCommonSignInFragment
      */
     private void setInstanceListeners() {
 
-        // Set a listener to the "SignInResult" event
+        // Set a listener to the "SignIn" event
         pInstanceDisposable.add(AuthService.get().getSignInSubject().subscribe(event -> {
             switch (event.getResult()) {
                 case SUCCESS:
@@ -115,7 +116,7 @@ public class InitialCommonSignInFragment
             }
         }));
 
-        // Set a listener to the "GetDeviceTokenResult" event
+        // Set a listener to the "GetDeviceToken" event
         pInstanceDisposable.add(AuthService.get().getGetDeviceTokenSubject().subscribe(event -> {
             switch (event.getResult()) {
                 case SUCCESS:
@@ -131,8 +132,8 @@ public class InitialCommonSignInFragment
             }
         }));
 
-        // Set a listener to the "PublishDeviceTokenResult" event
-        pInstanceDisposable.add(FunctionsService.get().getPublishDeviceTokenSubject().subscribe(event -> {
+        // Set a listener to the "PublishDeviceToken" event
+        pInstanceDisposable.add(FirestoreService.get().getPublishDeviceTokenSubject().subscribe(event -> {
             switch (event.getResult()) {
                 case SUCCESS:
                     if (BuildConfig.DEBUG) Log.d(TAG, "PublishDeviceTokenResult.SUCCESS event received; emmitting CommonSetupFinished event");
@@ -209,7 +210,7 @@ public class InitialCommonSignInFragment
      */
     private void publishDeviceToken() {
         String deviceToken = AuthService.get().getDeviceToken();
-        FunctionsService.get().publishDeviceTokenAsync(deviceToken);
+        FirestoreService.get().publishDeviceTokenAsync(deviceToken);
     }
 
 }
