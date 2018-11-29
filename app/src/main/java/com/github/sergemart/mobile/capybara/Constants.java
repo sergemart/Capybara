@@ -22,6 +22,13 @@ public final class Constants {
     public static final String SELECTION_ID = "selection_id";                                       // used by the RecyclerView Selection Library
 
 
+    // ----------------------- App preference names
+
+    public static final String PREF_APP_MODE = "appMode";
+    public static final String PREF_FAMILY_CREATED = "familyCreated";
+    public static final String PREF_FAMILY_JOINED = "familyJoined";
+
+
     // ----------------------- Dialog tags
 
     public static final String TAG_GRANT_PERMISSION_RETRY_DIALOG = "grantPermissionRetryDialog";

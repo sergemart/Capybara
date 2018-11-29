@@ -25,7 +25,7 @@ public class ResRepo {
     }
 
 
-    // --------------------------- Repository interface: Grant permission retry dialog resources
+    // --------------------------- The interface: Grant permission retry dialog resources
 
     /**
      * @return  Grant permission retry dialog icon resource id
@@ -51,7 +51,7 @@ public class ResRepo {
     }
 
 
-    // --------------------------- Repository interface: Sign-in retry dialog resources
+    // --------------------------- The interface: Sign-in retry dialog resources
 
     /**
      * @return Sign-in retry dialog icon resource id
@@ -106,7 +106,7 @@ public class ResRepo {
     }
 
 
-    // --------------------------- Repository interface: Create family retry dialog resources
+    // --------------------------- The interface: Create family retry dialog resources
 
     /**
      * @return  Create family retry dialog icon resource id
@@ -132,7 +132,7 @@ public class ResRepo {
     }
 
 
-    // --------------------------- Repository interface: Join family retry dialog resources
+    // --------------------------- The interface: Join family retry dialog resources
 
     /**
      * @return  Join family retry dialog icon resource id

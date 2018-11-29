@@ -15,19 +15,19 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".ui.activities.InitialCommonActivity">
+        <activity android:name=".controller.activity.InitialCommonActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.activities.InitialMajorActivity" />
-        <activity android:name=".ui.activities.InitialMinorActivity" />
-        <activity android:name=".ui.activities.MajorActivity" />
-        <activity android:name=".ui.activities.MinorActivity" />
-        <activity android:name=".ui.activities.ErrorActivity" />
+        <activity android:name=".controller.activity.InitialMajorActivity" />
+        <activity android:name=".controller.activity.InitialMinorActivity" />
+        <activity android:name=".controller.activity.MajorActivity" />
+        <activity android:name=".controller.activity.MinorActivity" />
+        <activity android:name=".controller.activity.ErrorActivity" />
 
-        <service android:name=".service.CloudMessagingService"
+        <service android:name=".controller.service.CloudMessagingService"
             android:stopWithTask="true"
             tools:ignore="ExportedService">                                                         <!-- security checks performed at runtime -->
             <intent-filter>
@@ -35,7 +35,7 @@
             </intent-filter>
         </service>
 
-        <receiver android:name=".service.LocationRequestBroadcastReceiver"
+        <receiver android:name=".controller.service.LocationRequestBroadcastReceiver"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.github.sergemart.mobile.capybara.SEND_LOCATION" />

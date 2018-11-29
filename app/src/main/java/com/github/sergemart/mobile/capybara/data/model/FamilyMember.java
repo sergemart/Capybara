@@ -3,8 +3,6 @@ package com.github.sergemart.mobile.capybara.data.model;
 import android.graphics.Bitmap;
 import android.location.Location;
 
-import com.github.sergemart.mobile.capybara.Constants;
-
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.Ignore;
@@ -26,7 +24,6 @@ public class FamilyMember {
 
 
     // --------------------------- Getters/ setters
-
 
     @NonNull
     public String getExtId() {

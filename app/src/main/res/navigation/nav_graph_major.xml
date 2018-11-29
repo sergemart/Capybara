@@ -8,25 +8,25 @@
 
     <fragment
         android:id="@+id/fragment_common_locator"
-        android:name="com.github.sergemart.mobile.capybara.ui.fragments.CommonLocatorFragment"
+        android:name="com.github.sergemart.mobile.capybara.controller.fragment.CommonLocatorFragment"
         android:label="fragment_major_locator"
         tools:layout="@layout/fragment_common_locator" />
 
     <fragment
         android:id="@+id/fragment_major_dummy"
-        android:name="com.github.sergemart.mobile.capybara.ui.fragments.MajorDummyFragment"
+        android:name="com.github.sergemart.mobile.capybara.controller.fragment.MajorDummyFragment"
         android:label="fragment_major_dummy"
         tools:layout="@layout/fragment_major_dummy" />
 
     <fragment
         android:id="@+id/fragment_major_invite"
-        android:name="com.github.sergemart.mobile.capybara.ui.fragments.MajorInviteFragment"
+        android:name="com.github.sergemart.mobile.capybara.controller.fragment.MajorInviteFragment"
         android:label="fragment_major_invite"
         tools:layout="@layout/fragment_major_invite" />
 
     <fragment
         android:id="@+id/fragment_major_budget_list"
-        android:name="com.github.sergemart.mobile.capybara.ui.fragments.MajorBudgetListFragment"
+        android:name="com.github.sergemart.mobile.capybara.controller.fragment.MajorBudgetListFragment"
         android:label="fragment_major_budget_list"
         tools:layout="@layout/fragment_major_budget_list" />
 

@@ -8,7 +8,7 @@ import android.content.Context;
 import android.os.Build;
 import android.util.Log;
 
-import com.github.sergemart.mobile.capybara.data.CloudRepo;
+import com.github.sergemart.mobile.capybara.data.source.CloudService;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
@@ -47,7 +47,7 @@ public class App extends Application {
         }
 
         // App start-up actions
-        CloudRepo.get().getTokenAsync();                                                            // make sense for non-initial start-ups
+        CloudService.get().getTokenAsync();                                                            // make sense for non-initial start-ups
         this.createNotificationChannels();
     }
 

@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.fragments.MajorBudgetListFragment">
+    tools:context=".controller.fragment.MajorBudgetListFragment">
 
     <include
         layout="@layout/content_background_general"/>

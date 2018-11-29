@@ -8,7 +8,7 @@
 
     <fragment
         android:id="@+id/fragment_initial_minor_wait_for_invite"
-        android:name="com.github.sergemart.mobile.capybara.ui.fragments.InitialMinorWaitForInviteFragment"
+        android:name="com.github.sergemart.mobile.capybara.controller.fragment.InitialMinorWaitForInviteFragment"
         android:label="fragment_initial_minor_wait_for_invite"
         tools:layout="@layout/fragment_initial_minor_wait_for_invite" >
         <action
@@ -18,7 +18,7 @@
 
     <fragment
         android:id="@+id/fragment_initial_minor_accept_invite"
-        android:name="com.github.sergemart.mobile.capybara.ui.fragments.InitialMinorAcceptInviteFragment"
+        android:name="com.github.sergemart.mobile.capybara.controller.fragment.InitialMinorAcceptInviteFragment"
         android:label="fragment_initial_minor_accept_invite"
         tools:layout="@layout/fragment_initial_minor_accept_invite" >
     </fragment>
