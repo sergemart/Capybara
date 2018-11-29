@@ -11,9 +11,10 @@ import android.view.ViewGroup;
 import com.github.sergemart.mobile.capybara.BuildConfig;
 import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
-import com.github.sergemart.mobile.capybara.data.source.CloudService;
-import com.github.sergemart.mobile.capybara.data.events.GenericEvent;
 import com.github.sergemart.mobile.capybara.controller.dialog.SignInRetryDialogFragment;
+import com.github.sergemart.mobile.capybara.data.events.GenericEvent;
+import com.github.sergemart.mobile.capybara.data.source.AuthService;
+import com.github.sergemart.mobile.capybara.data.source.FunctionsService;
 import com.github.sergemart.mobile.capybara.viewmodel.InitialCommonSharedViewModel;
 import com.google.android.material.button.MaterialButton;
 import com.jakewharton.rxbinding2.view.RxView;
@@ -99,7 +100,7 @@ public class InitialCommonSignInFragment
     private void setInstanceListeners() {
 
         // Set a listener to the "SignInResult" event
-        pInstanceDisposable.add(CloudService.get().getSignInSubject().subscribe(event -> {
+        pInstanceDisposable.add(AuthService.get().getSignInSubject().subscribe(event -> {
             switch (event.getResult()) {
                 case SUCCESS:
                     if (BuildConfig.DEBUG) Log.d(TAG, "SignInResult.SUCCESS event received; getting device token");
@@ -115,7 +116,7 @@ public class InitialCommonSignInFragment
         }));
 
         // Set a listener to the "GetDeviceTokenResult" event
-        pInstanceDisposable.add(CloudService.get().getGetDeviceTokenSubject().subscribe(event -> {
+        pInstanceDisposable.add(AuthService.get().getGetDeviceTokenSubject().subscribe(event -> {
             switch (event.getResult()) {
                 case SUCCESS:
                     if (BuildConfig.DEBUG) Log.d(TAG, "GetDeviceTokenResult.SUCCESS event received; publishing device token");
@@ -131,7 +132,7 @@ public class InitialCommonSignInFragment
         }));
 
         // Set a listener to the "PublishDeviceTokenResult" event
-        pInstanceDisposable.add(CloudService.get().getPublishDeviceTokenSubject().subscribe(event -> {
+        pInstanceDisposable.add(FunctionsService.get().getPublishDeviceTokenSubject().subscribe(event -> {
             switch (event.getResult()) {
                 case SUCCESS:
                     if (BuildConfig.DEBUG) Log.d(TAG, "PublishDeviceTokenResult.SUCCESS event received; emmitting CommonSetupFinished event");
@@ -170,7 +171,7 @@ public class InitialCommonSignInFragment
     private void signIn() {
         mSignInStarted = true;
         this.indicateSignInInProgress();
-        CloudService.get().sendSignInIntent(Objects.requireNonNull( super.getActivity() ));
+        AuthService.get().sendSignInIntent(Objects.requireNonNull( super.getActivity() ));
     }
 
 
@@ -199,7 +200,7 @@ public class InitialCommonSignInFragment
      * Get a Firebase Messaging device token
      */
     private void getDeviceToken() {
-        CloudService.get().getTokenAsync();
+        AuthService.get().getTokenAsync();
     }
 
 
@@ -207,7 +208,8 @@ public class InitialCommonSignInFragment
      * Publish the Firebase Messaging device token
      */
     private void publishDeviceToken() {
-        CloudService.get().publishDeviceTokenAsync();
+        String deviceToken = AuthService.get().getDeviceToken();
+        FunctionsService.get().publishDeviceTokenAsync(deviceToken);
     }
 
 }

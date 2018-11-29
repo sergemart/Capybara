@@ -1,14 +1,13 @@
 package com.github.sergemart.mobile.capybara;
 
 import android.annotation.SuppressLint;
-import android.app.Application;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.os.Build;
 import android.util.Log;
 
-import com.github.sergemart.mobile.capybara.data.source.CloudService;
+import com.github.sergemart.mobile.capybara.data.source.AuthService;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
@@ -48,7 +47,7 @@ public class App extends MultiDexApplication {
         }
 
         // App start-up actions
-        CloudService.get().getTokenAsync();                                                            // make sense for non-initial start-ups
+        AuthService.get().getTokenAsync();                                                            // make sense for non-initial start-ups
         this.createNotificationChannels();
     }
 

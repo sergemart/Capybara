@@ -7,10 +7,10 @@ import android.view.ViewGroup;
 
 import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
-import com.github.sergemart.mobile.capybara.data.source.CloudService;
-import com.github.sergemart.mobile.capybara.data.source.GeoService;
 import com.github.sergemart.mobile.capybara.data.MessageRepo;
 import com.github.sergemart.mobile.capybara.data.model.FamilyMember;
+import com.github.sergemart.mobile.capybara.data.source.FunctionsService;
+import com.github.sergemart.mobile.capybara.data.source.GeoService;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -114,7 +114,7 @@ public class CommonLocatorFragment
         // Set a listener to the "Request Locations" FAB
         // Make it send a request for family members' locations
         pViewDisposable.add(RxView.clicks(mRequestLocationsFab).subscribe(event ->
-            CloudService.get().requestLocationsAsync()
+            FunctionsService.get().requestLocationsAsync()
         ));
 
         // Set a listener to the "LocateMe" event

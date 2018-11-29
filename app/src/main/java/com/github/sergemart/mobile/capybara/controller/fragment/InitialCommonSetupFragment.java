@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 
 import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
-import com.github.sergemart.mobile.capybara.data.source.CloudService;
+import com.github.sergemart.mobile.capybara.data.source.AuthService;
 import com.github.sergemart.mobile.capybara.data.source.GeoService;
 import com.github.sergemart.mobile.capybara.data.PreferenceRepo;
 import com.github.sergemart.mobile.capybara.data.events.GenericEvent;
@@ -141,7 +141,7 @@ public class InitialCommonSetupFragment
      * Otherwise, notify subscribers (hosting activity) that the app is completely initialized
      */
     private void navigateToNextPage() {
-        if (!CloudService.get().isAuthenticated()) {
+        if (!AuthService.get().isAuthenticated()) {
             NavHostFragment.findNavController(this).navigate(R.id.action_initialSetup_to_initialSignin);
         } else {
             mInitialCommonSharedViewModel.getCommonSetupFinishedSubject().onNext(GenericEvent.of(SUCCESS));

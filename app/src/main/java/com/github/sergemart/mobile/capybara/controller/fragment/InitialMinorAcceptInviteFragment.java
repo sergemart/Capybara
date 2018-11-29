@@ -12,10 +12,11 @@ import android.widget.TextView;
 import com.github.sergemart.mobile.capybara.BuildConfig;
 import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
-import com.github.sergemart.mobile.capybara.data.source.CloudService;
+import com.github.sergemart.mobile.capybara.data.source.AuthService;
 import com.github.sergemart.mobile.capybara.data.MessageRepo;
 import com.github.sergemart.mobile.capybara.data.PreferenceRepo;
 import com.github.sergemart.mobile.capybara.data.events.GenericEvent;
+import com.github.sergemart.mobile.capybara.data.source.FunctionsService;
 import com.github.sergemart.mobile.capybara.exceptions.FirebaseMessagingException;
 import com.github.sergemart.mobile.capybara.controller.dialog.JoinFamilyRetryDialogFragment;
 import com.github.sergemart.mobile.capybara.viewmodel.InitialMinorSharedViewModel;
@@ -106,7 +107,7 @@ public class InitialMinorAcceptInviteFragment
     private void setInstanceListeners() {
 
         // Set a listener to the "JoinFamily" event
-        pInstanceDisposable.add(CloudService.get().getJoinFamilySubject().subscribe(event -> {
+        pInstanceDisposable.add(FunctionsService.get().getJoinFamilySubject().subscribe(event -> {
             switch (event.getResult()) {
                 case SUCCESS:
                     PreferenceRepo.storeFamilyJoined(true);
@@ -186,7 +187,7 @@ public class InitialMinorAcceptInviteFragment
     private void joinFamily() {
         mContentContainerLayout.setVisibility(View.GONE);
         super.showWaitingState();
-        CloudService.get().joinFamilyAsync(mInvitingEmail);
+        FunctionsService.get().joinFamilyAsync(mInvitingEmail);
     }
 
 

@@ -8,7 +8,7 @@ import com.github.sergemart.mobile.capybara.App;
 import com.github.sergemart.mobile.capybara.BuildConfig;
 import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
-import com.github.sergemart.mobile.capybara.data.source.CloudService;
+import com.github.sergemart.mobile.capybara.data.source.AuthService;
 import com.github.sergemart.mobile.capybara.data.PreferenceRepo;
 import com.github.sergemart.mobile.capybara.viewmodel.InitialCommonSharedViewModel;
 
@@ -53,7 +53,7 @@ public class InitialCommonActivity
                 PreferenceRepo.getAppMode() == Constants.APP_MODE_MAJOR ||
                 PreferenceRepo.getAppMode() == Constants.APP_MODE_MINOR
             ) &&
-                CloudService.get().isAuthenticated()
+                AuthService.get().isAuthenticated()
         ){
             this.leaveNavGraph();
         }
@@ -68,7 +68,7 @@ public class InitialCommonActivity
         super.onActivityResult(requestCode, resultCode, responseIntent);
         // The result returned from launching the intent from CloudRepo.sendSignInIntent()
         if (requestCode == Constants.REQUEST_CODE_SIGN_IN) {
-            CloudService.get().proceedWithFirebaseAuthAsync(responseIntent);
+            AuthService.get().proceedWithFirebaseAuthAsync(responseIntent);
         }
     }
 

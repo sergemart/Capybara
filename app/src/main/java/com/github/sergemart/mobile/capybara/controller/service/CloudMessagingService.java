@@ -6,12 +6,13 @@ import android.util.Log;
 import com.github.sergemart.mobile.capybara.BuildConfig;
 import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.Tools;
-import com.github.sergemart.mobile.capybara.data.source.CloudService;
-import com.github.sergemart.mobile.capybara.data.source.GeoService;
 import com.github.sergemart.mobile.capybara.data.MessageRepo;
 import com.github.sergemart.mobile.capybara.data.PreferenceRepo;
 import com.github.sergemart.mobile.capybara.data.events.GenericEvent;
 import com.github.sergemart.mobile.capybara.data.events.LocationEvent;
+import com.github.sergemart.mobile.capybara.data.source.AuthService;
+import com.github.sergemart.mobile.capybara.data.source.FunctionsService;
+import com.github.sergemart.mobile.capybara.data.source.GeoService;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -103,7 +104,7 @@ public class CloudMessagingService
 
         mDisposable.add(GeoService.get().getLocateMeSubject().subscribe(location -> {
             GeoService.get().stopLocationUpdates();
-            CloudService.get().sendLocationAsync(location);
+            FunctionsService.get().sendLocationAsync(location);
         }));
 
     }
@@ -116,7 +117,7 @@ public class CloudMessagingService
      */
     private void notifyOnNewDeviceToken(String newDeviceToken) {
         if (BuildConfig.DEBUG) Log.d(TAG, "New device token received, calling repository update method.");
-        CloudService.get().updateDeviceToken(newDeviceToken);
+        AuthService.get().updateDeviceToken(newDeviceToken);
     }
 
 

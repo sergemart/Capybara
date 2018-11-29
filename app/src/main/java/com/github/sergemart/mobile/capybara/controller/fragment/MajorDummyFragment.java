@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import com.github.sergemart.mobile.capybara.BuildConfig;
 import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
-import com.github.sergemart.mobile.capybara.data.source.CloudService;
+import com.github.sergemart.mobile.capybara.data.source.FunctionsService;
 import com.github.sergemart.mobile.capybara.data.source.GeoService;
 import com.google.android.material.button.MaterialButton;
 import com.jakewharton.rxbinding2.view.RxView;
@@ -148,7 +148,7 @@ public class MajorDummyFragment extends Fragment {
     private void setInstanceListeners() {
 
         // Set a listener to the "CreateFamily" result
-        mInstanceDisposable.add(CloudService.get().getCreateFamilySubject().subscribe(
+        mInstanceDisposable.add(FunctionsService.get().getCreateFamilySubject().subscribe(
             event -> {}
         ));
 
@@ -163,7 +163,7 @@ public class MajorDummyFragment extends Fragment {
     private void sendMyLocation() {
         this.locateMe();
         if (mCurrentLocation == null) return;
-        CloudService.get().sendLocationAsync(mCurrentLocation);
+        FunctionsService.get().sendLocationAsync(mCurrentLocation);
     }
 
 
@@ -171,7 +171,7 @@ public class MajorDummyFragment extends Fragment {
      * Create family data
      */
     private void createFamily() {
-        CloudService.get().createFamilyAsync();
+        FunctionsService.get().createFamilyAsync();
     }
 
 
@@ -179,7 +179,7 @@ public class MajorDummyFragment extends Fragment {
      * Create family member
      */
     private void createFamilyMember() {
-        CloudService.get().createFamilyMemberAsync("serge.martynov@gmail.com");
+        FunctionsService.get().createFamilyMemberAsync("serge.martynov@gmail.com");
     }
 
 
@@ -187,7 +187,7 @@ public class MajorDummyFragment extends Fragment {
      * Create family member
      */
     private void deleteFamilyMember() {
-        CloudService.get().deleteFamilyMemberAsync("serge.martynov@gmail.com");
+        FunctionsService.get().deleteFamilyMemberAsync("serge.martynov@gmail.com");
     }
 
 
@@ -195,7 +195,7 @@ public class MajorDummyFragment extends Fragment {
      * Create family member
      */
     private void sendInvite() {
-        CloudService.get().sendInviteAsync("serge.martynov@gmail.com");
+        FunctionsService.get().sendInviteAsync("serge.martynov@gmail.com");
     }
 
 

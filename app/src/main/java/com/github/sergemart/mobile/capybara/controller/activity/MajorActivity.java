@@ -7,7 +7,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.github.sergemart.mobile.capybara.R;
-import com.github.sergemart.mobile.capybara.data.source.CloudService;
+import com.github.sergemart.mobile.capybara.data.source.AuthService;
 import com.google.android.material.navigation.NavigationView;
 import com.squareup.picasso.Picasso;
 
@@ -45,10 +45,10 @@ public class MajorActivity
         TextView userNameTextView = mNavigationView.getHeaderView(0).findViewById(R.id.textView_user_name);
         TextView userEmailTextView = mNavigationView.getHeaderView(0).findViewById(R.id.textView_user_email);
 
-        userNameTextView.setText(CloudService.get().getCurrentUsername());
-        userEmailTextView.setText(CloudService.get().getCurrentUser().getEmail());
+        userNameTextView.setText(AuthService.get().getCurrentUsername());
+        userEmailTextView.setText(AuthService.get().getCurrentUser().getEmail());
         Picasso.get()
-            .load(CloudService.get().getCurrentUser().getPhotoUrl())
+            .load(AuthService.get().getCurrentUser().getPhotoUrl())
             .placeholder(R.mipmap.capybara_bighead)
             .into(thumbnailImageView)
         ;

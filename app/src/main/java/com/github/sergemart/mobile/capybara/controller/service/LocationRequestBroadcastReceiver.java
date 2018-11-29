@@ -9,7 +9,7 @@ import android.util.Log;
 import com.github.sergemart.mobile.capybara.App;
 import com.github.sergemart.mobile.capybara.BuildConfig;
 import com.github.sergemart.mobile.capybara.Constants;
-import com.github.sergemart.mobile.capybara.data.source.CloudService;
+import com.github.sergemart.mobile.capybara.data.source.FunctionsService;
 import com.github.sergemart.mobile.capybara.data.source.GeoService;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationResult;
@@ -34,7 +34,7 @@ public class LocationRequestBroadcastReceiver extends BroadcastReceiver {
                 if (locationResult == null) return;
                 for (Location location : locationResult.getLocations()) {
                     if (BuildConfig.DEBUG) Log.d(TAG, "Got a fix: " + location);
-                    CloudService.get().sendLocationAsync(location);
+                    FunctionsService.get().sendLocationAsync(location);
                 }
             }
         };

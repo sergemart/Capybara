@@ -13,10 +13,10 @@ import android.widget.Toast;
 
 import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
-import com.github.sergemart.mobile.capybara.data.source.CloudService;
 import com.github.sergemart.mobile.capybara.data.ContactRepo;
 import com.github.sergemart.mobile.capybara.data.events.GenericEvent;
 import com.github.sergemart.mobile.capybara.data.model.ContactData;
+import com.github.sergemart.mobile.capybara.data.source.FunctionsService;
 import com.github.sergemart.mobile.capybara.viewmodel.MajorSharedViewModel;
 
 import java.util.ArrayList;
@@ -186,7 +186,7 @@ public class MajorInviteFragment
 
         // Add a listener to SendInvite event
         // Update a list item with a transaction result
-        pInstanceDisposable.add(CloudService.get().getSendInviteSubject()
+        pInstanceDisposable.add(FunctionsService.get().getSendInviteSubject()
             .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
             .subscribe(inviteResult -> {
                 int position = this.getContactIndexByEmail((String)inviteResult.getData());
@@ -268,7 +268,7 @@ public class MajorInviteFragment
      */
     private void sendInvite() {
         for (String contactEmail : mSelectionTracker.getSelection()) {
-            CloudService.get().sendInviteAsync(contactEmail);
+            FunctionsService.get().sendInviteAsync(contactEmail);
         }
         Toast.makeText(pActivity, R.string.msg_invite_sent, Toast.LENGTH_LONG).show();
     }
