@@ -1,4 +1,4 @@
-package com.github.sergemart.mobile.capybara.controller.service;
+package com.github.sergemart.mobile.capybara.controller.background;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

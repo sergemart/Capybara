@@ -27,7 +27,7 @@
         <activity android:name=".controller.activity.MinorActivity" />
         <activity android:name=".controller.activity.ErrorActivity" />
 
-        <service android:name=".controller.service.CloudMessagingService"
+        <service android:name=".controller.background.CloudMessagingService"
             android:stopWithTask="true"
             tools:ignore="ExportedService">                                                         <!-- security checks performed at runtime -->
             <intent-filter>
@@ -35,7 +35,7 @@
             </intent-filter>
         </service>
 
-        <receiver android:name=".controller.service.LocationRequestBroadcastReceiver"
+        <receiver android:name=".controller.background.LocationRequestBroadcastReceiver"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.github.sergemart.mobile.capybara.SEND_LOCATION" />

@@ -89,6 +89,11 @@ public final class Constants {
     public static final String INTENT_ACTION_SEND_LOCATION = "com.github.sergemart.mobile.capybara.SEND_LOCATION";
 
 
+    // ----------------------- Firestore collection names
+
+    public static final String FIRESTORE_COLLECTION_USERS = "users";
+
+
     // ----------------------- Permissions
 
     public static final String[] LOCATION_PERMISSIONS = new String[]{
