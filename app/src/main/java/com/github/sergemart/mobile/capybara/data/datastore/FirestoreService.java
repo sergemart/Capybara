@@ -13,13 +13,9 @@ import com.github.sergemart.mobile.capybara.exceptions.FirebaseDbException;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import io.reactivex.Observable;
-import io.reactivex.observables.ConnectableObservable;
-import io.reactivex.schedulers.Schedulers;
-import io.reactivex.subjects.PublishSubject;
 
 import static com.github.sergemart.mobile.capybara.data.events.Result.FAILURE;
 import static com.github.sergemart.mobile.capybara.data.events.Result.SUCCESS;
@@ -52,54 +48,11 @@ public class FirestoreService {
 
     // --------------------------- Member variables
 
-    private final PublishSubject<GenericEvent> mPublishDeviceTokenSubject = PublishSubject.create();
-
     private final Context mContext;
     private FirebaseFirestore mFirebaseFirestore;
 
 
-    // --------------------------- Observable getters
-
-    public PublishSubject<GenericEvent> getPublishDeviceTokenSubject() {
-        return mPublishDeviceTokenSubject;
-    }
-
-
     // --------------------------- The interface
-
-    /**
-     * Publish device token on a backend
-     * Send an event notifying on success or failure
-     */
-    public void publishDeviceTokenAsync(String deviceToken) {
-        if (deviceToken == null || deviceToken.equals("")) {
-            if (BuildConfig.DEBUG) Log.e(TAG, "No device token set while attempting to publish it on backend; skipping");
-            return;
-        }
-        if (!AuthService.get().isAuthenticated()) {
-            if (BuildConfig.DEBUG) Log.e(TAG, "User not authenticated while attempting to publish device token on backend; skipping");
-            return;
-        }
-
-        Map<String, Object> data = new HashMap<>();
-        data.put(Constants.KEY_DEVICE_TOKEN, deviceToken);
-
-        mFirebaseFirestore
-            .collection(Constants.FIRESTORE_COLLECTION_USERS)
-            .document(AuthService.get().getCurrentUser().getUid())
-            .set(data, SetOptions.merge())
-            .addOnSuccessListener(result -> {
-                if (BuildConfig.DEBUG) Log.d(TAG, "Device token published :" + deviceToken);
-                mPublishDeviceTokenSubject.onNext(GenericEvent.of(SUCCESS));
-            })
-            .addOnFailureListener(e -> {
-                String errorMessage = mContext.getString(R.string.exception_firebase_device_token_not_published);
-                if (BuildConfig.DEBUG) Log.e(TAG, errorMessage + ": " +  e.getMessage());
-                mPublishDeviceTokenSubject.onNext(GenericEvent.of(FAILURE).setException( new FirebaseDbException(errorMessage, e)) );
-            })
-        ;
-    }
-
 
     /**
      * Create or update a user on a backend

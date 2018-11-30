@@ -60,7 +60,6 @@ public class FunctionsService {
 
     // --------------------------- Member variables
 
-    private final PublishSubject<GenericEvent> mPublishDeviceTokenSubject = PublishSubject.create();
     private final PublishSubject<GenericEvent> mCreateFamilySubject = PublishSubject.create();
     private final PublishSubject<GenericEvent> mCreateFamilyMemberSubject = PublishSubject.create();
     private final PublishSubject<GenericEvent> mDeleteFamilyMemberSubject = PublishSubject.create();
@@ -75,11 +74,6 @@ public class FunctionsService {
 
 
     // --------------------------- Observable getters
-
-    public PublishSubject<GenericEvent> getPublishDeviceTokenSubject() {
-        return mPublishDeviceTokenSubject;
-    }
-
 
     public PublishSubject<GenericEvent> getCreateFamilySubject() {
         return mCreateFamilySubject;
@@ -118,60 +112,6 @@ public class FunctionsService {
 
     public PublishSubject<GenericEvent> getSendLocationRequestSubject() {
         return mSendLocationRequestSubject;
-    }
-
-
-    // --------------------------- The interface: Manage the device token
-
-    /**
-     * Publish device token on a backend using custom Firebase callable function.
-     * Send an event notifying on success or failure.
-     * REPLACED TO THE DIRECT FIRESTORE CALL
-     */
-    @SuppressWarnings("unchecked")
-    public void publishDeviceTokenAsync(String deviceToken) {
-        if (deviceToken == null || deviceToken.equals("")) {
-            if (BuildConfig.DEBUG) Log.e(TAG, "No device token set while attempting to publish it on backend; skipping");
-            return;
-        }
-        if (!AuthService.get().isAuthenticated()) {
-            if (BuildConfig.DEBUG) Log.e(TAG, "User not authenticated while attempting to publish device token on backend; skipping");
-            return;
-        }
-
-        Map<String, Object> data = new HashMap<>();
-        data.put(Constants.KEY_DEVICE_TOKEN, deviceToken);
-
-        mFirebaseFunctions
-            .getHttpsCallable("updateDeviceToken")
-            .call(data)
-            .continueWith(task -> {
-                Map<String, Object> result = null;
-                try {
-                    result = (Map<String, Object>) Objects.requireNonNull(task.getResult()).getData(); // throws an exception on error
-                    // if success:
-                    if (BuildConfig.DEBUG) Log.d(TAG, "Device token published :" + deviceToken);
-                    mPublishDeviceTokenSubject.onNext(GenericEvent.of(SUCCESS));
-                } catch (Exception e) {
-                    String errorMessage = mContext.getString(R.string.exception_firebase_device_token_not_published);
-                    if (BuildConfig.DEBUG) Log.e(TAG, errorMessage + ": " +  e.getMessage());
-                    mPublishDeviceTokenSubject.onNext(GenericEvent.of(FAILURE).setException( new FirebaseFunctionException(errorMessage, e)) );
-                }
-                return result;
-            })
-            .addOnCompleteListener(task -> {
-                if (!task.isSuccessful() && task.getException() != null) {
-                    Exception e = task.getException();
-                    String errorMessage = mContext.getString(R.string.exception_firebase_device_token_not_published);
-                    if (BuildConfig.DEBUG) Log.e(TAG, errorMessage + ": " +  e.getMessage());
-                    mPublishDeviceTokenSubject.onNext(GenericEvent.of(FAILURE).setException( new FirebaseFunctionException(errorMessage, e)) );
-                } else if (!task.isSuccessful()) {
-                    String errorMessage = mContext.getString(R.string.exception_firebase_device_token_not_published);
-                    if (BuildConfig.DEBUG) Log.e(TAG, errorMessage + "; no exception provided");
-                    mPublishDeviceTokenSubject.onNext(GenericEvent.of(FAILURE).setException( new FirebaseFunctionException(errorMessage)) );
-                }
-            })
-        ;
     }
 
 

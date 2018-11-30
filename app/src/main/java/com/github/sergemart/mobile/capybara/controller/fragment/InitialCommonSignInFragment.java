@@ -132,22 +132,6 @@ public class InitialCommonSignInFragment
             }
         }));
 
-        // Set a listener to the "PublishDeviceToken" event
-        pInstanceDisposable.add(FirestoreService.get().getPublishDeviceTokenSubject().subscribe(event -> {
-            switch (event.getResult()) {
-                case SUCCESS:
-                    if (BuildConfig.DEBUG) Log.d(TAG, "PublishDeviceTokenResult.SUCCESS event received; emmitting CommonSetupFinished event");
-                    mInitialCommonSharedViewModel.getCommonSetupFinishedSubject().onNext(GenericEvent.of(SUCCESS));
-                    break;
-                case FAILURE:
-                    if (BuildConfig.DEBUG) Log.d(TAG, "PublishDeviceTokenResult.FAILURE event received; invoking retry dialog");
-                    mCause = event.getException();
-                    this.showSigninRetryDialog(mCause);
-                    break;
-                default:
-            }
-        }));
-
     }
 
 
@@ -211,7 +195,18 @@ public class InitialCommonSignInFragment
     private void updateDeviceToken() {
         String deviceToken = DeviceTokenRepo.get().getCurrentDeviceToken();
         pViewDisposable.add(DeviceTokenRepo.get().updateDeviceToken(deviceToken).subscribe(event -> {
-
+            switch (event.getResult()) {
+                case SUCCESS:
+                    if (BuildConfig.DEBUG) Log.d(TAG, "Device token successfully updated; emitting CommonSetupFinished event");
+                    mInitialCommonSharedViewModel.getCommonSetupFinishedSubject().onNext(GenericEvent.of(SUCCESS));
+                    break;
+                case FAILURE:
+                    if (BuildConfig.DEBUG) Log.d(TAG, "Error while updating the device token; invoking retry dialog");
+                    mCause = event.getException();
+                    this.showSigninRetryDialog(mCause);
+                    break;
+                default:
+            }
         }));
     }
 
