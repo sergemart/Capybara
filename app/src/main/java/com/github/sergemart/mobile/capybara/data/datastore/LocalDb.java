@@ -1,4 +1,4 @@
-package com.github.sergemart.mobile.capybara.data.source;
+package com.github.sergemart.mobile.capybara.data.datastore;
 
 import com.github.sergemart.mobile.capybara.App;
 import com.github.sergemart.mobile.capybara.Constants;

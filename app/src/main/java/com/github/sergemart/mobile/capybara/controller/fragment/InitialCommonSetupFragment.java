@@ -9,9 +9,9 @@ import android.view.ViewGroup;
 
 import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
-import com.github.sergemart.mobile.capybara.data.source.AuthService;
-import com.github.sergemart.mobile.capybara.data.source.GeoService;
-import com.github.sergemart.mobile.capybara.data.PreferenceRepo;
+import com.github.sergemart.mobile.capybara.data.datastore.AuthService;
+import com.github.sergemart.mobile.capybara.data.datastore.GeoService;
+import com.github.sergemart.mobile.capybara.data.datastore.PreferenceStore;
 import com.github.sergemart.mobile.capybara.data.events.GenericEvent;
 import com.github.sergemart.mobile.capybara.controller.dialog.GrantPermissionRetryDialogFragment;
 import com.github.sergemart.mobile.capybara.viewmodel.InitialCommonSharedViewModel;
@@ -122,13 +122,13 @@ public class InitialCommonSetupFragment
 
         // Set a listener to the "I Am a Major" button
         pViewDisposable.add(RxView.clicks(mIAmMajorButton).subscribe(event -> {
-            PreferenceRepo.storeAppMode(Constants.APP_MODE_MAJOR);
+            PreferenceStore.storeAppMode(Constants.APP_MODE_MAJOR);
             this.requestLocationPermissions();
         }));
 
         // Set a listener to the "I Am a Minor" button
         pViewDisposable.add(RxView.clicks(mIAmMinorButton).subscribe(event -> {
-            PreferenceRepo.storeAppMode(Constants.APP_MODE_MINOR);
+            PreferenceStore.storeAppMode(Constants.APP_MODE_MINOR);
             this.requestLocationPermissions();
         }));
     }

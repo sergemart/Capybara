@@ -7,7 +7,7 @@ import android.os.Bundle;
 
 import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
-import com.github.sergemart.mobile.capybara.data.ResRepo;
+import com.github.sergemart.mobile.capybara.data.datastore.ResStore;
 
 import java.util.Objects;
 
@@ -38,9 +38,9 @@ public class GrantPermissionRetryDialogFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         AlertDialog alertDialog = new AlertDialog.Builder(Objects.requireNonNull( super.getActivity() ))
-            .setTitle(ResRepo.get().getGrantPermissionRetryDialogTitleR())
-            .setMessage(ResRepo.get().getGrantPermissionRetryDialogMessageR())
-            .setIcon(ResRepo.get().getGrantPermissionRetryDialogIconR())
+            .setTitle(ResStore.get().getGrantPermissionRetryDialogTitleR())
+            .setMessage(ResStore.get().getGrantPermissionRetryDialogMessageR())
+            .setIcon(ResStore.get().getGrantPermissionRetryDialogIconR())
             .setPositiveButton(R.string.action_retry, (dialog, button) ->
                 Objects.requireNonNull(super.getParentFragment()).onActivityResult(                 // use Fragment#onActivityResult() as a callback
                     Constants.REQUEST_CODE_DIALOG_FRAGMENT,

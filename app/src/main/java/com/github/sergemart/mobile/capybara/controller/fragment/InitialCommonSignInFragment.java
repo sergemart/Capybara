@@ -13,9 +13,9 @@ import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
 import com.github.sergemart.mobile.capybara.controller.dialog.SignInRetryDialogFragment;
 import com.github.sergemart.mobile.capybara.data.events.GenericEvent;
-import com.github.sergemart.mobile.capybara.data.source.AuthService;
-import com.github.sergemart.mobile.capybara.data.source.FirestoreService;
-import com.github.sergemart.mobile.capybara.data.source.FunctionsService;
+import com.github.sergemart.mobile.capybara.data.datastore.AuthService;
+import com.github.sergemart.mobile.capybara.data.datastore.FirestoreService;
+import com.github.sergemart.mobile.capybara.data.repo.DeviceTokenRepo;
 import com.github.sergemart.mobile.capybara.viewmodel.InitialCommonSharedViewModel;
 import com.google.android.material.button.MaterialButton;
 import com.jakewharton.rxbinding2.view.RxView;
@@ -121,7 +121,7 @@ public class InitialCommonSignInFragment
             switch (event.getResult()) {
                 case SUCCESS:
                     if (BuildConfig.DEBUG) Log.d(TAG, "GetDeviceTokenResult.SUCCESS event received; publishing device token");
-                    this.publishDeviceToken();
+                    this.updateDeviceToken();
                     break;
                 case FAILURE:
                     if (BuildConfig.DEBUG) Log.d(TAG, "GetDeviceTokenResult.FAILURE event received; invoking retry dialog");
@@ -206,11 +206,13 @@ public class InitialCommonSignInFragment
 
 
     /**
-     * Publish the Firebase Messaging device token
+     * Update the Firebase Messaging device token in the app and on the backend
      */
-    private void publishDeviceToken() {
-        String deviceToken = AuthService.get().getDeviceToken();
-        FirestoreService.get().publishDeviceTokenAsync(deviceToken);
+    private void updateDeviceToken() {
+        String deviceToken = DeviceTokenRepo.get().getCurrentDeviceToken();
+        pViewDisposable.add(DeviceTokenRepo.get().updateDeviceToken(deviceToken).subscribe(event -> {
+
+        }));
     }
 
 }

@@ -4,7 +4,7 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.location.Location;
 
-import com.github.sergemart.mobile.capybara.data.PreferenceRepo;
+import com.github.sergemart.mobile.capybara.data.datastore.PreferenceStore;
 import com.github.sergemart.mobile.capybara.controller.activity.InitialMajorActivity;
 import com.github.sergemart.mobile.capybara.controller.activity.InitialMinorActivity;
 import com.google.gson.Gson;
@@ -85,7 +85,7 @@ public class Tools {
      */
     public void showGeneralNotification(String contentTitle, String contentText) {
         Intent intent;
-        if (PreferenceRepo.getAppMode() == Constants.APP_MODE_MAJOR) {
+        if (PreferenceStore.getAppMode() == Constants.APP_MODE_MAJOR) {
             intent = InitialMajorActivity.newIntent(App.getContext());
         } else {
             intent = InitialMinorActivity.newIntent(App.getContext());

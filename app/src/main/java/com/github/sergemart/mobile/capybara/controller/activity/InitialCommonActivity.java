@@ -8,8 +8,8 @@ import com.github.sergemart.mobile.capybara.App;
 import com.github.sergemart.mobile.capybara.BuildConfig;
 import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
-import com.github.sergemart.mobile.capybara.data.source.AuthService;
-import com.github.sergemart.mobile.capybara.data.PreferenceRepo;
+import com.github.sergemart.mobile.capybara.data.datastore.AuthService;
+import com.github.sergemart.mobile.capybara.data.datastore.PreferenceStore;
 import com.github.sergemart.mobile.capybara.viewmodel.InitialCommonSharedViewModel;
 
 import java.lang.ref.WeakReference;
@@ -50,8 +50,8 @@ public class InitialCommonActivity
         // Otherwise implicitly delegate control to the local nav AAC
         if (
             (
-                PreferenceRepo.getAppMode() == Constants.APP_MODE_MAJOR ||
-                PreferenceRepo.getAppMode() == Constants.APP_MODE_MINOR
+                PreferenceStore.getAppMode() == Constants.APP_MODE_MAJOR ||
+                PreferenceStore.getAppMode() == Constants.APP_MODE_MINOR
             ) &&
                 AuthService.get().isAuthenticated()
         ){
@@ -104,7 +104,7 @@ public class InitialCommonActivity
     private void leaveNavGraph() {
         if (BuildConfig.DEBUG) Log.d(TAG, "Leaving the nav graph");
         Intent intent;
-        if (PreferenceRepo.getAppMode() == Constants.APP_MODE_MAJOR) {
+        if (PreferenceStore.getAppMode() == Constants.APP_MODE_MAJOR) {
             intent = InitialMajorActivity.newIntent(this);
         } else {
             intent = InitialMinorActivity.newIntent(this);

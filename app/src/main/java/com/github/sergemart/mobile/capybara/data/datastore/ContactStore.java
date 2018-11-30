@@ -1,4 +1,4 @@
-package com.github.sergemart.mobile.capybara.data;
+package com.github.sergemart.mobile.capybara.data.datastore;
 
 import android.annotation.SuppressLint;
 import android.content.ContentResolver;
@@ -38,16 +38,16 @@ import static com.github.sergemart.mobile.capybara.data.events.Result.SUCCESS;
 
 
 // Singleton
-public class ContactRepo {
+public class ContactStore {
 
-    private static final String TAG = ContactRepo.class.getSimpleName();
+    private static final String TAG = ContactStore.class.getSimpleName();
 
     @SuppressLint("StaticFieldLeak")                                                                // OK for the application context
-    private static ContactRepo sInstance = new ContactRepo();
+    private static ContactStore sInstance = new ContactStore();
 
 
     // Private constructor
-    private ContactRepo() {
+    private ContactStore() {
 
         // Init member variables
         mContext = App.getContext();
@@ -58,8 +58,8 @@ public class ContactRepo {
 
 
     // Factory method
-    public static ContactRepo get() {
-        if(sInstance == null) sInstance = new ContactRepo();
+    public static ContactStore get() {
+        if(sInstance == null) sInstance = new ContactStore();
         return sInstance;
     }
 

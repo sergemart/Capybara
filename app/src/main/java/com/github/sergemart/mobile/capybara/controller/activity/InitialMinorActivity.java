@@ -8,7 +8,7 @@ import android.util.Log;
 import com.github.sergemart.mobile.capybara.App;
 import com.github.sergemart.mobile.capybara.BuildConfig;
 import com.github.sergemart.mobile.capybara.R;
-import com.github.sergemart.mobile.capybara.data.PreferenceRepo;
+import com.github.sergemart.mobile.capybara.data.datastore.PreferenceStore;
 import com.github.sergemart.mobile.capybara.viewmodel.InitialMinorSharedViewModel;
 
 import java.lang.ref.WeakReference;
@@ -47,7 +47,7 @@ public class InitialMinorActivity
         super.onStart();
         // Leave the major initial graph if the FAMILY IS JOINED.
         // Otherwise implicitly delegate control to the local nav AAC
-        if (PreferenceRepo.getFamilyJoined()) this.leaveNavGraph();
+        if (PreferenceStore.getFamilyJoined()) this.leaveNavGraph();
     }
 
 

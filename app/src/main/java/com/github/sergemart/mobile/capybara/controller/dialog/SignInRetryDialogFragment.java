@@ -8,7 +8,7 @@ import android.os.Bundle;
 
 import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
-import com.github.sergemart.mobile.capybara.data.ResRepo;
+import com.github.sergemart.mobile.capybara.data.datastore.ResStore;
 
 import java.util.Objects;
 
@@ -49,9 +49,9 @@ public class SignInRetryDialogFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         AlertDialog alertDialog = new AlertDialog.Builder(Objects.requireNonNull( super.getActivity() ))
-            .setTitle(ResRepo.get().getSignInRetryDialogTitleR(mCause))
-            .setMessage(ResRepo.get().getSignInRetryDialogMessageR(mCause))
-            .setIcon(ResRepo.get().getSignInRetryDialogIconR(mCause))
+            .setTitle(ResStore.get().getSignInRetryDialogTitleR(mCause))
+            .setMessage(ResStore.get().getSignInRetryDialogMessageR(mCause))
+            .setIcon(ResStore.get().getSignInRetryDialogIconR(mCause))
             .setPositiveButton(R.string.action_retry, (dialog, button) ->
                 Objects.requireNonNull(super.getParentFragment()).onActivityResult(                 // use Fragment#onActivityResult() as a callback
                     Constants.REQUEST_CODE_DIALOG_FRAGMENT,

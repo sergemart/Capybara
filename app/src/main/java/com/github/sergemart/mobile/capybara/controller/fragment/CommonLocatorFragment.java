@@ -7,10 +7,10 @@ import android.view.ViewGroup;
 
 import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
-import com.github.sergemart.mobile.capybara.data.MessageRepo;
+import com.github.sergemart.mobile.capybara.data.repo.MessageRepo;
 import com.github.sergemart.mobile.capybara.data.model.FamilyMember;
-import com.github.sergemart.mobile.capybara.data.source.FunctionsService;
-import com.github.sergemart.mobile.capybara.data.source.GeoService;
+import com.github.sergemart.mobile.capybara.data.datastore.FunctionsService;
+import com.github.sergemart.mobile.capybara.data.datastore.GeoService;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;

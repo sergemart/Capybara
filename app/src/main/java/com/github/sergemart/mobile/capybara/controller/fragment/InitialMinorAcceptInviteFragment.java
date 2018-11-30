@@ -12,11 +12,10 @@ import android.widget.TextView;
 import com.github.sergemart.mobile.capybara.BuildConfig;
 import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
-import com.github.sergemart.mobile.capybara.data.source.AuthService;
-import com.github.sergemart.mobile.capybara.data.MessageRepo;
-import com.github.sergemart.mobile.capybara.data.PreferenceRepo;
+import com.github.sergemart.mobile.capybara.data.repo.MessageRepo;
+import com.github.sergemart.mobile.capybara.data.datastore.PreferenceStore;
 import com.github.sergemart.mobile.capybara.data.events.GenericEvent;
-import com.github.sergemart.mobile.capybara.data.source.FunctionsService;
+import com.github.sergemart.mobile.capybara.data.datastore.FunctionsService;
 import com.github.sergemart.mobile.capybara.exceptions.FirebaseMessagingException;
 import com.github.sergemart.mobile.capybara.controller.dialog.JoinFamilyRetryDialogFragment;
 import com.github.sergemart.mobile.capybara.viewmodel.InitialMinorSharedViewModel;
@@ -110,12 +109,12 @@ public class InitialMinorAcceptInviteFragment
         pInstanceDisposable.add(FunctionsService.get().getJoinFamilySubject().subscribe(event -> {
             switch (event.getResult()) {
                 case SUCCESS:
-                    PreferenceRepo.storeFamilyJoined(true);
+                    PreferenceStore.storeFamilyJoined(true);
                     if (BuildConfig.DEBUG) Log.d(TAG, "JoinFamily.SUCCESS event received; emitting MinorSetupFinished event");
                     mInitialMinorSharedViewModel.getMinorSetupFinishedSubject().onNext(GenericEvent.of(SUCCESS));
                     break;
                 case NOT_FOUND:
-                    PreferenceRepo.storeFamilyJoined(false);
+                    PreferenceStore.storeFamilyJoined(false);
                     if (BuildConfig.DEBUG) Log.d(TAG, "JoinFamily.NOT_FOUND event received; emitting MinorSetupFinished event");
                     mCause = event.getException();
                     mInitialMinorSharedViewModel.getMinorSetupFinishedSubject().onNext(GenericEvent.of(FAILURE).setException(mCause));

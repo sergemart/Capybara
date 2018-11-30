@@ -1,4 +1,4 @@
-package com.github.sergemart.mobile.capybara.data;
+package com.github.sergemart.mobile.capybara.data.datastore;
 
 import android.preference.PreferenceManager;
 
@@ -6,7 +6,7 @@ import com.github.sergemart.mobile.capybara.App;
 import com.github.sergemart.mobile.capybara.Constants;
 
 
-public class PreferenceRepo {
+public class PreferenceStore {
 
     // --------------------------- The interface
 

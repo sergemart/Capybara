@@ -7,7 +7,7 @@ import android.os.Bundle;
 
 import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
-import com.github.sergemart.mobile.capybara.data.ResRepo;
+import com.github.sergemart.mobile.capybara.data.datastore.ResStore;
 
 import java.util.Objects;
 
@@ -48,9 +48,9 @@ public class JoinFamilyRetryDialogFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         AlertDialog alertDialog = new AlertDialog.Builder(Objects.requireNonNull( super.getActivity() ))
-            .setTitle(ResRepo.get().getJoinFamilyRetryDialogTitleR(mCause))
-            .setMessage(ResRepo.get().getJoinFamilyRetryDialogMessageR(mCause))
-            .setIcon(ResRepo.get().getJoinFamilyRetryDialogIconR(mCause))
+            .setTitle(ResStore.get().getJoinFamilyRetryDialogTitleR(mCause))
+            .setMessage(ResStore.get().getJoinFamilyRetryDialogMessageR(mCause))
+            .setIcon(ResStore.get().getJoinFamilyRetryDialogIconR(mCause))
             .setPositiveButton(R.string.action_retry, (dialog, button) ->
                 Objects.requireNonNull(super.getParentFragment()).onActivityResult(                 // use Fragment#onActivityResult() as a callback
                     Constants.REQUEST_CODE_DIALOG_FRAGMENT,

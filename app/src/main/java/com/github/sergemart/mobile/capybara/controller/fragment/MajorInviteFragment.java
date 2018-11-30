@@ -13,10 +13,10 @@ import android.widget.Toast;
 
 import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
-import com.github.sergemart.mobile.capybara.data.ContactRepo;
+import com.github.sergemart.mobile.capybara.data.datastore.ContactStore;
 import com.github.sergemart.mobile.capybara.data.events.GenericEvent;
 import com.github.sergemart.mobile.capybara.data.model.ContactData;
-import com.github.sergemart.mobile.capybara.data.source.FunctionsService;
+import com.github.sergemart.mobile.capybara.data.datastore.FunctionsService;
 import com.github.sergemart.mobile.capybara.viewmodel.MajorSharedViewModel;
 
 import java.util.ArrayList;
@@ -121,7 +121,7 @@ public class MajorInviteFragment
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
             case Constants.REQUEST_CODE_READ_CONTACTS_PERMISSIONS:
-                if ( ContactRepo.get().isPermissionGranted() ) this.getContacts();                 // 2nd try, if granted
+                if ( ContactStore.get().isPermissionGranted() ) this.getContacts();                 // 2nd try, if granted
             default:
                 super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
@@ -214,9 +214,9 @@ public class MajorInviteFragment
     @SuppressWarnings({"unchecked", "RedundantCast"})
     private void getContacts() {
 
-        if (ContactRepo.get().isPermissionGranted() ) {
+        if (ContactStore.get().isPermissionGranted() ) {
 
-            pInstanceDisposable.add(ContactRepo.get().getContactsObservable()
+            pInstanceDisposable.add(ContactStore.get().getContactsObservable()
                 .observeOn(Schedulers.io())                                                         // switch to background
                 .doOnNext(contactsResult -> {                                                       // load contacts
                     switch (contactsResult.getResult()) {
@@ -238,7 +238,7 @@ public class MajorInviteFragment
                 .flatMap(contactsResult ->  Observable.fromIterable( (List)((GenericEvent)contactsResult).getData() )) // split contacts
                 .flatMap(contact -> {                                                               // map every contact to bitmap observable
                     String contactEmail = ((ContactData) contact).getEmail();
-                    return ContactRepo.get().getEnrichedContactObservable(contactEmail);
+                    return ContactStore.get().getEnrichedContactObservable(contactEmail);
                 })
                 .observeOn(AndroidSchedulers.mainThread())                                          // UI operations follows, main thread required
                 .subscribe(bitmapEvent -> {                                                         // update contact list with thumbnails
@@ -255,7 +255,7 @@ public class MajorInviteFragment
                     }
                 })
             );
-            ContactRepo.get().getContactsObservable().connect();                                   // init multicasting
+            ContactStore.get().getContactsObservable().connect();                                   // init multicasting
 
         } else {
             super.requestPermissions(Constants.CONTACTS_PERMISSIONS, Constants.REQUEST_CODE_READ_CONTACTS_PERMISSIONS);

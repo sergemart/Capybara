@@ -9,8 +9,8 @@ import android.util.Log;
 import com.github.sergemart.mobile.capybara.App;
 import com.github.sergemart.mobile.capybara.BuildConfig;
 import com.github.sergemart.mobile.capybara.Constants;
-import com.github.sergemart.mobile.capybara.data.source.FunctionsService;
-import com.github.sergemart.mobile.capybara.data.source.GeoService;
+import com.github.sergemart.mobile.capybara.data.datastore.FunctionsService;
+import com.github.sergemart.mobile.capybara.data.datastore.GeoService;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationResult;
 

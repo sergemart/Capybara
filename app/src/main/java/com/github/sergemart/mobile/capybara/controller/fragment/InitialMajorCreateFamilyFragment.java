@@ -12,9 +12,9 @@ import com.github.sergemart.mobile.capybara.BuildConfig;
 import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
 import com.github.sergemart.mobile.capybara.controller.dialog.CreateFamilyRetryDialogFragment;
-import com.github.sergemart.mobile.capybara.data.PreferenceRepo;
+import com.github.sergemart.mobile.capybara.data.datastore.PreferenceStore;
 import com.github.sergemart.mobile.capybara.data.events.GenericEvent;
-import com.github.sergemart.mobile.capybara.data.source.FunctionsService;
+import com.github.sergemart.mobile.capybara.data.datastore.FunctionsService;
 import com.github.sergemart.mobile.capybara.viewmodel.InitialMajorSharedViewModel;
 
 import java.util.Objects;
@@ -102,12 +102,12 @@ public class InitialMajorCreateFamilyFragment
         pInstanceDisposable.add(FunctionsService.get().getCreateFamilySubject().subscribe(event -> {
             switch (event.getResult()) {
                 case SUCCESS:
-                    PreferenceRepo.storeFamilyCreated(true);
+                    PreferenceStore.storeFamilyCreated(true);
                     if (BuildConfig.DEBUG) Log.d(TAG, "CreateFamilyResult.CREATED event received; emitting MajorSetupFinished event");
                     mInitialMajorSharedViewModel.getMajorSetupFinishedSubject().onNext(GenericEvent.of(SUCCESS));
                     break;
                 case EXIST:
-                    PreferenceRepo.storeFamilyCreated(true);
+                    PreferenceStore.storeFamilyCreated(true);
                     if (BuildConfig.DEBUG) Log.d(TAG, "CreateFamilyResult.EXIST event received; emitting MajorSetupFinished event");
                     mInitialMajorSharedViewModel.getMajorSetupFinishedSubject().onNext(GenericEvent.of(SUCCESS));
                     break;

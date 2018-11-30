@@ -10,8 +10,8 @@ import android.view.ViewGroup;
 import com.github.sergemart.mobile.capybara.BuildConfig;
 import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
-import com.github.sergemart.mobile.capybara.data.source.FunctionsService;
-import com.github.sergemart.mobile.capybara.data.source.GeoService;
+import com.github.sergemart.mobile.capybara.data.datastore.FunctionsService;
+import com.github.sergemart.mobile.capybara.data.datastore.GeoService;
 import com.google.android.material.button.MaterialButton;
 import com.jakewharton.rxbinding2.view.RxView;
 

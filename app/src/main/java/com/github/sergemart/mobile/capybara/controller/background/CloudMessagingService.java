@@ -6,13 +6,14 @@ import android.util.Log;
 import com.github.sergemart.mobile.capybara.BuildConfig;
 import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.Tools;
-import com.github.sergemart.mobile.capybara.data.MessageRepo;
-import com.github.sergemart.mobile.capybara.data.PreferenceRepo;
+import com.github.sergemart.mobile.capybara.data.repo.DeviceTokenRepo;
+import com.github.sergemart.mobile.capybara.data.repo.MessageRepo;
+import com.github.sergemart.mobile.capybara.data.datastore.PreferenceStore;
 import com.github.sergemart.mobile.capybara.data.events.GenericEvent;
 import com.github.sergemart.mobile.capybara.data.events.LocationEvent;
-import com.github.sergemart.mobile.capybara.data.source.AuthService;
-import com.github.sergemart.mobile.capybara.data.source.FunctionsService;
-import com.github.sergemart.mobile.capybara.data.source.GeoService;
+import com.github.sergemart.mobile.capybara.data.datastore.AuthService;
+import com.github.sergemart.mobile.capybara.data.datastore.FunctionsService;
+import com.github.sergemart.mobile.capybara.data.datastore.GeoService;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -52,7 +53,7 @@ public class CloudMessagingService
     @Override
     public void onNewToken(String newDeviceToken) {
         super.onNewToken(newDeviceToken);
-        this.notifyOnNewDeviceToken(newDeviceToken);
+        this.updateDeviceToken(newDeviceToken);
     }
 
 
@@ -95,6 +96,16 @@ public class CloudMessagingService
     }
 
 
+    /**
+     * Instance clean-up actions
+     */
+    @Override
+    public void onDestroy() {
+        mDisposable.clear();
+        super.onDestroy();
+    }
+
+
     // --------------------------- Service lifecycle subroutines
 
     /**
@@ -113,11 +124,17 @@ public class CloudMessagingService
     // --------------------------- Use cases
 
     /**
-     * Notify the app on the new Firebase Messaging device token when received one from the cloud
+     * Update the app and the backend with the new Firebase Messaging device token
      */
-    private void notifyOnNewDeviceToken(String newDeviceToken) {
-        if (BuildConfig.DEBUG) Log.d(TAG, "New device token received, calling repository update method.");
-        AuthService.get().updateDeviceToken(newDeviceToken);
+    private void updateDeviceToken(String newDeviceToken) {
+        if (BuildConfig.DEBUG) Log.d(TAG, "New device token received, updating");
+
+        String currentDeviceToken = DeviceTokenRepo.get().getCurrentDeviceToken();
+        if (newDeviceToken.equals(currentDeviceToken)) {                                            // break the possible loop
+            if (BuildConfig.DEBUG) Log.d(TAG, "New device token actually not new; skipping update");
+            return;
+        }
+        mDisposable.add(DeviceTokenRepo.get().updateDeviceToken(newDeviceToken).subscribe(event -> {})); // update the token
     }
 
 
@@ -129,7 +146,7 @@ public class CloudMessagingService
             if (BuildConfig.DEBUG) Log.e(TAG, "Message contains no inviting email; skipping");
             return;
         }
-        if (PreferenceRepo.getAppMode() != Constants.APP_MODE_MINOR) {
+        if (PreferenceStore.getAppMode() != Constants.APP_MODE_MINOR) {
             if (BuildConfig.DEBUG) Log.e(TAG, "App mode should be 'MINOR' to process the message; skipping");
             return;
         }
@@ -149,7 +166,7 @@ public class CloudMessagingService
             if (BuildConfig.DEBUG) Log.e(TAG, "Message contains no invitee email; skipping");
             return;
         }
-        if (PreferenceRepo.getAppMode() != Constants.APP_MODE_MAJOR) {
+        if (PreferenceStore.getAppMode() != Constants.APP_MODE_MAJOR) {
             if (BuildConfig.DEBUG) Log.e(TAG, "App mode should be 'MAJOR' to process the message; skipping");
             return;
         }

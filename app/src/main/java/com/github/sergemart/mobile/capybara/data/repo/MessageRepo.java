@@ -1,4 +1,4 @@
-package com.github.sergemart.mobile.capybara.data;
+package com.github.sergemart.mobile.capybara.data.repo;
 
 import com.github.sergemart.mobile.capybara.data.events.GenericEvent;
 import com.github.sergemart.mobile.capybara.data.events.LocationEvent;

@@ -7,7 +7,7 @@ import android.content.Context;
 import android.os.Build;
 import android.util.Log;
 
-import com.github.sergemart.mobile.capybara.data.source.AuthService;
+import com.github.sergemart.mobile.capybara.data.datastore.AuthService;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;

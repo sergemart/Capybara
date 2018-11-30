@@ -7,7 +7,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.github.sergemart.mobile.capybara.R;
-import com.github.sergemart.mobile.capybara.data.source.AuthService;
+import com.github.sergemart.mobile.capybara.data.datastore.AuthService;
 import com.google.android.material.navigation.NavigationView;
 import com.squareup.picasso.Picasso;
 

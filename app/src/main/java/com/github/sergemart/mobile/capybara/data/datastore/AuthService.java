@@ -1,4 +1,4 @@
-package com.github.sergemart.mobile.capybara.data.source;
+package com.github.sergemart.mobile.capybara.data.datastore;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -55,7 +55,7 @@ public class AuthService {
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
         if (mFirebaseUser != null) mUsername = mFirebaseUser.getDisplayName();
         mFirebaseInstanceId = FirebaseInstanceId.getInstance();
-        mDeviceToken = "";
+        mCurrentDeviceToken = "";
     }
 
 
@@ -78,7 +78,7 @@ public class AuthService {
     private FirebaseUser mFirebaseUser;
     private String mUsername = Constants.DEFAULT_USERNAME;
     private FirebaseInstanceId mFirebaseInstanceId;
-    private String mDeviceToken;
+    private String mCurrentDeviceToken;
 
 
     // --------------------------- Observable getters
@@ -203,10 +203,18 @@ public class AuthService {
 
 
     /**
-     * The device token getter
+     * The current device token getter
      */
-    public String getDeviceToken() {
-        return mDeviceToken;
+    public String getCurrentDeviceToken() {
+        return mCurrentDeviceToken;
+    }
+
+
+    /**
+     * The current device token setter
+     */
+    public void setCurrentDeviceToken(String deviceToken) {
+        mCurrentDeviceToken = deviceToken;
     }
 
 
@@ -218,8 +226,8 @@ public class AuthService {
         mFirebaseInstanceId
             .getInstanceId()
             .addOnSuccessListener(instanseIdResult -> {
-                mDeviceToken = instanseIdResult.getToken();
-                if (BuildConfig.DEBUG) Log.d(TAG, "Got device token: " + mDeviceToken);
+                mCurrentDeviceToken = instanseIdResult.getToken();
+                if (BuildConfig.DEBUG) Log.d(TAG, "Got device token: " + mCurrentDeviceToken);
                 mGetDeviceTokenSubject.onNext(GenericEvent.of(SUCCESS));
             })
             .addOnFailureListener(e -> {
@@ -229,21 +237,5 @@ public class AuthService {
             })
         ;
     }
-
-
-    /**
-     * Update current known device token when received one from the cloud.
-     * Init publishing the token, if it differs
-     */
-    public void updateDeviceToken(String deviceToken) {
-        if (BuildConfig.DEBUG) Log.d(TAG, "Update token method called with the token provided: " + deviceToken);
-        if (deviceToken.equals(mDeviceToken)) {                                                     // break the possible loop
-            if (BuildConfig.DEBUG) Log.d(TAG, "Provided token already known; skipping update");
-            return;
-        }
-        mDeviceToken = deviceToken;
-        FirestoreService.get().publishDeviceTokenAsync(deviceToken);
-    }
-
 
 }

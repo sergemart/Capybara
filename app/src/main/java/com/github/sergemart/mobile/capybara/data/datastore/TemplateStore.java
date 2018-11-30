@@ -1,17 +1,17 @@
-package com.github.sergemart.mobile.capybara.data;
+package com.github.sergemart.mobile.capybara.data.datastore;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
 // Singleton
-public class TemplateRepo {
+public class TemplateStore {
 
-    private static TemplateRepo sInstance = new TemplateRepo();
+    private static TemplateStore sInstance = new TemplateStore();
 
 
     // Private constructor
-    private TemplateRepo() {
+    private TemplateStore() {
         mItems = new ArrayList<>();
         mItems.add("1");
         mItems.add("2");
@@ -20,8 +20,8 @@ public class TemplateRepo {
 
 
     // Factory method
-    public static TemplateRepo get() {
-        if(sInstance == null) sInstance = new TemplateRepo();
+    public static TemplateStore get() {
+        if(sInstance == null) sInstance = new TemplateStore();
         return sInstance;
     }
 

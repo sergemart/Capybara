@@ -1,4 +1,4 @@
-package com.github.sergemart.mobile.capybara.data;
+package com.github.sergemart.mobile.capybara.data.datastore;
 
 import com.github.sergemart.mobile.capybara.R;
 import com.github.sergemart.mobile.capybara.exceptions.FirebaseSigninException;
@@ -8,19 +8,19 @@ import com.google.android.gms.common.api.ApiException;
 
 
 // Singleton
-public class ResRepo {
+public class ResStore {
 
-    private static ResRepo sInstance = new ResRepo();
+    private static ResStore sInstance = new ResStore();
 
 
     // Private constructor
-    private ResRepo() {
+    private ResStore() {
     }
 
 
     // Factory method
-    public static ResRepo get() {
-        if(sInstance == null) sInstance = new ResRepo();
+    public static ResStore get() {
+        if(sInstance == null) sInstance = new ResStore();
         return sInstance;
     }
 

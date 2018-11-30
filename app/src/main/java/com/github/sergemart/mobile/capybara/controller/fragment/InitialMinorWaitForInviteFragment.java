@@ -6,7 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.github.sergemart.mobile.capybara.R;
-import com.github.sergemart.mobile.capybara.data.MessageRepo;
+import com.github.sergemart.mobile.capybara.data.repo.MessageRepo;
 import com.github.sergemart.mobile.capybara.data.events.GenericEvent;
 import com.github.sergemart.mobile.capybara.exceptions.FirebaseMessagingException;
 import com.github.sergemart.mobile.capybara.viewmodel.InitialMinorSharedViewModel;
