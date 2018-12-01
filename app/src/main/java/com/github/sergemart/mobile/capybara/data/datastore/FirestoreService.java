@@ -55,8 +55,7 @@ public class FirestoreService {
     // --------------------------- The interface
 
     /**
-     * Create or update a user on a backend
-     * Send an event notifying on success or failure
+     * Create or update a user document on a backend
      */
     public Observable<GenericEvent> updateUserAsync(Map<String, Object> userData) {
         return Observable.create(emitter -> {

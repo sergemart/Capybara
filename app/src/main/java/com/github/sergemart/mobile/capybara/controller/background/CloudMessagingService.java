@@ -6,16 +6,14 @@ import android.util.Log;
 import com.github.sergemart.mobile.capybara.BuildConfig;
 import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.Tools;
-import com.github.sergemart.mobile.capybara.data.model.CurrentUser;
-import com.github.sergemart.mobile.capybara.data.repo.CurrentUserRepo;
-import com.github.sergemart.mobile.capybara.data.repo.DeviceTokenRepo;
-import com.github.sergemart.mobile.capybara.data.repo.MessageRepo;
+import com.github.sergemart.mobile.capybara.data.datastore.FunctionsService;
+import com.github.sergemart.mobile.capybara.data.datastore.GeoService;
 import com.github.sergemart.mobile.capybara.data.datastore.PreferenceStore;
 import com.github.sergemart.mobile.capybara.data.events.GenericEvent;
 import com.github.sergemart.mobile.capybara.data.events.LocationEvent;
-import com.github.sergemart.mobile.capybara.data.datastore.AuthService;
-import com.github.sergemart.mobile.capybara.data.datastore.FunctionsService;
-import com.github.sergemart.mobile.capybara.data.datastore.GeoService;
+import com.github.sergemart.mobile.capybara.data.model.CurrentUser;
+import com.github.sergemart.mobile.capybara.data.repo.CurrentUserRepo;
+import com.github.sergemart.mobile.capybara.data.repo.MessageRepo;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -131,7 +129,7 @@ public class CloudMessagingService
     private void updateDeviceToken(String newDeviceToken) {
         if (BuildConfig.DEBUG) Log.d(TAG, "New device token received, updating");
 
-        String currentDeviceToken = DeviceTokenRepo.get().getCurrentDeviceToken();
+        String currentDeviceToken = CurrentUserRepo.get().read().getDeviceToken();
         if (newDeviceToken.equals(currentDeviceToken)) {                                            // break the possible loop
             if (BuildConfig.DEBUG) Log.d(TAG, "New device token actually not new; skipping update");
             return;

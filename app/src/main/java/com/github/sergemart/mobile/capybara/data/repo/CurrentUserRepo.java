@@ -3,6 +3,7 @@ package com.github.sergemart.mobile.capybara.data.repo;
 import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.data.datastore.AuthService;
 import com.github.sergemart.mobile.capybara.data.datastore.FirestoreService;
+import com.github.sergemart.mobile.capybara.data.datastore.PreferenceStore;
 import com.github.sergemart.mobile.capybara.data.events.GenericEvent;
 import com.github.sergemart.mobile.capybara.data.model.CurrentUser;
 
@@ -31,6 +32,18 @@ public class CurrentUserRepo {
 
 
     // --------------------------- The interface
+
+
+    /**
+     * Sync read the current user record
+     */
+    public CurrentUser read() {
+        CurrentUser currentUser = new CurrentUser();
+        currentUser.setAppMode(PreferenceStore.getAppMode());
+        currentUser.setDeviceToken(AuthService.get().getCurrentDeviceToken());
+        return currentUser;
+    }
+
 
     /**
      * Async update the current user record

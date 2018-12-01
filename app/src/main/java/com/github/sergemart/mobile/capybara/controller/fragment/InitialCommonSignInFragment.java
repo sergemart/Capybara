@@ -12,12 +12,11 @@ import com.github.sergemart.mobile.capybara.BuildConfig;
 import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
 import com.github.sergemart.mobile.capybara.controller.dialog.SignInRetryDialogFragment;
+import com.github.sergemart.mobile.capybara.data.datastore.AuthService;
 import com.github.sergemart.mobile.capybara.data.datastore.PreferenceStore;
 import com.github.sergemart.mobile.capybara.data.events.GenericEvent;
-import com.github.sergemart.mobile.capybara.data.datastore.AuthService;
 import com.github.sergemart.mobile.capybara.data.model.CurrentUser;
 import com.github.sergemart.mobile.capybara.data.repo.CurrentUserRepo;
-import com.github.sergemart.mobile.capybara.data.repo.DeviceTokenRepo;
 import com.github.sergemart.mobile.capybara.viewmodel.InitialCommonSharedViewModel;
 import com.google.android.material.button.MaterialButton;
 import com.jakewharton.rxbinding2.view.RxView;
@@ -197,8 +196,8 @@ public class InitialCommonSignInFragment
     private void updateCurrentUser() {
         CurrentUser currentUser = new CurrentUser();
         currentUser.setAppMode(PreferenceStore.getAppMode());
-        currentUser.setDeviceToken(DeviceTokenRepo.get().getCurrentDeviceToken());
-        pViewDisposable.add(CurrentUserRepo.get().update(currentUser).subscribe(event -> {
+        currentUser.setDeviceToken(CurrentUserRepo.get().read().getDeviceToken());                  // read authoritative data
+        pViewDisposable.add(CurrentUserRepo.get().update(currentUser).subscribe(event -> {          // update the repo with the authoritative data
             switch (event.getResult()) {
                 case SUCCESS:
                     if (BuildConfig.DEBUG) Log.d(TAG, "Current user data successfully updated; emitting CommonSetupFinished event");
