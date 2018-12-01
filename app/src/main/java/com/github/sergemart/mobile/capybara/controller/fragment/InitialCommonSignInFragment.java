@@ -12,9 +12,11 @@ import com.github.sergemart.mobile.capybara.BuildConfig;
 import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
 import com.github.sergemart.mobile.capybara.controller.dialog.SignInRetryDialogFragment;
+import com.github.sergemart.mobile.capybara.data.datastore.PreferenceStore;
 import com.github.sergemart.mobile.capybara.data.events.GenericEvent;
 import com.github.sergemart.mobile.capybara.data.datastore.AuthService;
-import com.github.sergemart.mobile.capybara.data.datastore.FirestoreService;
+import com.github.sergemart.mobile.capybara.data.model.CurrentUser;
+import com.github.sergemart.mobile.capybara.data.repo.CurrentUserRepo;
 import com.github.sergemart.mobile.capybara.data.repo.DeviceTokenRepo;
 import com.github.sergemart.mobile.capybara.viewmodel.InitialCommonSharedViewModel;
 import com.google.android.material.button.MaterialButton;
@@ -121,7 +123,7 @@ public class InitialCommonSignInFragment
             switch (event.getResult()) {
                 case SUCCESS:
                     if (BuildConfig.DEBUG) Log.d(TAG, "GetDeviceTokenResult.SUCCESS event received; publishing device token");
-                    this.updateDeviceToken();
+                    this.updateCurrentUser();
                     break;
                 case FAILURE:
                     if (BuildConfig.DEBUG) Log.d(TAG, "GetDeviceTokenResult.FAILURE event received; invoking retry dialog");
@@ -190,18 +192,20 @@ public class InitialCommonSignInFragment
 
 
     /**
-     * Update the Firebase Messaging device token in the app and on the backend
+     * Update the user data with Firebase Messaging device token and the app mode
      */
-    private void updateDeviceToken() {
-        String deviceToken = DeviceTokenRepo.get().getCurrentDeviceToken();
-        pViewDisposable.add(DeviceTokenRepo.get().updateDeviceToken(deviceToken).subscribe(event -> {
+    private void updateCurrentUser() {
+        CurrentUser currentUser = new CurrentUser();
+        currentUser.setAppMode(PreferenceStore.getAppMode());
+        currentUser.setDeviceToken(DeviceTokenRepo.get().getCurrentDeviceToken());
+        pViewDisposable.add(CurrentUserRepo.get().update(currentUser).subscribe(event -> {
             switch (event.getResult()) {
                 case SUCCESS:
-                    if (BuildConfig.DEBUG) Log.d(TAG, "Device token successfully updated; emitting CommonSetupFinished event");
+                    if (BuildConfig.DEBUG) Log.d(TAG, "Current user data successfully updated; emitting CommonSetupFinished event");
                     mInitialCommonSharedViewModel.getCommonSetupFinishedSubject().onNext(GenericEvent.of(SUCCESS));
                     break;
                 case FAILURE:
-                    if (BuildConfig.DEBUG) Log.d(TAG, "Error while updating the device token; invoking retry dialog");
+                    if (BuildConfig.DEBUG) Log.d(TAG, "Error while updating the current user data; invoking retry dialog");
                     mCause = event.getException();
                     this.showSigninRetryDialog(mCause);
                     break;

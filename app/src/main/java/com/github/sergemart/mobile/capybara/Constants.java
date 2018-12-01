@@ -61,13 +61,14 @@ public final class Constants {
     public static final String RETURN_CODE_NONE_SENT = "none_sent";
 
 
-    // ----------------------- Data keys
+    // ----------------------- Data keys and JSON field names
 
     public static final String KEY_LOCATION = "location";
     public static final String KEY_LOCATION_LAT = "locationLat";
     public static final String KEY_LOCATION_LON = "locationLon";
     public static final String KEY_LOCATION_TIME = "locationTime";
     public static final String KEY_DEVICE_TOKEN = "deviceToken";
+    public static final String KEY_APP_MODE = "appMode";
     public static final String KEY_FAMILY_MEMBER_EMAIL = "familyMemberEmail";
     public static final String KEY_INVITEE_EMAIL = "inviteeEmail";
     public static final String KEY_INVITING_EMAIL = "invitingEmail";

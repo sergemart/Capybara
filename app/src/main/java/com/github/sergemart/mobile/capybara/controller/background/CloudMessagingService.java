@@ -6,6 +6,8 @@ import android.util.Log;
 import com.github.sergemart.mobile.capybara.BuildConfig;
 import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.Tools;
+import com.github.sergemart.mobile.capybara.data.model.CurrentUser;
+import com.github.sergemart.mobile.capybara.data.repo.CurrentUserRepo;
 import com.github.sergemart.mobile.capybara.data.repo.DeviceTokenRepo;
 import com.github.sergemart.mobile.capybara.data.repo.MessageRepo;
 import com.github.sergemart.mobile.capybara.data.datastore.PreferenceStore;
@@ -134,7 +136,9 @@ public class CloudMessagingService
             if (BuildConfig.DEBUG) Log.d(TAG, "New device token actually not new; skipping update");
             return;
         }
-        mDisposable.add(DeviceTokenRepo.get().updateDeviceToken(newDeviceToken).subscribe(event -> {})); // update the token
+        CurrentUser currentUser = new CurrentUser();
+        currentUser.setDeviceToken(currentDeviceToken);
+        mDisposable.add(CurrentUserRepo.get().update(currentUser).subscribe(event -> {}));          // update the token
     }
 
 

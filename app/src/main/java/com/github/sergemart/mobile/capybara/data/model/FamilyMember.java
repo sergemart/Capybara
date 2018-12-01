@@ -16,6 +16,7 @@ public class FamilyMember {
     @NonNull
     private String extId = "";
     private String name;
+    private String type;
     @Ignore
     private Bitmap photo;
     private String email;
@@ -43,6 +44,16 @@ public class FamilyMember {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+
+    public String getType() {
+        return type;
+    }
+
+
+    public void setType(String type) {
+        this.type = type;
     }
 
 
