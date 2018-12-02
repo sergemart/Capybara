@@ -37,7 +37,7 @@ public class CurrentUserRepo {
     /**
      * Sync read the current user record
      */
-    public CurrentUser read() {
+    public CurrentUser readSync() {
         CurrentUser currentUser = new CurrentUser();
         currentUser.setAppMode(PreferenceStore.getAppMode());
         currentUser.setDeviceToken(AuthService.get().getCurrentDeviceToken());
@@ -48,7 +48,7 @@ public class CurrentUserRepo {
     /**
      * Async update the current user record
      */
-    public Observable<GenericEvent> update(CurrentUser currentUser) {
+    public Observable<GenericEvent> updateAsync(CurrentUser currentUser) {
         Map<String, Object> userData = new HashMap<>();                                             // the mapping
         if (currentUser.getAppMode() != null) userData.put(Constants.KEY_APP_MODE, currentUser.getAppMode());
         if (currentUser.getDeviceToken() != null) {

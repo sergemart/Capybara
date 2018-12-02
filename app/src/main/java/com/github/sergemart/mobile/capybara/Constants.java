@@ -27,6 +27,7 @@ public final class Constants {
     public static final String PREF_APP_MODE = "appMode";
     public static final String PREF_FAMILY_CREATED = "familyCreated";
     public static final String PREF_FAMILY_JOINED = "familyJoined";
+    public static final String PREF_BACKEND_VERSION = "backendVersion";
 
 
     // ----------------------- Dialog tags
@@ -90,8 +91,11 @@ public final class Constants {
     public static final String INTENT_ACTION_SEND_LOCATION = "com.github.sergemart.mobile.capybara.SEND_LOCATION";
 
 
-    // ----------------------- Firestore collection names
+    // ----------------------- Firestore collection, document and field names
 
+    public static final String FIRESTORE_COLLECTION_SYSTEM = "system";
+    public static final String FIRESTORE_DOCUMENT_DATABASE = "database";
+    public static final String FIRESTORE_FIELD_VERSION = "version";
     public static final String FIRESTORE_COLLECTION_USERS = "users";
 
 

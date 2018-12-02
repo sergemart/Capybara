@@ -196,8 +196,8 @@ public class InitialCommonSignInFragment
     private void updateCurrentUser() {
         CurrentUser currentUser = new CurrentUser();
         currentUser.setAppMode(PreferenceStore.getAppMode());
-        currentUser.setDeviceToken(CurrentUserRepo.get().read().getDeviceToken());                  // read authoritative data
-        pViewDisposable.add(CurrentUserRepo.get().update(currentUser).subscribe(event -> {          // update the repo with the authoritative data
+        currentUser.setDeviceToken(CurrentUserRepo.get().readSync().getDeviceToken());                  // read authoritative data
+        pViewDisposable.add(CurrentUserRepo.get().updateAsync(currentUser).subscribe(event -> {          // update the repo with the authoritative data
             switch (event.getResult()) {
                 case SUCCESS:
                     if (BuildConfig.DEBUG) Log.d(TAG, "Current user data successfully updated; emitting CommonSetupFinished event");

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".controller.fragment.InitialCommonUpgradeBackendFragment">
+
+    <include
+        layout="@layout/content_background_general"/>
+
+    <include
+        layout="@layout/content_waiting"
+        android:id="@+id/layout_waiting"
+        android:visibility="gone"/>
+
+</FrameLayout>

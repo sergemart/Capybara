@@ -13,14 +13,19 @@ import com.github.sergemart.mobile.capybara.data.datastore.PreferenceStore;
 import com.github.sergemart.mobile.capybara.viewmodel.InitialCommonSharedViewModel;
 
 import java.lang.ref.WeakReference;
+import java.util.Objects;
 
 import androidx.lifecycle.ViewModelProviders;
+import androidx.navigation.NavController;
+import androidx.navigation.NavOptions;
+import androidx.navigation.Navigation;
 
 
 public class InitialCommonActivity
     extends AbstractActivity
 {
 
+    private NavController mNavController;
     private InitialCommonSharedViewModel mInitialCommonSharedViewModel;
 
 
@@ -34,6 +39,7 @@ public class InitialCommonActivity
         super.onCreate(savedInstanceState);
         super.setContentView(R.layout.activity_initial_common);
 
+        mNavController = Navigation.findNavController(this, R.id.fragment_nav_host_initial_common);
         mInitialCommonSharedViewModel = ViewModelProviders.of(this).get(InitialCommonSharedViewModel.class);
 
         this.setInstanceListeners();
@@ -46,16 +52,32 @@ public class InitialCommonActivity
     @Override
     protected void onStart() {
         super.onStart();
-        // Leave the common initial graph if the APP MODE IS SET and the USER IS AUTHENTICATED.
-        // Otherwise implicitly delegate control to the local nav AAC
+        // Leave the common initial graph if
+        // - the APP MODE IS SET
+        // - and the USER IS AUTHENTICATED
+        // - and the EXPECTED BACKEND VERSION CORRESPONDS THE APP VERSION.
         if (
             (
                 PreferenceStore.getAppMode() == Constants.APP_MODE_MAJOR ||
                 PreferenceStore.getAppMode() == Constants.APP_MODE_MINOR
-            ) &&
-                AuthService.get().isAuthenticated()
+            )
+            && AuthService.get().isAuthenticated()
+            && PreferenceStore.getExpectedBackendVersion() == BuildConfig.VERSION_CODE
         ){
             this.leaveNavGraph();
+        // Otherwise delegate control to the local nav AAC
+        } else {                                                                                    // set up needed, stay in the nav graph
+            if (PreferenceStore.getExpectedBackendVersion() < BuildConfig.VERSION_CODE) {           // backend schema upgrade is needed
+                NavOptions navOptions = new NavOptions.Builder()
+                    .setPopUpTo(                                                                    // clear the entire task TODO: Works not as expected: clears nav graph fragment also. Action-based nav could be broken!
+                        Objects.requireNonNull(mNavController.getCurrentDestination()).getId(),     // docs recommend use nav graph id here. Does not work
+                        true
+                    )
+                    .build()
+                ;
+                mNavController.navigate(R.id.fragment_initial_common_upgrade_backend, null, navOptions);
+            }
+            // Implicitly delegate control to the local nav AAC
         }
     }
 

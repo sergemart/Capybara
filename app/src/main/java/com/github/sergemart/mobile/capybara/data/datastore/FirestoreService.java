@@ -10,6 +10,7 @@ import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
 import com.github.sergemart.mobile.capybara.data.events.GenericEvent;
 import com.github.sergemart.mobile.capybara.exceptions.FirebaseDbException;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
 
@@ -32,7 +33,6 @@ public class FirestoreService {
 
     // Private constructor
     private FirestoreService() {
-
         // Init member variables
         mContext = App.getContext();
         mFirebaseFirestore = FirebaseFirestore.getInstance();
@@ -61,12 +61,12 @@ public class FirestoreService {
         return Observable.create(emitter -> {
             if (userData == null) {
                 if (BuildConfig.DEBUG)
-                    Log.e(TAG, "No user data provided while attempting to create or update it on backend; skipping");
+                    Log.e(TAG, "No user data provided while attempting to update user on backend; skipping");
                 return;
             }
             if (!AuthService.get().isAuthenticated()) {
                 if (BuildConfig.DEBUG)
-                    Log.e(TAG, "User not authenticated while attempting to create or update it on backend; skipping");
+                    Log.e(TAG, "User not authenticated while attempting to update user on backend; skipping");
                 return;
             }
             String userUid = AuthService.get().getCurrentUser().getUid();
@@ -80,6 +80,35 @@ public class FirestoreService {
                 })
                 .addOnFailureListener(e -> {
                     String errorMessage = mContext.getString(R.string.exception_firebase_user_not_updated) + ": " + userUid;
+                    if (BuildConfig.DEBUG) Log.e(TAG, errorMessage + ": " + e.getMessage());
+                    emitter.onNext(GenericEvent.of(FAILURE).setException(new FirebaseDbException(errorMessage, e)));
+                })
+            ;
+        });
+    }
+
+
+    /**
+     * Read a system/database document on a backend
+     */
+    @SuppressWarnings("unchecked")
+    public Observable<GenericEvent<DocumentSnapshot>> readSystemDatabaseAsync() {
+        return Observable.create(emitter -> {
+            if (!AuthService.get().isAuthenticated()) {
+                if (BuildConfig.DEBUG)
+                    Log.e(TAG, "User not authenticated while attempting to read system data on backend; skipping");
+                return;
+            }
+            mFirebaseFirestore
+                .collection(Constants.FIRESTORE_COLLECTION_SYSTEM)
+                .document(Constants.FIRESTORE_DOCUMENT_DATABASE)
+                .get()
+                .addOnSuccessListener(result -> {
+                    if (BuildConfig.DEBUG) Log.d(TAG, "Read system/database document");
+                    emitter.onNext(GenericEvent.of(SUCCESS).setData(result));
+                })
+                .addOnFailureListener(e -> {
+                    String errorMessage = mContext.getString(R.string.exception_firebase_system_data_not_read);
                     if (BuildConfig.DEBUG) Log.e(TAG, errorMessage + ": " + e.getMessage());
                     emitter.onNext(GenericEvent.of(FAILURE).setException(new FirebaseDbException(errorMessage, e)));
                 })

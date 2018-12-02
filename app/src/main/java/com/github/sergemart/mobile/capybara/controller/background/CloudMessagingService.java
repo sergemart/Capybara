@@ -129,14 +129,14 @@ public class CloudMessagingService
     private void updateDeviceToken(String newDeviceToken) {
         if (BuildConfig.DEBUG) Log.d(TAG, "New device token received, updating");
 
-        String currentDeviceToken = CurrentUserRepo.get().read().getDeviceToken();
+        String currentDeviceToken = CurrentUserRepo.get().readSync().getDeviceToken();
         if (newDeviceToken.equals(currentDeviceToken)) {                                            // break the possible loop
             if (BuildConfig.DEBUG) Log.d(TAG, "New device token actually not new; skipping update");
             return;
         }
         CurrentUser currentUser = new CurrentUser();
         currentUser.setDeviceToken(currentDeviceToken);
-        mDisposable.add(CurrentUserRepo.get().update(currentUser).subscribe(event -> {}));          // update the token
+        mDisposable.add(CurrentUserRepo.get().updateAsync(currentUser).subscribe(event -> {}));          // update the token
     }
 
 

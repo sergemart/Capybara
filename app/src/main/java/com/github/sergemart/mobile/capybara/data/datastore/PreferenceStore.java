@@ -11,6 +11,22 @@ public class PreferenceStore {
     // --------------------------- The interface
 
     /**
+     * Get an expected backend version stored in shared preferences
+     */
+    public static int getExpectedBackendVersion() {
+        return getIntPreference(Constants.PREF_BACKEND_VERSION);
+    }
+
+
+    /**
+     * Store an expected backend version in shared preferences
+     */
+    public static void storeExpectedBackendVersion(int value) {
+        storePreference(Constants.PREF_BACKEND_VERSION, value);
+    }
+
+
+    /**
      * Get an app mode stored in shared preferences
      */
     public static int getAppMode() {
