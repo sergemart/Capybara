@@ -216,7 +216,7 @@ public class MajorInviteFragment
 
         if (ContactStore.get().isPermissionGranted() ) {
 
-            pInstanceDisposable.add(ContactStore.get().getContactsObservable()
+            pInstanceDisposable.add(ContactStore.get().getContactsAsync()
                 .observeOn(Schedulers.io())                                                         // switch to background
                 .doOnNext(contactsResult -> {                                                       // load contacts
                     switch (contactsResult.getResult()) {
@@ -238,7 +238,7 @@ public class MajorInviteFragment
                 .flatMap(contactsResult ->  Observable.fromIterable( (List)((GenericEvent)contactsResult).getData() )) // split contacts
                 .flatMap(contact -> {                                                               // map every contact to bitmap observable
                     String contactEmail = ((ContactData) contact).getEmail();
-                    return ContactStore.get().getEnrichedContactObservable(contactEmail);
+                    return ContactStore.get().getEnrichedContactAsync(contactEmail);
                 })
                 .observeOn(AndroidSchedulers.mainThread())                                          // UI operations follows, main thread required
                 .subscribe(bitmapEvent -> {                                                         // update contact list with thumbnails
@@ -255,7 +255,7 @@ public class MajorInviteFragment
                     }
                 })
             );
-            ContactStore.get().getContactsObservable().connect();                                   // init multicasting
+            ContactStore.get().getContactsAsync().connect();                                   // init multicasting
 
         } else {
             super.requestPermissions(Constants.CONTACTS_PERMISSIONS, Constants.REQUEST_CODE_READ_CONTACTS_PERMISSIONS);

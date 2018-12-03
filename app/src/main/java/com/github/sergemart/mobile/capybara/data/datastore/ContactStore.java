@@ -80,7 +80,7 @@ public class ContactStore {
     /**
      * @return A connectable observable emitting a contact list
      */
-    public ConnectableObservable<GenericEvent> getContactsObservable() {
+    public ConnectableObservable<GenericEvent> getContactsAsync() {
         if (mContactsObservable != null) return mContactsObservable;
 
         Observable<GenericEvent> observable = Observable.create(emitter -> {
@@ -107,7 +107,7 @@ public class ContactStore {
     /**
      * @return A cold observable emitting a contact data structure used as a photo container
      */
-    public Observable<GenericEvent> getEnrichedContactObservable(String contactEmail) {
+    public Observable<GenericEvent> getEnrichedContactAsync(String contactEmail) {
         return Observable.create(emitter -> {
             ContactData auxContactData = new ContactData();
             String contactId = mIdsByEmail.get(contactEmail);

@@ -8,7 +8,6 @@ import com.github.sergemart.mobile.capybara.App;
 import com.github.sergemart.mobile.capybara.BuildConfig;
 import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
-import com.github.sergemart.mobile.capybara.data.events.GenericEvent;
 import com.github.sergemart.mobile.capybara.exceptions.FirebaseDbException;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -17,10 +16,7 @@ import com.google.firebase.firestore.SetOptions;
 import java.util.Map;
 
 import io.reactivex.Completable;
-import io.reactivex.Observable;
-
-import static com.github.sergemart.mobile.capybara.data.events.Result.FAILURE;
-import static com.github.sergemart.mobile.capybara.data.events.Result.SUCCESS;
+import io.reactivex.Single;
 
 
 // Singleton
@@ -86,8 +82,8 @@ public class FirestoreService {
      * Read a system/database document on a backend
      */
     @SuppressWarnings("unchecked")
-    public Observable<GenericEvent<DocumentSnapshot>> readSystemDatabaseAsync() {
-        return Observable.create(emitter -> {
+    public Single<DocumentSnapshot> readSystemDatabaseAsync() {
+        return Single.create(emitter -> {
             if (!AuthService.get().isAuthenticated()) {
                 if (BuildConfig.DEBUG)
                     Log.e(TAG, "User not authenticated while attempting to read system data on backend; skipping");
@@ -99,12 +95,12 @@ public class FirestoreService {
                 .get()
                 .addOnSuccessListener(result -> {
                     if (BuildConfig.DEBUG) Log.d(TAG, "Read system/database document");
-                    emitter.onNext(GenericEvent.of(SUCCESS).setData(result));
+                    emitter.onSuccess(result);
                 })
                 .addOnFailureListener(e -> {
                     String errorMessage = mContext.getString(R.string.exception_firebase_system_data_not_read);
                     if (BuildConfig.DEBUG) Log.e(TAG, errorMessage + ": " + e.getMessage());
-                    emitter.onNext(GenericEvent.of(FAILURE).setException(new FirebaseDbException(errorMessage, e)));
+                    emitter.onError(new FirebaseDbException(errorMessage, e));
                 })
             ;
         });
