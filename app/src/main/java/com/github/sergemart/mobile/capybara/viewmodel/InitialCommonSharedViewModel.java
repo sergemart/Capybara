@@ -8,6 +8,7 @@ import com.github.sergemart.mobile.capybara.data.repo.CurrentUserRepo;
 import com.github.sergemart.mobile.capybara.exceptions.FirebaseDbException;
 
 import androidx.lifecycle.ViewModel;
+import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.observables.ConnectableObservable;
 import io.reactivex.schedulers.Schedulers;
@@ -34,14 +35,14 @@ public class InitialCommonSharedViewModel extends ViewModel {
     /**
      * Async upgrade backend database schema
      */
-    public Observable<GenericEvent> upgradeBackendObservableAsync() {
-        return Observable.create(emitter -> {
+    public Completable upgradeBackendObservableAsync() {
+        return Completable.create(emitter -> {
             try {                                                                                   // synchronous sequence of upgrade calls
                 if (PreferenceStore.getCurrentBackendVersion() < 3) this.upgradeBackendSchemaV3();
                 PreferenceStore.storeCurrentBackendVersion(BuildConfig.VERSION_CODE);
-                emitter.onNext(GenericEvent.of(SUCCESS));
+                emitter.onComplete();
             } catch (Exception e) {
-                emitter.onNext(GenericEvent.of(FAILURE).setException(e));
+                emitter.onError(e);
             }
         });
     }

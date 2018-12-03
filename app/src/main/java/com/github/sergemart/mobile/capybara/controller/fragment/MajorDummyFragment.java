@@ -147,7 +147,7 @@ public class MajorDummyFragment extends Fragment {
      */
     private void setInstanceListeners() {
 
-        // Set a listener to the "CreateFamily" result
+        // Set a listener to the "CreateFamily" event
         mInstanceDisposable.add(FunctionsService.get().getCreateFamilySubject().subscribe(
             event -> {}
         ));

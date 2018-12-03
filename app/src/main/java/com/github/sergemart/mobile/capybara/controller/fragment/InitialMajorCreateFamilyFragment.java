@@ -98,7 +98,7 @@ public class InitialMajorCreateFamilyFragment
      */
     private void setInstanceListeners() {
 
-        // Set a listener to the "CreateFamilySubject" event
+        // Set a listener to the "CreateFamily" event
         pInstanceDisposable.add(FunctionsService.get().getCreateFamilySubject().subscribe(event -> {
             switch (event.getResult()) {
                 case SUCCESS:

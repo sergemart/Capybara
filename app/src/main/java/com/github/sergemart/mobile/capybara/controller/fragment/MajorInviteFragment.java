@@ -184,7 +184,7 @@ public class MajorInviteFragment
             }
         });
 
-        // Add a listener to SendInvite event
+        // Add a listener to "SendInvite" event
         // Update a list item with a transaction result
         pInstanceDisposable.add(FunctionsService.get().getSendInviteSubject()
             .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())

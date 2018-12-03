@@ -116,20 +116,17 @@ public class InitialCommonUpgradeBackendFragment
     private void upgradeBackend() {
         pInstanceDisposable.add(mSharedViewModel.upgradeBackendObservableAsync()
             .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-            .subscribe(event -> {
-                switch (event.getResult()) {
-                    case SUCCESS:
-                        if (BuildConfig.DEBUG) Log.d(TAG, "UpgradeBackend.SUCCESS event received; emitting CommonSetupFinished event");
-                        mSharedViewModel.getCommonSetupFinishedSubject().onNext(GenericEvent.of(SUCCESS));
-                        break;
-                    case FAILURE:
-                        if (BuildConfig.DEBUG) Log.d(TAG, "UpgradeBackend.FAILURE event received; invoking retry dialog");
-                        mCause = event.getException();
-                        this.showSigninRetryDialog(mCause);
-                        break;
-                    default:
+            .subscribe(
+                () -> {
+                    if (BuildConfig.DEBUG) Log.d(TAG, "UpgradeBackend success event received; emitting CommonSetupFinished event");
+                    mSharedViewModel.getCommonSetupFinishedSubject().onNext(GenericEvent.of(SUCCESS));
+                },
+                e -> {
+                    if (BuildConfig.DEBUG) Log.d(TAG, "UpgradeBackend error received; invoking retry dialog");
+                    mCause = e;
+                    this.showRetryDialog(mCause);
                 }
-            })
+            )
         );
     }
 
@@ -137,7 +134,7 @@ public class InitialCommonUpgradeBackendFragment
     /**
      * Show sign-in retry dialog
      */
-    private void showSigninRetryDialog(Throwable cause) {
+    private void showRetryDialog(Throwable cause) {
         UpgradeBackendRetryDialogFragment.newInstance(cause).show(Objects.requireNonNull(
             super.getChildFragmentManager()),
             Constants.TAG_SIGN_IN_RETRY_DIALOG
