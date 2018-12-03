@@ -31,7 +31,7 @@ public class InitialMajorCreateFamilyFragment
     extends AbstractFragment
 {
 
-    private InitialMajorSharedViewModel mInitialMajorSharedViewModel;
+    private InitialMajorSharedViewModel mSharedViewModel;
     private Throwable mCause;
 
 
@@ -44,7 +44,7 @@ public class InitialMajorCreateFamilyFragment
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mInitialMajorSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(pActivity)).get(InitialMajorSharedViewModel.class);
+        mSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(pActivity)).get(InitialMajorSharedViewModel.class);
 
         this.setInstanceListeners();
     }
@@ -83,7 +83,7 @@ public class InitialMajorCreateFamilyFragment
                 if (resultCode == Activity.RESULT_OK) {                                             // retry
                     this.createFamily();
                 } else if (resultCode == Activity.RESULT_CANCELED) {                                // fatal
-                    mInitialMajorSharedViewModel.getMajorSetupFinishedSubject().onNext(GenericEvent.of(FAILURE).setException(mCause));
+                    mSharedViewModel.getMajorSetupFinishedSubject().onNext(GenericEvent.of(FAILURE).setException(mCause));
                 }
                 break;
             default:
@@ -104,17 +104,17 @@ public class InitialMajorCreateFamilyFragment
                 case SUCCESS:
                     PreferenceStore.storeFamilyCreated(true);
                     if (BuildConfig.DEBUG) Log.d(TAG, "CreateFamilyResult.CREATED event received; emitting MajorSetupFinished event");
-                    mInitialMajorSharedViewModel.getMajorSetupFinishedSubject().onNext(GenericEvent.of(SUCCESS));
+                    mSharedViewModel.getMajorSetupFinishedSubject().onNext(GenericEvent.of(SUCCESS));
                     break;
                 case EXIST:
                     PreferenceStore.storeFamilyCreated(true);
                     if (BuildConfig.DEBUG) Log.d(TAG, "CreateFamilyResult.EXIST event received; emitting MajorSetupFinished event");
-                    mInitialMajorSharedViewModel.getMajorSetupFinishedSubject().onNext(GenericEvent.of(SUCCESS));
+                    mSharedViewModel.getMajorSetupFinishedSubject().onNext(GenericEvent.of(SUCCESS));
                     break;
                 case INTEGRITY_ERROR:
                     if (BuildConfig.DEBUG) Log.d(TAG, "CreateFamilyResult.INTEGRITY_ERROR event received; emitting MajorSetupFinished event");
                     mCause = event.getException();
-                    mInitialMajorSharedViewModel.getMajorSetupFinishedSubject().onNext(GenericEvent.of(FAILURE).setException(mCause));
+                    mSharedViewModel.getMajorSetupFinishedSubject().onNext(GenericEvent.of(FAILURE).setException(mCause));
                     break;
                 case BACKEND_ERROR:
                     if (BuildConfig.DEBUG) Log.d(TAG, "CreateFamilyResult.BACKEND_ERROR event received; invoking retry dialog");

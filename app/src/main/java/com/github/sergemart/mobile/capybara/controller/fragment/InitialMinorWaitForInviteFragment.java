@@ -29,7 +29,7 @@ public class InitialMinorWaitForInviteFragment
 
     private MaterialButton mExitApplicationButton;
 
-    private InitialMinorSharedViewModel mInitialMinorSharedViewModel;
+    private InitialMinorSharedViewModel mSharedViewModel;
 
 
     // --------------------------- Override fragment lifecycle event handlers
@@ -41,7 +41,7 @@ public class InitialMinorWaitForInviteFragment
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mInitialMinorSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(pActivity)).get(InitialMinorSharedViewModel.class);
+        mSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(pActivity)).get(InitialMinorSharedViewModel.class);
 
         this.setInstanceListeners();
     }
@@ -76,7 +76,7 @@ public class InitialMinorWaitForInviteFragment
                     this.navigateToNextPage();
                     break;
                 case FAILURE:                                                                       // no way to get here, added just in case
-                    mInitialMinorSharedViewModel.getMinorSetupFinishedSubject().onNext(GenericEvent.of(FAILURE).setData(event.getData()).setException(new FirebaseMessagingException()));
+                    mSharedViewModel.getMinorSetupFinishedSubject().onNext(GenericEvent.of(FAILURE).setData(event.getData()).setException(new FirebaseMessagingException()));
                     break;
                 default:
             }
@@ -91,7 +91,7 @@ public class InitialMinorWaitForInviteFragment
 
         // Set a listener to the "Exit Application" button
         pViewDisposable.add(RxView.clicks(mExitApplicationButton).subscribe(event ->
-            mInitialMinorSharedViewModel.getExitRequestedSubject().onComplete()                     // send ExitRequested event
+            mSharedViewModel.getExitRequestedSubject().onComplete()                     // send ExitRequested event
         ));
 
     }

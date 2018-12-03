@@ -26,9 +26,11 @@
     <string name="title_google_signin_failed">Google Sign-In Failed</string>
     <string name="title_create_family_failed">Creating The Family Failed</string>
     <string name="title_join_family_failed">Joining The Family Failed</string>
+    <string name="title_upgrade_backend_failed">Upgrading To The New App Version Failed</string>
     <string name="msg_invite_sent">Invite sent</string>
     <string name="msg_waiting_for_invite">Waiting for invite&#8230;</string>
     <string name="msg_invitation">%1$s has invited you to join the family</string>
+    <string name="msg_upgrade_backend">Application is being updated&#8230;</string>
     <string name="msg_permission_not_granted">Required permission has not been granted. The app functions will be limited. Retry?</string>
     <string name="msg_google_unknown_error">Unknown error while signing in to Google. The app cannot proceed. Retry?</string>
     <string name="msg_google_signin_canceled_by_user">You have been canceled the Google sign-in. The app cannot proceed. Retry?</string>

@@ -136,7 +136,7 @@ public class CloudMessagingService
         }
         CurrentUser currentUser = new CurrentUser();
         currentUser.setDeviceToken(currentDeviceToken);
-        mDisposable.add(CurrentUserRepo.get().updateAsync(currentUser).subscribe(event -> {}));          // update the token
+        mDisposable.add(CurrentUserRepo.get().updateAsync(currentUser).subscribe(() -> {}));        // update the token
     }
 
 

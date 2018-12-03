@@ -14,4 +14,9 @@
         android:id="@+id/layout_waiting"
         android:visibility="gone"/>
 
+    <TextView
+        android:id="@+id/textView_message"
+        style="@style/App.TextView"
+        android:text="@string/msg_upgrade_backend"/>
+
 </FrameLayout>

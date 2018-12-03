@@ -20,7 +20,7 @@ public class InitialMajorActivity
     extends AbstractActivity
 {
 
-    private InitialMajorSharedViewModel mInitialMajorSharedViewModel;
+    private InitialMajorSharedViewModel mSharedViewModel;
 
 
     // --------------------------- Override activity event handlers
@@ -33,7 +33,7 @@ public class InitialMajorActivity
         super.onCreate(savedInstanceState);
         super.setContentView(R.layout.activity_initial_major);
 
-        mInitialMajorSharedViewModel = ViewModelProviders.of(this).get(InitialMajorSharedViewModel.class);
+        mSharedViewModel = ViewModelProviders.of(this).get(InitialMajorSharedViewModel.class);
 
         this.setInstanceListeners();
     }
@@ -59,7 +59,7 @@ public class InitialMajorActivity
     private void setInstanceListeners() {
 
         // Set a listener to the "MajorSetupFinished" event
-        pInstanceDisposable.add(mInitialMajorSharedViewModel.getMajorSetupFinishedSubject().subscribe(event -> {
+        pInstanceDisposable.add(mSharedViewModel.getMajorSetupFinishedSubject().subscribe(event -> {
             switch (event.getResult()) {
                 case SUCCESS:
                     if (BuildConfig.DEBUG) Log.d(TAG, "MajorSetupFinished.SUCCESS event received; leaving nav graph and go further");

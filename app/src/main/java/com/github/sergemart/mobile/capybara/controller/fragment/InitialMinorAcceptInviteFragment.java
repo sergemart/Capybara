@@ -42,7 +42,7 @@ public class InitialMinorAcceptInviteFragment
     private MaterialButton mDeclineInviteButton;
     private ViewGroup mContentContainerLayout;
 
-    private InitialMinorSharedViewModel mInitialMinorSharedViewModel;
+    private InitialMinorSharedViewModel mSharedViewModel;
     private Throwable mCause;
     private String mInvitingEmail;
 
@@ -56,7 +56,7 @@ public class InitialMinorAcceptInviteFragment
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mInitialMinorSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(pActivity)).get(InitialMinorSharedViewModel.class);
+        mSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(pActivity)).get(InitialMinorSharedViewModel.class);
         mInvitingEmail = super.getString(R.string.word_someone);                                    // stub
 
         this.setInstanceListeners();
@@ -91,7 +91,7 @@ public class InitialMinorAcceptInviteFragment
                 if (resultCode == Activity.RESULT_OK) {                                             // retry
                     this.joinFamily();
                 } else if (resultCode == Activity.RESULT_CANCELED) {                                // fatal
-                    mInitialMinorSharedViewModel.getMinorSetupFinishedSubject().onNext(GenericEvent.of(FAILURE).setException(mCause));
+                    mSharedViewModel.getMinorSetupFinishedSubject().onNext(GenericEvent.of(FAILURE).setException(mCause));
                 }
                 break;
             default:
@@ -111,18 +111,18 @@ public class InitialMinorAcceptInviteFragment
                 case SUCCESS:
                     PreferenceStore.storeFamilyJoined(true);
                     if (BuildConfig.DEBUG) Log.d(TAG, "JoinFamily.SUCCESS event received; emitting MinorSetupFinished event");
-                    mInitialMinorSharedViewModel.getMinorSetupFinishedSubject().onNext(GenericEvent.of(SUCCESS));
+                    mSharedViewModel.getMinorSetupFinishedSubject().onNext(GenericEvent.of(SUCCESS));
                     break;
                 case NOT_FOUND:
                     PreferenceStore.storeFamilyJoined(false);
                     if (BuildConfig.DEBUG) Log.d(TAG, "JoinFamily.NOT_FOUND event received; emitting MinorSetupFinished event");
                     mCause = event.getException();
-                    mInitialMinorSharedViewModel.getMinorSetupFinishedSubject().onNext(GenericEvent.of(FAILURE).setException(mCause));
+                    mSharedViewModel.getMinorSetupFinishedSubject().onNext(GenericEvent.of(FAILURE).setException(mCause));
                     break;
                 case INTEGRITY_ERROR:
                     if (BuildConfig.DEBUG) Log.d(TAG, "JoinFamily.INTEGRITY_ERROR event received; emitting MinorSetupFinished event");
                     mCause = event.getException();
-                    mInitialMinorSharedViewModel.getMinorSetupFinishedSubject().onNext(GenericEvent.of(FAILURE).setException(mCause));
+                    mSharedViewModel.getMinorSetupFinishedSubject().onNext(GenericEvent.of(FAILURE).setException(mCause));
                     break;
                 case BACKEND_ERROR:
                     if (BuildConfig.DEBUG) Log.d(TAG, "JoinFamily.BACKEND_ERROR event received; invoking retry dialog");
@@ -161,7 +161,7 @@ public class InitialMinorAcceptInviteFragment
                     mInvitationTextView.setText(super.getString(R.string.msg_invitation, mInvitingEmail));
                     break;
                 case FAILURE:                                                                       // no way to get here, added just in case
-                    mInitialMinorSharedViewModel.getMinorSetupFinishedSubject().onNext(GenericEvent.of(FAILURE).setData(event.getData()).setException(new FirebaseMessagingException()));
+                    mSharedViewModel.getMinorSetupFinishedSubject().onNext(GenericEvent.of(FAILURE).setData(event.getData()).setException(new FirebaseMessagingException()));
                     break;
                 default:
             }

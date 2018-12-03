@@ -26,7 +26,7 @@ public class InitialCommonActivity
 {
 
     private NavController mNavController;
-    private InitialCommonSharedViewModel mInitialCommonSharedViewModel;
+    private InitialCommonSharedViewModel mSharedViewModel;
 
 
     // --------------------------- Override activity event handlers
@@ -40,7 +40,7 @@ public class InitialCommonActivity
         super.setContentView(R.layout.activity_initial_common);
 
         mNavController = Navigation.findNavController(this, R.id.fragment_nav_host_initial_common);
-        mInitialCommonSharedViewModel = ViewModelProviders.of(this).get(InitialCommonSharedViewModel.class);
+        mSharedViewModel = ViewModelProviders.of(this).get(InitialCommonSharedViewModel.class);
 
         this.setInstanceListeners();
     }
@@ -62,12 +62,12 @@ public class InitialCommonActivity
                 PreferenceStore.getAppMode() == Constants.APP_MODE_MINOR
             )
             && AuthService.get().isAuthenticated()
-            && PreferenceStore.getExpectedBackendVersion() == BuildConfig.VERSION_CODE
+            && PreferenceStore.getCurrentBackendVersion() == BuildConfig.VERSION_CODE
         ){
             this.leaveNavGraph();
         // Otherwise delegate control to the local nav AAC
         } else {                                                                                    // set up needed, stay in the nav graph
-            if (PreferenceStore.getExpectedBackendVersion() < BuildConfig.VERSION_CODE) {           // backend schema upgrade is needed
+            if (PreferenceStore.getCurrentBackendVersion() < BuildConfig.VERSION_CODE) {           // backend schema upgrade is needed
                 NavOptions navOptions = new NavOptions.Builder()
                     .setPopUpTo(                                                                    // clear the entire task TODO: Works not as expected: clears nav graph fragment also. Action-based nav could be broken!
                         Objects.requireNonNull(mNavController.getCurrentDestination()).getId(),     // docs recommend use nav graph id here. Does not work
@@ -103,7 +103,7 @@ public class InitialCommonActivity
     private void setInstanceListeners() {
 
         // Set a listener to the "CommonSetupFinished" event
-        pInstanceDisposable.add(mInitialCommonSharedViewModel.getCommonSetupFinishedSubject().subscribe(event -> {
+        pInstanceDisposable.add(mSharedViewModel.getCommonSetupFinishedSubject().subscribe(event -> {
             switch (event.getResult()) {
                 case SUCCESS:
                     if (BuildConfig.DEBUG) Log.d(TAG, "CommonSetupFinished.SUCCESS event received; leaving nav graph");

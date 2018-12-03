@@ -11,18 +11,17 @@ import android.view.ViewGroup;
 import com.github.sergemart.mobile.capybara.BuildConfig;
 import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
-import com.github.sergemart.mobile.capybara.controller.dialog.CreateFamilyRetryDialogFragment;
-import com.github.sergemart.mobile.capybara.data.datastore.FunctionsService;
-import com.github.sergemart.mobile.capybara.data.datastore.PreferenceStore;
+import com.github.sergemart.mobile.capybara.controller.dialog.UpgradeBackendRetryDialogFragment;
 import com.github.sergemart.mobile.capybara.data.events.GenericEvent;
 import com.github.sergemart.mobile.capybara.viewmodel.InitialCommonSharedViewModel;
-import com.github.sergemart.mobile.capybara.viewmodel.InitialMajorSharedViewModel;
 
 import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProviders;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 import static com.github.sergemart.mobile.capybara.data.events.Result.FAILURE;
 import static com.github.sergemart.mobile.capybara.data.events.Result.SUCCESS;
@@ -32,7 +31,7 @@ public class InitialCommonUpgradeBackendFragment
     extends AbstractFragment
 {
 
-    private InitialCommonSharedViewModel mInitialCommonSharedViewModel;
+    private InitialCommonSharedViewModel mSharedViewModel;
     private Throwable mCause;
 
 
@@ -45,7 +44,7 @@ public class InitialCommonUpgradeBackendFragment
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mInitialCommonSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(pActivity)).get(InitialCommonSharedViewModel.class);
+        mSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(pActivity)).get(InitialCommonSharedViewModel.class);
 
         this.setInstanceListeners();
     }
@@ -70,7 +69,8 @@ public class InitialCommonUpgradeBackendFragment
     @Override
     public void onStart() {
         super.onStart();
-        //this.createFamily();
+        super.showWaitingState();
+        this.upgradeBackend();
     }
 
 
@@ -82,9 +82,9 @@ public class InitialCommonUpgradeBackendFragment
         switch(requestCode) {
             case Constants.REQUEST_CODE_DIALOG_FRAGMENT:
                 if (resultCode == Activity.RESULT_OK) {                                             // retry
-                    //this.createFamily();
+                    this.upgradeBackend();
                 } else if (resultCode == Activity.RESULT_CANCELED) {                                // fatal
-                    mInitialCommonSharedViewModel.getCommonSetupFinishedSubject().onNext(GenericEvent.of(FAILURE).setException(mCause));
+                    mSharedViewModel.getCommonSetupFinishedSubject().onNext(GenericEvent.of(FAILURE).setException(mCause));
                 }
                 break;
             default:
@@ -110,5 +110,38 @@ public class InitialCommonUpgradeBackendFragment
 
     // --------------------------- Use cases
 
+    /**
+     * Upgrade the backend database schema
+     */
+    private void upgradeBackend() {
+        pInstanceDisposable.add(mSharedViewModel.upgradeBackendObservableAsync()
+            .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+            .subscribe(event -> {
+                switch (event.getResult()) {
+                    case SUCCESS:
+                        if (BuildConfig.DEBUG) Log.d(TAG, "UpgradeBackend.SUCCESS event received; emitting CommonSetupFinished event");
+                        mSharedViewModel.getCommonSetupFinishedSubject().onNext(GenericEvent.of(SUCCESS));
+                        break;
+                    case FAILURE:
+                        if (BuildConfig.DEBUG) Log.d(TAG, "UpgradeBackend.FAILURE event received; invoking retry dialog");
+                        mCause = event.getException();
+                        this.showSigninRetryDialog(mCause);
+                        break;
+                    default:
+                }
+            })
+        );
+    }
+
+
+    /**
+     * Show sign-in retry dialog
+     */
+    private void showSigninRetryDialog(Throwable cause) {
+        UpgradeBackendRetryDialogFragment.newInstance(cause).show(Objects.requireNonNull(
+            super.getChildFragmentManager()),
+            Constants.TAG_SIGN_IN_RETRY_DIALOG
+        );
+    }
 
 }

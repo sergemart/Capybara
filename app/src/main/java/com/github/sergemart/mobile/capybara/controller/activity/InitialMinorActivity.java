@@ -20,7 +20,7 @@ public class InitialMinorActivity
     extends AbstractActivity
 {
 
-    private InitialMinorSharedViewModel mInitialMinorSharedViewModel;
+    private InitialMinorSharedViewModel mSharedViewModel;
 
 
     // --------------------------- Override activity event handlers
@@ -33,7 +33,7 @@ public class InitialMinorActivity
         super.onCreate(savedInstanceState);
         super.setContentView(R.layout.activity_initial_minor);
 
-        mInitialMinorSharedViewModel = ViewModelProviders.of(this).get(InitialMinorSharedViewModel.class);
+        mSharedViewModel = ViewModelProviders.of(this).get(InitialMinorSharedViewModel.class);
 
         this.setInstanceListeners();
     }
@@ -59,7 +59,7 @@ public class InitialMinorActivity
     private void setInstanceListeners() {
 
         // Set a listener to the "MinorSetupFinished" event
-        pInstanceDisposable.add(mInitialMinorSharedViewModel.getMinorSetupFinishedSubject().subscribe(event -> {
+        pInstanceDisposable.add(mSharedViewModel.getMinorSetupFinishedSubject().subscribe(event -> {
             switch (event.getResult()) {
                 case SUCCESS:
                     if (BuildConfig.DEBUG) Log.d(TAG, "MinorSetupFinished.SUCCESS event received; leaving nav graph and go further");
@@ -72,7 +72,7 @@ public class InitialMinorActivity
         }));
 
         // Set a listener to the ExitRequested event
-        pInstanceDisposable.add(mInitialMinorSharedViewModel.getExitRequestedSubject().subscribe(
+        pInstanceDisposable.add(mSharedViewModel.getExitRequestedSubject().subscribe(
             this::exitApplication
         ));
 

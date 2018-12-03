@@ -26,9 +26,11 @@
     <string name="title_google_signin_failed">Не могу войти в ваш аккаунт Google</string>
     <string name="title_create_family_failed">Не могу создать капибарятник</string>
     <string name="title_join_family_failed">Не могу присоединиться к капибарятнику</string>
+    <string name="title_upgrade_backend_failed">Приложению не удалось обновиться</string>
     <string name="msg_invite_sent">Приглашение отправлено</string>
     <string name="msg_waiting_for_invite">Жду приглашения&#8230;</string>
     <string name="msg_invitation">%1$s пригласил Вас присоединиться к капибарятнику</string>
+    <string name="msg_upgrade_backend">Приложение обновляется&#8230;</string>
     <string name="msg_permission_not_granted">Вы не дали нужного разрешения. Приложение не сможет полноценно работать. Попробовать ещё раз?</string>
     <string name="msg_google_unknown_error">Непонятно, что произошло. Попробовать ещё раз?</string>
     <string name="msg_google_signin_canceled_by_user">Вы отменили вход в свой аккаунт. Без этого ничего не будет работать. Попробовать ещё раз?</string>

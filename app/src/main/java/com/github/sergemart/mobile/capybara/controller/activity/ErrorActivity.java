@@ -18,7 +18,7 @@ public class ErrorActivity
     extends AbstractActivity
 {
 
-    ErrorSharedViewModel mErrorSharedViewModel;
+    ErrorSharedViewModel mSharedViewModel;
 
 
     // --------------------------- Override activity event handlers
@@ -33,10 +33,10 @@ public class ErrorActivity
         super.setContentView(R.layout.activity_error);
 
         // Publish the error cause
-        mErrorSharedViewModel = ViewModelProviders.of(this).get(ErrorSharedViewModel.class);
+        mSharedViewModel = ViewModelProviders.of(this).get(ErrorSharedViewModel.class);
         if (App.getLastFatalException() != null) {
             Throwable cause = App.getLastFatalException().get();
-            mErrorSharedViewModel.getCauseSubject().onNext(GenericEvent.of(SUCCESS).setException(cause));
+            mSharedViewModel.getCauseSubject().onNext(GenericEvent.of(SUCCESS).setException(cause));
         }
         this.setInstanceListeners();
     }
@@ -59,7 +59,7 @@ public class ErrorActivity
     private void setInstanceListeners() {
 
         // Set a listener to the ExitRequested event
-        pInstanceDisposable.add(mErrorSharedViewModel.getExitRequestedSubject().subscribe(
+        pInstanceDisposable.add(mSharedViewModel.getExitRequestedSubject().subscribe(
             this::exitApplication
         ));
 

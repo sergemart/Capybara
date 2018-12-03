@@ -31,7 +31,7 @@ public class ResStore {
      * @return  Grant permission retry dialog icon resource id
      */
     public int getGrantPermissionRetryDialogIconR() {
-        return R.mipmap.capybara_profile; // TODO: Make dialog icons
+        return R.mipmap.capybara_bighead; // TODO: Make dialog icons
     }
 
 
@@ -57,7 +57,7 @@ public class ResStore {
      * @return Sign-in retry dialog icon resource id
      */
     public int getSignInRetryDialogIconR(Throwable cause) {
-        return R.mipmap.capybara_profile; // TODO: Make dialog icons
+        return R.mipmap.capybara_bighead; // TODO: Make dialog icons
     }
 
 
@@ -112,7 +112,7 @@ public class ResStore {
      * @return  Create family retry dialog icon resource id
      */
     public int getCreateFamilyRetryDialogIconR(Throwable cause) {
-        return R.mipmap.capybara_profile; // TODO: Make dialog icons
+        return R.mipmap.capybara_bighead; // TODO: Make dialog icons
     }
 
 
@@ -138,7 +138,7 @@ public class ResStore {
      * @return  Join family retry dialog icon resource id
      */
     public int getJoinFamilyRetryDialogIconR(Throwable cause) {
-        return R.mipmap.capybara_profile; // TODO: Make dialog icons
+        return R.mipmap.capybara_bighead; // TODO: Make dialog icons
     }
 
 
@@ -154,6 +154,32 @@ public class ResStore {
      * @return Join family retry dialog message resource id
      */
     public int getJoinFamilyRetryDialogMessageR(Throwable cause) {
+        return R.string.msg_firebase_unknown_error;
+    }
+
+
+    // --------------------------- The interface: Upgrade backend retry dialog resources
+
+    /**
+     * @return  Upgrade backend retry dialog icon resource id
+     */
+    public int getUpgradeBackendRetryDialogIconR(Throwable cause) {
+        return R.mipmap.capybara_bighead; // TODO: Make dialog icons
+    }
+
+
+    /**
+     * @return Upgrade backend retry dialog title resource id
+     */
+    public int getUpgradeBackendRetryDialogTitleR(Throwable cause) {
+        return R.string.title_join_family_failed;
+    }
+
+
+    /**
+     * @return Upgrade backend retry dialog message resource id
+     */
+    public int getUpgradeBackendRetryDialogMessageR(Throwable cause) {
         return R.string.msg_firebase_unknown_error;
     }
 

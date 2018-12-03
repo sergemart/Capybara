@@ -50,7 +50,7 @@ public class MajorInviteFragment
     private final List<ContactData> mContacts = Collections.synchronizedList(new ArrayList<>());
     private ContactsAdapter mContactsAdapter;
     private SelectionTracker<String> mSelectionTracker;
-    private MajorSharedViewModel mMajorSharedViewModel;
+    private MajorSharedViewModel mSharedViewModel;
     private ActionMode mActionMode;
     private boolean mIsInActionMode;                                                                // to remember the Action Mode state between the lives
 
@@ -65,7 +65,7 @@ public class MajorInviteFragment
         super.onCreate(savedInstanceState);
 
         mContactsAdapter = new ContactsAdapter();
-        mMajorSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(pActivity)).get(MajorSharedViewModel.class);
+        mSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(pActivity)).get(MajorSharedViewModel.class);
 
         this.setInstanceListeners();
     }

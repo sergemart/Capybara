@@ -25,7 +25,7 @@ public class ErrorFatalFragment
     private TextView mErrorDetailsTextView;
     private MaterialButton mExitApplicationButton;
 
-    private ErrorSharedViewModel mErrorSharedViewModel;
+    private ErrorSharedViewModel mSharedViewModel;
 
 
     // --------------------------- Override fragment event handlers
@@ -37,7 +37,7 @@ public class ErrorFatalFragment
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mErrorSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(pActivity)).get(ErrorSharedViewModel.class);
+        mSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(pActivity)).get(ErrorSharedViewModel.class);
 
         this.setInstanceListeners();
     }
@@ -75,11 +75,11 @@ public class ErrorFatalFragment
 
         // Set a listener to the "Exit Application" button
         pViewDisposable.add(RxView.clicks(mExitApplicationButton).subscribe(event ->
-            mErrorSharedViewModel.getExitRequestedSubject().onComplete()                            // send ExitRequested event
+            mSharedViewModel.getExitRequestedSubject().onComplete()                            // send ExitRequested event
         ));
 
         // Set a listener to the Cause event
-        pInstanceDisposable.add(mErrorSharedViewModel.getCauseSubject().subscribe(event ->
+        pInstanceDisposable.add(mSharedViewModel.getCauseSubject().subscribe(event ->
             this.showErrorMessage(event.getException())
         ));
 

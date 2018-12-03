@@ -38,7 +38,7 @@ public class MajorBudgetListFragment
 
     private final List<ContactData> mMinors = Collections.synchronizedList(new ArrayList<>());
     private MinorsAdapter mMinorsAdapter;
-    private MajorSharedViewModel mMajorSharedViewModel;
+    private MajorSharedViewModel mSharedViewModel;
     private ActionMode mActionMode;
     private boolean mIsInActionMode;                                                                // to remember the Action Mode state between the lives
 
@@ -53,7 +53,7 @@ public class MajorBudgetListFragment
         super.onCreate(savedInstanceState);
 
         mMinorsAdapter = new MinorsAdapter();
-        mMajorSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(pActivity)).get(MajorSharedViewModel.class);
+        mSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(pActivity)).get(MajorSharedViewModel.class);
 
         this.setInstanceListeners();
     }

@@ -14,6 +14,7 @@ import java.lang.ref.WeakReference;
 import java.util.Objects;
 
 import androidx.multidex.MultiDexApplication;
+import io.reactivex.exceptions.OnErrorNotImplementedException;
 import io.reactivex.exceptions.UndeliverableException;
 import io.reactivex.plugins.RxJavaPlugins;
 
@@ -35,14 +36,23 @@ public class App extends MultiDexApplication {
         if (BuildConfig.DEBUG) Log.d(TAG, "onCreate() called");
         sContext = super.getApplicationContext();
 
-        if (!BuildConfig.DEBUG) {                                                                   // do not intercept when debugging
+        if (BuildConfig.DEBUG) {
             RxJavaPlugins.setErrorHandler(e -> {
-                if (e instanceof UndeliverableException) e = e.getCause();
+                if (e instanceof UndeliverableException || e instanceof OnErrorNotImplementedException) e = e.getCause();
                 if (e instanceof IOException)
                     return;                                                                         // skip, irrelevant network problem or API that throws on cancellation
                 if (e instanceof InterruptedException)
                     return;                                                                         // skip, some blocking code was interrupted by a dispose call
-                Log.e(TAG, "Undeliverable exception: " + e.getMessage());
+                throw new RuntimeException(e);                                                      // do not intercept others when debugging
+            });
+        } else {
+            RxJavaPlugins.setErrorHandler(e -> {
+                if (e instanceof UndeliverableException || e instanceof OnErrorNotImplementedException) e = e.getCause();
+                if (e instanceof IOException)
+                    return;                                                                         // skip, irrelevant network problem or API that throws on cancellation
+                if (e instanceof InterruptedException)
+                    return;                                                                         // skip, some blocking code was interrupted by a dispose call
+                Log.e(TAG, "Undeliverable exception: " + e.getMessage());                      // intercept others when in prod
             });
         }
 

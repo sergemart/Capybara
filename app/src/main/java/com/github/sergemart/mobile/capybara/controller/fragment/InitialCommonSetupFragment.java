@@ -35,7 +35,7 @@ public class InitialCommonSetupFragment
     private MaterialButton mIAmMajorButton;
     private MaterialButton mIAmMinorButton;
 
-    private InitialCommonSharedViewModel mInitialCommonSharedViewModel;
+    private InitialCommonSharedViewModel mSharedViewModel;
 
 
     // --------------------------- Override fragment event handlers
@@ -47,7 +47,7 @@ public class InitialCommonSetupFragment
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mInitialCommonSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(pActivity)).get(InitialCommonSharedViewModel.class);
+        mSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(pActivity)).get(InitialCommonSharedViewModel.class);
 
         this.setInstanceListeners();
     }
@@ -144,7 +144,7 @@ public class InitialCommonSetupFragment
         if (!AuthService.get().isAuthenticated()) {
             NavHostFragment.findNavController(this).navigate(R.id.action_initialSetup_to_initialSignin);
         } else {
-            mInitialCommonSharedViewModel.getCommonSetupFinishedSubject().onNext(GenericEvent.of(SUCCESS));
+            mSharedViewModel.getCommonSetupFinishedSubject().onNext(GenericEvent.of(SUCCESS));
         }
     }
 

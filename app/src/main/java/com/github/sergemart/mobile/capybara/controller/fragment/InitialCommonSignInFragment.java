@@ -37,7 +37,7 @@ public class InitialCommonSignInFragment
 
     private MaterialButton mSignInButton;
 
-    private InitialCommonSharedViewModel mInitialCommonSharedViewModel;
+    private InitialCommonSharedViewModel mSharedViewModel;
     private Throwable mCause;
     private boolean mSignInStarted;
 
@@ -51,7 +51,7 @@ public class InitialCommonSignInFragment
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mInitialCommonSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(pActivity)).get(InitialCommonSharedViewModel.class);
+        mSharedViewModel = ViewModelProviders.of(Objects.requireNonNull(pActivity)).get(InitialCommonSharedViewModel.class);
         mSignInStarted = false;
 
         this.setInstanceListeners();
@@ -86,7 +86,7 @@ public class InitialCommonSignInFragment
                 if (resultCode == Activity.RESULT_OK) {                                             // retry
                     this.signIn();
                 } else if (resultCode == Activity.RESULT_CANCELED) {                                // fatal
-                    mInitialCommonSharedViewModel.getCommonSetupFinishedSubject().onNext(GenericEvent.of(FAILURE).setException(mCause));
+                    mSharedViewModel.getCommonSetupFinishedSubject().onNext(GenericEvent.of(FAILURE).setException(mCause));
                 }
                 break;
             default:
@@ -105,11 +105,11 @@ public class InitialCommonSignInFragment
         pInstanceDisposable.add(AuthService.get().getSignInSubject().subscribe(event -> {
             switch (event.getResult()) {
                 case SUCCESS:
-                    if (BuildConfig.DEBUG) Log.d(TAG, "SignInResult.SUCCESS event received; getting device token");
+                    if (BuildConfig.DEBUG) Log.d(TAG, "SignIn.SUCCESS event received; getting device token");
                     this.getDeviceToken();
                     break;
                 case FAILURE:
-                    if (BuildConfig.DEBUG) Log.d(TAG, "SignInResult.FAILURE event received; invoking retry dialog");
+                    if (BuildConfig.DEBUG) Log.d(TAG, "SignIn.FAILURE event received; invoking retry dialog");
                     mCause = event.getException();
                     this.showSigninRetryDialog(mCause);
                     break;
@@ -121,11 +121,11 @@ public class InitialCommonSignInFragment
         pInstanceDisposable.add(AuthService.get().getGetDeviceTokenSubject().subscribe(event -> {
             switch (event.getResult()) {
                 case SUCCESS:
-                    if (BuildConfig.DEBUG) Log.d(TAG, "GetDeviceTokenResult.SUCCESS event received; publishing device token");
+                    if (BuildConfig.DEBUG) Log.d(TAG, "GetDeviceToken.SUCCESS event received; publishing device token");
                     this.updateCurrentUser();
                     break;
                 case FAILURE:
-                    if (BuildConfig.DEBUG) Log.d(TAG, "GetDeviceTokenResult.FAILURE event received; invoking retry dialog");
+                    if (BuildConfig.DEBUG) Log.d(TAG, "GetDeviceToken.FAILURE event received; invoking retry dialog");
                     mCause = event.getException();
                     this.showSigninRetryDialog(mCause);
                     break;
@@ -197,20 +197,17 @@ public class InitialCommonSignInFragment
         CurrentUser currentUser = new CurrentUser();
         currentUser.setAppMode(PreferenceStore.getAppMode());
         currentUser.setDeviceToken(CurrentUserRepo.get().readSync().getDeviceToken());                  // read authoritative data
-        pViewDisposable.add(CurrentUserRepo.get().updateAsync(currentUser).subscribe(event -> {          // update the repo with the authoritative data
-            switch (event.getResult()) {
-                case SUCCESS:
-                    if (BuildConfig.DEBUG) Log.d(TAG, "Current user data successfully updated; emitting CommonSetupFinished event");
-                    mInitialCommonSharedViewModel.getCommonSetupFinishedSubject().onNext(GenericEvent.of(SUCCESS));
-                    break;
-                case FAILURE:
-                    if (BuildConfig.DEBUG) Log.d(TAG, "Error while updating the current user data; invoking retry dialog");
-                    mCause = event.getException();
-                    this.showSigninRetryDialog(mCause);
-                    break;
-                default:
+        pViewDisposable.add(CurrentUserRepo.get().updateAsync(currentUser).subscribe(
+            () -> {                                                                                 // update the repo with the authoritative data
+                if (BuildConfig.DEBUG) Log.d(TAG, "Current user data successfully updated; emitting CommonSetupFinished event");
+                mSharedViewModel.getCommonSetupFinishedSubject().onNext(GenericEvent.of(SUCCESS));
+            },
+            e -> {
+                if (BuildConfig.DEBUG) Log.d(TAG, "Error while updating the current user data; invoking retry dialog");
+                mCause = e;
+                this.showSigninRetryDialog(mCause);
             }
-        }));
+        ));
     }
 
 }

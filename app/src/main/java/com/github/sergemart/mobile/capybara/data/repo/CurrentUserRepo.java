@@ -4,13 +4,12 @@ import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.data.datastore.AuthService;
 import com.github.sergemart.mobile.capybara.data.datastore.FirestoreService;
 import com.github.sergemart.mobile.capybara.data.datastore.PreferenceStore;
-import com.github.sergemart.mobile.capybara.data.events.GenericEvent;
 import com.github.sergemart.mobile.capybara.data.model.CurrentUser;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import io.reactivex.Observable;
+import io.reactivex.Completable;
 
 
 // Singleton
@@ -48,7 +47,7 @@ public class CurrentUserRepo {
     /**
      * Async update the current user record
      */
-    public Observable<GenericEvent> updateAsync(CurrentUser currentUser) {
+    public Completable updateAsync(CurrentUser currentUser) {
         Map<String, Object> userData = new HashMap<>();                                             // the mapping
         if (currentUser.getAppMode() != null) userData.put(Constants.KEY_APP_MODE, currentUser.getAppMode());
         if (currentUser.getDeviceToken() != null) {

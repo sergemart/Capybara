@@ -16,6 +16,7 @@ import com.google.firebase.firestore.SetOptions;
 
 import java.util.Map;
 
+import io.reactivex.Completable;
 import io.reactivex.Observable;
 
 import static com.github.sergemart.mobile.capybara.data.events.Result.FAILURE;
@@ -57,8 +58,8 @@ public class FirestoreService {
     /**
      * Create or update a user document on a backend
      */
-    public Observable<GenericEvent> updateUserAsync(Map<String, Object> userData) {
-        return Observable.create(emitter -> {
+    public Completable updateUserAsync(Map<String, Object> userData) {
+        return Completable.create(emitter -> {
             if (userData == null) {
                 if (BuildConfig.DEBUG)
                     Log.e(TAG, "No user data provided while attempting to update user on backend; skipping");
@@ -76,12 +77,12 @@ public class FirestoreService {
                 .set(userData, SetOptions.merge())
                 .addOnSuccessListener(result -> {
                     if (BuildConfig.DEBUG) Log.d(TAG, "User created or updated :" + userUid);
-                    emitter.onNext(GenericEvent.of(SUCCESS));
+                    emitter.onComplete();
                 })
                 .addOnFailureListener(e -> {
                     String errorMessage = mContext.getString(R.string.exception_firebase_user_not_updated) + ": " + userUid;
                     if (BuildConfig.DEBUG) Log.e(TAG, errorMessage + ": " + e.getMessage());
-                    emitter.onNext(GenericEvent.of(FAILURE).setException(new FirebaseDbException(errorMessage, e)));
+                    emitter.onError(new FirebaseDbException(errorMessage, e));
                 })
             ;
         });
