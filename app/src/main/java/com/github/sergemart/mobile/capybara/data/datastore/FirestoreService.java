@@ -56,7 +56,7 @@ public class FirestoreService {
     // --------------------------- The interface
 
     /**
-     * Create or update a user document on a backend
+     * Create or update a user document on a backend in a way which works for the online and offline modes as well
      */
     public Completable updateUserAsync(Map<String, Object> userData) {
         return Completable.create(emitter -> {
@@ -74,17 +74,10 @@ public class FirestoreService {
             mFirebaseFirestore
                 .collection(Constants.FIRESTORE_COLLECTION_USERS)
                 .document(userUid)
-                .set(userData, SetOptions.merge())
-                .addOnSuccessListener(result -> {
-                    if (BuildConfig.DEBUG) Log.d(TAG, "User created or updated :" + userUid);
-                    emitter.onComplete();
-                })
-                .addOnFailureListener(e -> {
-                    String errorMessage = mContext.getString(R.string.exception_firebase_user_not_updated) + ": " + userUid;
-                    if (BuildConfig.DEBUG) Log.e(TAG, errorMessage + ": " + e.getMessage());
-                    emitter.onError(new FirebaseDbException(errorMessage, e));
-                })
+                .set(userData, SetOptions.merge())                                                  // here used the local replica
             ;
+            if (BuildConfig.DEBUG) Log.d(TAG, "User created or updated :" + userUid);
+            emitter.onComplete();
         });
     }
 
