@@ -64,10 +64,7 @@ public class InitialCommonActivity
             && AuthService.get().isAuthenticated()
             && PreferenceStore.getCurrentBackendVersion() == BuildConfig.VERSION_CODE
         ){
-            this.leaveNavGraph();
-        // Otherwise delegate control to the local nav AAC
-        } else {                                                                                    // set up needed, stay in the nav graph
-            if (PreferenceStore.getCurrentBackendVersion() < BuildConfig.VERSION_CODE) {           // backend schema upgrade is needed
+            if (PreferenceStore.getCurrentBackendVersion() < BuildConfig.VERSION_CODE) {            // backend schema upgrade is needed
                 NavOptions navOptions = new NavOptions.Builder()
                     .setPopUpTo(                                                                    // clear the entire task TODO: Works not as expected: clears nav graph fragment also. Action-based nav could be broken!
                         Objects.requireNonNull(mNavController.getCurrentDestination()).getId(),     // docs recommend use nav graph id here. Does not work
@@ -76,9 +73,10 @@ public class InitialCommonActivity
                     .build()
                 ;
                 mNavController.navigate(R.id.fragment_initial_common_upgrade_backend, null, navOptions);
+            } else {
+                this.leaveNavGraph();
             }
-            // Implicitly delegate control to the local nav AAC
-        }
+        }                                                                                           // otherwise implicitly delegate control to the local nav AAC
     }
 
 
