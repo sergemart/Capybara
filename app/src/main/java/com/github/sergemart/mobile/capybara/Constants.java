@@ -97,6 +97,9 @@ public final class Constants {
     public static final String FIRESTORE_DOCUMENT_DATABASE = "database";
     public static final String FIRESTORE_FIELD_VERSION = "version";
     public static final String FIRESTORE_COLLECTION_USERS = "users";
+    public static final String FIRESTORE_COLLECTION_FAMILIES = "families";
+    public static final String FIRESTORE_FIELD_CREATOR = "creator";
+    public static final String FIRESTORE_FIELD_MEMBERS = "members";
 
 
     // ----------------------- Permissions

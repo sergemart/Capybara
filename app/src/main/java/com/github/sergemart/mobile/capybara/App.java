@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.github.sergemart.mobile.capybara.data.datastore.AuthService;
 import com.github.sergemart.mobile.capybara.viewmodel.AppViewModel;
+import com.google.firebase.FirebaseApp;
 
 import java.lang.ref.WeakReference;
 
@@ -31,7 +32,8 @@ public class App extends MultiDexApplication {
 
         // App start-up actions
         AppViewModel.get().setRxGlobalErrorHandler();
-        AuthService.get().getTokenAsync();                                                            // make sense for non-initial start-ups
+        FirebaseApp.initializeApp(sContext);                                                        // to make Robolectric tests working; otherwise not needed
+        AuthService.get().getTokenAsync();                                                          // make sense for non-initial start-ups
         AppViewModel.get().createNotificationChannels();
     }
 

@@ -36,7 +36,7 @@ public class MajorBudgetListFragment
 
     private RecyclerView mMinorsRecyclerView;
 
-    private final List<ContactData> mMinors = Collections.synchronizedList(new ArrayList<>());
+    private final List<FamilyMember> mMinors = Collections.synchronizedList(new ArrayList<>());
     private MinorsAdapter mMinorsAdapter;
     private MajorSharedViewModel mSharedViewModel;
     private ActionMode mActionMode;
@@ -84,7 +84,7 @@ public class MajorBudgetListFragment
         this.setViewListeners();
 
         super.showWaitingState();
-        this.getMinors();
+        mSharedViewModel.getMinorFamilyMembersAsync();
 
         return fragmentView;
     }
@@ -109,7 +109,21 @@ public class MajorBudgetListFragment
     /**
      * Set listeners to view-unrelated events
      */
+    @SuppressWarnings("unchecked")
     private void setInstanceListeners() {
+
+        pInstanceDisposable.add(mSharedViewModel.getGetMinorFamilyMembersSubject().subscribe(event -> {
+            switch (event.getResult()) {
+                case SUCCESS:
+                    mMinors.clear();
+                    mMinors.addAll((List) event.getData());
+                    mMinorsAdapter.notifyDataSetChanged();
+                    break;
+                case FAILURE:
+                    break;
+                default:
+            }
+        }));
     }
 
 
@@ -117,15 +131,6 @@ public class MajorBudgetListFragment
      * Set listeners to view-related events
      */
     private void setViewListeners() {
-    }
-
-
-    // --------------------------- Use cases
-
-    /**
-     * Get minors to display in the list
-     */
-    private void getMinors() {
     }
 
 
@@ -149,7 +154,7 @@ public class MajorBudgetListFragment
          */
         @Override
         public void onBindViewHolder(@NonNull MinorHolder holder, int position) {
-            ContactData item = mMinors.get(position);
+            FamilyMember item = mMinors.get(position);
         }
 
 
