@@ -8,7 +8,7 @@
 
     <fragment
         android:id="@+id/fragment_initial_common_setup"
-        android:name="com.github.sergemart.mobile.capybara.controller.fragment.InitialCommonSetupFragment"
+        android:name="com.github.sergemart.mobile.capybara.workflow.fragment.InitialCommonSetupFragment"
         android:label="fragment_initial_common_setup"
         tools:layout="@layout/fragment_initial_common_setup" >
         <action
@@ -18,13 +18,13 @@
 
     <fragment
         android:id="@+id/fragment_initial_common_sign_in"
-        android:name="com.github.sergemart.mobile.capybara.controller.fragment.InitialCommonSignInFragment"
+        android:name="com.github.sergemart.mobile.capybara.workflow.fragment.InitialCommonSignInFragment"
         android:label="fragment_initial_common_sign_in"
         tools:layout="@layout/fragment_initial_common_sign_in" />
 
     <fragment
         android:id="@+id/fragment_initial_common_upgrade_backend"
-        android:name="com.github.sergemart.mobile.capybara.controller.fragment.InitialCommonUpgradeBackendFragment"
+        android:name="com.github.sergemart.mobile.capybara.workflow.fragment.InitialCommonUpgradeBackendFragment"
         android:label="fragment_initial_common_upgrade_backend"
         tools:layout="@layout/fragment_initial_common_upgrade_backend" />
 

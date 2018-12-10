@@ -11,7 +11,7 @@ import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
 import com.github.sergemart.mobile.capybara.Tools;
 import com.github.sergemart.mobile.capybara.data.events.GenericEvent;
-import com.github.sergemart.mobile.capybara.exceptions.FirebaseFunctionException;
+import com.github.sergemart.mobile.capybara.exception.FirebaseFunctionException;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.firebase.functions.FirebaseFunctions;
 

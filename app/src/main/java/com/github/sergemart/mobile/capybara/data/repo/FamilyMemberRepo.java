@@ -10,16 +10,12 @@ import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
 import com.github.sergemart.mobile.capybara.data.datastore.AuthService;
 import com.github.sergemart.mobile.capybara.data.datastore.FirestoreService;
-import com.github.sergemart.mobile.capybara.data.model.FamilyMember;
-import com.github.sergemart.mobile.capybara.exceptions.FirebaseDbException;
-import com.github.sergemart.mobile.capybara.exceptions.InvalidDataException;
-import com.github.sergemart.mobile.capybara.exceptions.NotFoundException;
+import com.github.sergemart.mobile.capybara.exception.InvalidDataException;
+import com.github.sergemart.mobile.capybara.exception.NotFoundException;
 
 import java.util.List;
 
 import io.reactivex.Single;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
 
 
 // Singleton

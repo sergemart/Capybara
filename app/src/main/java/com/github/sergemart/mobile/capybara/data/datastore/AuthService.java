@@ -11,9 +11,9 @@ import com.github.sergemart.mobile.capybara.BuildConfig;
 import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
 import com.github.sergemart.mobile.capybara.data.events.GenericEvent;
-import com.github.sergemart.mobile.capybara.exceptions.FirebaseFunctionException;
-import com.github.sergemart.mobile.capybara.exceptions.FirebaseSigninException;
-import com.github.sergemart.mobile.capybara.exceptions.GoogleSigninException;
+import com.github.sergemart.mobile.capybara.exception.FirebaseFunctionException;
+import com.github.sergemart.mobile.capybara.exception.FirebaseSigninException;
+import com.github.sergemart.mobile.capybara.exception.GoogleSigninException;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -26,6 +26,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.iid.FirebaseInstanceId;
 
+import io.reactivex.Completable;
 import io.reactivex.subjects.PublishSubject;
 
 import static com.github.sergemart.mobile.capybara.data.events.Result.FAILURE;
@@ -180,6 +181,35 @@ public class AuthService {
                 mSignInSubject.onNext(GenericEvent.of(SUCCESS).setData(mFirebaseUser));
             })
         ;
+    }
+
+
+    /**
+     * Out-of-workflow method to use in tests
+     */
+    public Completable signInWithEmailAndPassword(String email, String password) {
+        return Completable.create(emitter ->
+            mFirebaseAuth
+                .signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(task -> {
+                    if ( !task.isSuccessful() ) {                                                   // error check
+                        String errorMessage = mContext.getString(R.string.exception_firebase_client_connection_failed);
+                        if (BuildConfig.DEBUG) Log.e(TAG, errorMessage);
+                        emitter.onError(new FirebaseSigninException(errorMessage));
+                        return;
+                    }
+                    mFirebaseUser = mFirebaseAuth.getCurrentUser();
+                    if (mFirebaseUser == null) {
+                        String errorMessage = mContext.getString(R.string.exception_firebase_user_is_null);
+                        if (BuildConfig.DEBUG) Log.e(TAG, errorMessage);
+                        emitter.onError(new FirebaseSigninException(errorMessage));
+                        return;
+                    }
+                    mUsername = mFirebaseUser.getDisplayName();
+                    if (BuildConfig.DEBUG) Log.d(TAG, "Signed in successfully: " + mUsername);
+                    emitter.onComplete();
+                })
+        );
     }
 
 

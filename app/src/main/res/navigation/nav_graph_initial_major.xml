@@ -8,7 +8,7 @@
 
     <fragment
         android:id="@+id/fragment_initial_major_create_family"
-        android:name="com.github.sergemart.mobile.capybara.controller.fragment.InitialMajorCreateFamilyFragment"
+        android:name="com.github.sergemart.mobile.capybara.workflow.fragment.InitialMajorCreateFamilyFragment"
         android:label="fragment_initial_major_create_family"
         tools:layout="@layout/fragment_initial_major_create_family" >
     </fragment>

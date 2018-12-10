@@ -8,13 +8,13 @@
 
     <fragment
         android:id="@+id/fragment_common_locator"
-        android:name="com.github.sergemart.mobile.capybara.controller.fragment.CommonLocatorFragment"
+        android:name="com.github.sergemart.mobile.capybara.workflow.fragment.CommonLocatorFragment"
         android:label="fragment_major_locator"
         tools:layout="@layout/fragment_common_locator" />
 
     <fragment
         android:id="@+id/fragment_minor_dummy"
-        android:name="com.github.sergemart.mobile.capybara.controller.fragment.MinorDummyFragment"
+        android:name="com.github.sergemart.mobile.capybara.workflow.fragment.MinorDummyFragment"
         android:label="fragment_minor_dummy"
         tools:layout="@layout/fragment_minor_dummy" >
     </fragment>

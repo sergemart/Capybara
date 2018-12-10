@@ -5,8 +5,8 @@ import android.content.Intent;
 import android.location.Location;
 
 import com.github.sergemart.mobile.capybara.data.datastore.PreferenceStore;
-import com.github.sergemart.mobile.capybara.controller.activity.InitialMajorActivity;
-import com.github.sergemart.mobile.capybara.controller.activity.InitialMinorActivity;
+import com.github.sergemart.mobile.capybara.workflow.activity.InitialMajorActivity;
+import com.github.sergemart.mobile.capybara.workflow.activity.InitialMinorActivity;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 

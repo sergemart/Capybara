@@ -5,17 +5,10 @@ import com.github.sergemart.mobile.capybara.data.datastore.PreferenceStore;
 import com.github.sergemart.mobile.capybara.data.events.GenericEvent;
 import com.github.sergemart.mobile.capybara.data.model.CurrentUser;
 import com.github.sergemart.mobile.capybara.data.repo.CurrentUserRepo;
-import com.github.sergemart.mobile.capybara.exceptions.FirebaseDbException;
 
 import androidx.lifecycle.ViewModel;
 import io.reactivex.Completable;
-import io.reactivex.Observable;
-import io.reactivex.observables.ConnectableObservable;
-import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.BehaviorSubject;
-
-import static com.github.sergemart.mobile.capybara.data.events.Result.FAILURE;
-import static com.github.sergemart.mobile.capybara.data.events.Result.SUCCESS;
 
 
 public class InitialCommonSharedViewModel extends ViewModel {

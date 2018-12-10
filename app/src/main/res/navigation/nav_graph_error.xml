@@ -8,7 +8,7 @@
 
     <fragment
         android:id="@+id/fragment_error_fatal"
-        android:name="com.github.sergemart.mobile.capybara.controller.fragment.ErrorFatalFragment"
+        android:name="com.github.sergemart.mobile.capybara.workflow.fragment.ErrorFatalFragment"
         android:label="fragment_error_fatal"
         tools:layout="@layout/fragment_error_fatal" />
 

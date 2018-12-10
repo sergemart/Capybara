@@ -15,19 +15,19 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".controller.activity.InitialCommonActivity">
+        <activity android:name=".workflow.activity.InitialCommonActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".controller.activity.InitialMajorActivity" />
-        <activity android:name=".controller.activity.InitialMinorActivity" />
-        <activity android:name=".controller.activity.MajorActivity" />
-        <activity android:name=".controller.activity.MinorActivity" />
-        <activity android:name=".controller.activity.ErrorActivity" />
+        <activity android:name=".workflow.activity.InitialMajorActivity" />
+        <activity android:name=".workflow.activity.InitialMinorActivity" />
+        <activity android:name=".workflow.activity.MajorActivity" />
+        <activity android:name=".workflow.activity.MinorActivity" />
+        <activity android:name=".workflow.activity.ErrorActivity" />
 
-        <service android:name=".controller.background.CloudMessagingService"
+        <service android:name=".workflow.background.CloudMessagingService"
             android:stopWithTask="true"
             tools:ignore="ExportedService">                                                         <!-- security checks performed at runtime -->
             <intent-filter>
@@ -35,7 +35,7 @@
             </intent-filter>
         </service>
 
-        <receiver android:name=".controller.background.LocationRequestBroadcastReceiver"
+        <receiver android:name=".workflow.background.LocationRequestBroadcastReceiver"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.github.sergemart.mobile.capybara.SEND_LOCATION" />

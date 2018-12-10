@@ -4,14 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".controller.fragment.CommonLocatorFragment">
+    tools:context=".workflow.fragment.CommonLocatorFragment">
 
     <fragment
         android:id="@+id/fragment_map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context="com.github.sergemart.mobile.capybara.controller.activity.MajorActivity" />
+        tools:context="com.github.sergemart.mobile.capybara.workflow.activity.MajorActivity" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_request_locations"

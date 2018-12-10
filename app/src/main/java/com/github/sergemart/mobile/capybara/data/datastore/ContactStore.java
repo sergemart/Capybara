@@ -17,7 +17,7 @@ import com.github.sergemart.mobile.capybara.BuildConfig;
 import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
 import com.github.sergemart.mobile.capybara.data.events.GenericEvent;
-import com.github.sergemart.mobile.capybara.exceptions.ContactsException;
+import com.github.sergemart.mobile.capybara.exception.ContactsException;
 import com.github.sergemart.mobile.capybara.data.model.ContactData;
 
 import java.io.ByteArrayInputStream;

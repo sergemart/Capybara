@@ -1,8 +1,8 @@
 package com.github.sergemart.mobile.capybara.data.datastore;
 
 import com.github.sergemart.mobile.capybara.R;
-import com.github.sergemart.mobile.capybara.exceptions.FirebaseSigninException;
-import com.github.sergemart.mobile.capybara.exceptions.GoogleSigninException;
+import com.github.sergemart.mobile.capybara.exception.FirebaseSigninException;
+import com.github.sergemart.mobile.capybara.exception.GoogleSigninException;
 import com.google.android.gms.auth.api.signin.GoogleSignInStatusCodes;
 import com.google.android.gms.common.api.ApiException;
 
