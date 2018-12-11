@@ -59,9 +59,9 @@ public class FirestoreService {
     // --------------------------- The interface
 
     /**
-     * Create or update a user document on a backend in a way which works for the online and offline modes as well
+     * Create or update a current user document on a backend in a way which works for the online and offline modes as well
      */
-    public Completable updateUserAsync(Map<String, Object> userData) {
+    public Completable updateCurrentUserAsync(Map<String, Object> userData) {
         return Completable.create(emitter -> {
             if (userData == null) {
                 String errorMessage = mContext.getString(R.string.exception_firebase_wrong_call);
@@ -79,7 +79,7 @@ public class FirestoreService {
             mFirestore
                 .collection(Constants.FIRESTORE_COLLECTION_USERS)
                 .document(userUid)
-                .set(userData, SetOptions.merge())                                                  // here used the local replica
+                .set(userData, SetOptions.merge())                                                  // use the local replica
             ;
             if (BuildConfig.DEBUG) Log.d(TAG, "User created or updated :" + userUid);
             emitter.onComplete();
@@ -88,9 +88,9 @@ public class FirestoreService {
 
 
     /**
-     * Read a system/database document on a backend
+     * Read a current user document on a backend
      */
-    public Single<DocumentSnapshot> readSystemDatabaseAsync() {
+    public Single<DocumentSnapshot> readCurrentUserAsync() {
         return Single.create(emitter -> {
             if (!AuthService.get().isAuthenticated()) {
                 String errorMessage = mContext.getString(R.string.exception_firebase_not_authenticated);
@@ -99,15 +99,15 @@ public class FirestoreService {
                 return;
             }
             mFirestore
-                .collection(Constants.FIRESTORE_COLLECTION_SYSTEM)
-                .document(Constants.FIRESTORE_DOCUMENT_DATABASE)
+                .collection(Constants.FIRESTORE_COLLECTION_USERS)
+                .document(AuthService.get().getCurrentUser().getUid())
                 .get()
                 .addOnSuccessListener(result -> {
-                    if (BuildConfig.DEBUG) Log.d(TAG, "Have read system/database document");
+                    if (BuildConfig.DEBUG) Log.d(TAG, "Have read user document");
                     emitter.onSuccess(result);
                 })
                 .addOnFailureListener(e -> {
-                    String errorMessage = mContext.getString(R.string.exception_firebase_system_data_not_read);
+                    String errorMessage = mContext.getString(R.string.exception_firebase_user_not_read);
                     if (BuildConfig.DEBUG) Log.e(TAG, errorMessage + ": " + e.getMessage());
                     emitter.onError(new FirebaseDbException(errorMessage, e));
                 })
@@ -143,5 +143,35 @@ public class FirestoreService {
             ;
         });
     }
+
+
+    /**
+     * Read a system/database document on a backend
+     */
+    public Single<DocumentSnapshot> readSystemDatabaseAsync() {
+        return Single.create(emitter -> {
+            if (!AuthService.get().isAuthenticated()) {
+                String errorMessage = mContext.getString(R.string.exception_firebase_not_authenticated);
+                if (BuildConfig.DEBUG) Log.e(TAG, errorMessage);
+                emitter.onError(new FirebaseDbException(errorMessage));
+                return;
+            }
+            mFirestore
+                .collection(Constants.FIRESTORE_COLLECTION_SYSTEM)
+                .document(Constants.FIRESTORE_DOCUMENT_DATABASE)
+                .get()
+                .addOnSuccessListener(result -> {
+                    if (BuildConfig.DEBUG) Log.d(TAG, "Have read system/database document");
+                    emitter.onSuccess(result);
+                })
+                .addOnFailureListener(e -> {
+                    String errorMessage = mContext.getString(R.string.exception_firebase_system_data_not_read);
+                    if (BuildConfig.DEBUG) Log.e(TAG, errorMessage + ": " + e.getMessage());
+                    emitter.onError(new FirebaseDbException(errorMessage, e));
+                })
+            ;
+        });
+    }
+
 
 }

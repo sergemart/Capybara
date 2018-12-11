@@ -77,7 +77,6 @@ dependencies {
     testImplementation 'org.hamcrest:hamcrest-junit:2.0.0.0'
     testImplementation 'commons-io:commons-io:2.5'
     androidTestImplementation "androidx.test.ext:junit:1.0.0"
-    //androidTestImplementation 'androidx.test:runner:1.1.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
     // RxJava
     implementation 'io.reactivex.rxjava2:rxjava:2.1.12'
