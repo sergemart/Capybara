@@ -1,5 +1,6 @@
 package com.github.sergemart.mobile.capybara.data.repo;
 
+import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.data.datastore.AuthService;
 
 import org.junit.Before;
@@ -21,7 +22,7 @@ public class FamilyMemberRepoTest {
 
     @Before
     public void setUpTest() {
-        AuthService.get().signInWithEmailAndPassword("capybara.test.dummy.1@gmail.com", "c@pyb@ra").blockingAwait();
+        AuthService.get().signInWithEmailAndPassword(Constants.TEST_USER_1_EMAIL, Constants.TEST_USER_PASSWORD).blockingAwait();
     }
 
 
@@ -30,7 +31,7 @@ public class FamilyMemberRepoTest {
     @Test
     public void readFamilyMemberIdsAsync_Returns_Collection_Of_Ids() {
         List<String> result = FamilyMemberRepo.get().readFamilyMemberIdsAsync().blockingGet();
-        assertThat(1, is(1));
+        assertThat(result.size(), is(3));
     }
 
 

@@ -11,6 +11,7 @@ import com.github.sergemart.mobile.capybara.R;
 import com.github.sergemart.mobile.capybara.exception.FirebaseDbException;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 
@@ -33,7 +34,12 @@ public class FirestoreService {
     private FirestoreService() {
         // Init member variables
         mContext = App.getContext();
-        mFirebaseFirestore = FirebaseFirestore.getInstance();
+        mFirestore = FirebaseFirestore.getInstance();
+        FirebaseFirestoreSettings firestoreSettings = new FirebaseFirestoreSettings.Builder()
+            .setTimestampsInSnapshotsEnabled(true)                                                  // Preferred way to store timestamps (instead of Date)
+            .build()
+        ;
+        mFirestore.setFirestoreSettings(firestoreSettings);
     }
 
 
@@ -47,7 +53,7 @@ public class FirestoreService {
     // --------------------------- Member variables
 
     private final Context mContext;
-    private FirebaseFirestore mFirebaseFirestore;
+    private FirebaseFirestore mFirestore;
 
 
     // --------------------------- The interface
@@ -70,7 +76,7 @@ public class FirestoreService {
                 return;
             }
             String userUid = AuthService.get().getCurrentUser().getUid();
-            mFirebaseFirestore
+            mFirestore
                 .collection(Constants.FIRESTORE_COLLECTION_USERS)
                 .document(userUid)
                 .set(userData, SetOptions.merge())                                                  // here used the local replica
@@ -92,7 +98,7 @@ public class FirestoreService {
                 emitter.onError(new FirebaseDbException(errorMessage));
                 return;
             }
-            mFirebaseFirestore
+            mFirestore
                 .collection(Constants.FIRESTORE_COLLECTION_SYSTEM)
                 .document(Constants.FIRESTORE_DOCUMENT_DATABASE)
                 .get()
@@ -121,7 +127,7 @@ public class FirestoreService {
                 emitter.onError(new FirebaseDbException(errorMessage));
                 return;
             }
-            mFirebaseFirestore
+            mFirestore
                 .collection(Constants.FIRESTORE_COLLECTION_FAMILIES)
                 .whereEqualTo(Constants.FIRESTORE_FIELD_CREATOR, creatorId)
                 .get()

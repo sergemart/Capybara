@@ -113,4 +113,11 @@ public final class Constants {
     };
 
 
+    // ----------------------- Testing
+
+    public static final String TEST_USER_1_EMAIL = "capybara.test.dummy.1@gmail.com";
+    public static final String TEST_USER_2_EMAIL = "capybara.test.dummy.2@gmail.com";
+    public static final String TEST_USER_3_EMAIL = "capybara.test.dummy.3@gmail.com";
+    public static final String TEST_USER_PASSWORD = "c@pyb@ra";
+
 }
