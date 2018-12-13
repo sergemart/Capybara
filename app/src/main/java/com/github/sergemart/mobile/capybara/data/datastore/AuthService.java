@@ -144,7 +144,7 @@ public class AuthService {
         Task<GoogleSignInAccount> completedTask = GoogleSignIn.getSignedInAccountFromIntent(responseIntent);
         GoogleSignInAccount googleSignInAccount;
         try {
-            googleSignInAccount = completedTask.getResult(ApiException.class);                      // throwa an exception on sign-in error
+            googleSignInAccount = completedTask.getResult(ApiException.class);                      // throws an exception on sign-in error
         } catch (ApiException e) {
             String errorMessage = mContext.getString(R.string.exception_google_sign_in_failed);
             if (BuildConfig.DEBUG) Log.e(TAG, errorMessage + ": " +  e.getMessage());
@@ -185,6 +185,7 @@ public class AuthService {
 
 
     /**
+     * Sign in with email and password.
      * Out-of-workflow method to use in tests
      */
     public Completable signInWithEmailAndPassword(String email, String password) {
@@ -221,6 +222,7 @@ public class AuthService {
         try {
             mFirebaseAuth.signOut();
             mGoogleSignInClient.signOut();
+            mFirebaseUser = null;
             mUsername = Constants.DEFAULT_USERNAME;
             mSignOutSubject.onNext(GenericEvent.of(SUCCESS));
         } catch (Exception e) {

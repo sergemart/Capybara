@@ -20,6 +20,7 @@ public final class Constants {
     public static final String DB_NAME = "capybara.db";
     public static final String NOTIFICATION_CHANNEL_GENERAL = "com.github.sergemart.mobile.capybara.NOTIFICATION_CHANNEL_GENERAL"; // Notification channel ID (since Oreo)
     public static final String SELECTION_ID = "selection_id";                                       // used by the RecyclerView Selection Library
+    public static final int UI_AUTOMATOR_DEFAULT_TIMEOUT = 5000;
 
 
     // ----------------------- App preference names

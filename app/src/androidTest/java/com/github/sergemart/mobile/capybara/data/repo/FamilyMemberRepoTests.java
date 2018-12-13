@@ -2,6 +2,7 @@ package com.github.sergemart.mobile.capybara.data.repo;
 
 import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.data.datastore.AuthService;
+import com.google.firebase.auth.AuthCredential;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -19,12 +20,16 @@ import static org.junit.Assert.assertThat;
 
 @RunWith(AndroidJUnit4.class)
 @MediumTest
-public class FamilyMemberRepoTest {
+public class FamilyMemberRepoTests {
+
+    private static AuthCredential sAuthCredential;
+
 
     // --------------------------- Set up / tear down
 
     @BeforeClass
     public static void setUpClass() {
+        // Sign in a dummy test user
         AuthService.get().signInWithEmailAndPassword(Constants.TEST_USER_1_EMAIL, Constants.TEST_USER_PASSWORD).blockingAwait();
     }
 
@@ -39,7 +44,9 @@ public class FamilyMemberRepoTest {
 
     @Test
     public void readFamilyMemberIdsAsync_Returns_Ids() {
+        // When
         List<String> result = FamilyMemberRepo.get().readFamilyMemberIdsAsync().blockingGet();
+        // Then
         assertThat(result.size(), is(3));
     }
 

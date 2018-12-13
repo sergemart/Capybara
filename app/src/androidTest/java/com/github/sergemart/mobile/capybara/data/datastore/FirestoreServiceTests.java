@@ -25,7 +25,7 @@ import static org.junit.Assert.assertThat;
 
 @RunWith(AndroidJUnit4.class)
 @MediumTest
-public class FirestoreServiceTest {
+public class FirestoreServiceTests {
 
     private FirebaseUser mCurrentUser;
 
@@ -60,14 +60,15 @@ public class FirestoreServiceTest {
     @Test
     public void updateCurrentUserAsync_Has_Proper_Rx_Flow() {
         TestObserver testObserver = new TestObserver();
+        // Given
         Map<String, Object> userData = new ConcurrentHashMap<>();
         userData.put("testKey1", "testValue1");
         userData.put("testKey2", "testValue2");
-
+        // Then
         testObserver.assertNotSubscribed();
-
+        // When
         FirestoreService.get().updateCurrentUserAsync(userData).subscribe(testObserver);
-
+        // Then
         testObserver.assertSubscribed();
         testObserver.assertComplete();
         testObserver.assertNoErrors();
@@ -76,12 +77,14 @@ public class FirestoreServiceTest {
 
     @Test
     public void updateCurrentUserAsync_Updates_User_Document() {
+        // Given
         Map<String, Object> userData = new ConcurrentHashMap<>();
         userData.put("testKey1", "testValue1");
         userData.put("testKey2", "testValue2");
+        // When
         FirestoreService.get().updateCurrentUserAsync(userData).blockingAwait();
-
         DocumentSnapshot result = FirestoreService.get().readCurrentUserAsync().blockingGet();
+        // Then
         assertThat(result.get("testKey1"), is("testValue1"));
         assertThat(result.get("testKey2"), is("testValue2"));
     }
@@ -89,14 +92,18 @@ public class FirestoreServiceTest {
 
     @Test
     public void readCurrentUserAsync_Returns_Proper_User_Document() {
+        // When
         DocumentSnapshot result = FirestoreService.get().readCurrentUserAsync().blockingGet();
+        // Then
         assertThat(result.getId(), is(mCurrentUser.getUid()));
     }
 
 
     @Test
     public void readFamilyAsync_Returns_Proper_Family() {
+        // When
         QuerySnapshot result = FirestoreService.get().readFamilyAsync(mCurrentUser.getUid()).blockingGet();
+        // Then
         assertThat(result.size(), is(1));                                                     // should be only one family
         assertThat(result.getDocuments().get(0).get(Constants.FIRESTORE_FIELD_CREATOR), is(mCurrentUser.getUid()));
     }
@@ -104,7 +111,9 @@ public class FirestoreServiceTest {
 
     @Test
     public void readSystemDatabaseAsync_Returns_Proper_Database_Document() {
+        // When
         DocumentSnapshot result = FirestoreService.get().readSystemDatabaseAsync().blockingGet();
+        // Then
         assertThat((Long)result.get(Constants.FIRESTORE_FIELD_VERSION), greaterThan(0L));
     }
 

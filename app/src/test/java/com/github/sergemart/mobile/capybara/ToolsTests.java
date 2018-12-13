@@ -28,10 +28,10 @@ public class ToolsTests {
     private Location mLocation;
 
 
-    // --------------------------- Set up
+    // --------------------------- Set up / tear down
 
     @BeforeClass
-    public static void setUpSuite() throws IOException {
+    public static void setUpClass() throws IOException {
         // Prepare resources
         InputStream inputStream = Objects.requireNonNull(ToolsTests.class.getClassLoader()).getResourceAsStream("sample_location.json");
         sSampleLocationJson = IOUtils.toString(inputStream,"UTF-8");
@@ -41,8 +41,7 @@ public class ToolsTests {
 
     @Before
     public void setUpTest() {
-
-        // mLocation
+        // Mock mLocation
         when(mLocation.getLatitude()).thenReturn(12.23d);
         when(mLocation.getLongitude()).thenReturn(23.45d);
         when(mLocation.getTime()).thenReturn(321L);
@@ -53,7 +52,9 @@ public class ToolsTests {
 
     @Test
     public void getLocationJson_Returns_Proper_Json() {
+        // When
         String locationJson = Tools.get().getLocationJson(mLocation);
+        // Then
         assertThat(locationJson, is(sSampleLocationJson));
     }
 

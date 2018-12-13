@@ -70,8 +70,12 @@ public class InitialCommonActivity
         // - the BACKEND SCHEMA UPGRADE IN NOT NEEDED
         boolean mayLeaveNavGraph = initialSetupDone && backendSchemaOk;
 
-        if (initialSetupDone && !backendSchemaOk) this.navigateToUpgradeBackendPage();
-        else if (mayLeaveNavGraph) this.leaveNavGraph();
+        if (initialSetupDone && !backendSchemaOk) {
+            this.navigateToUpgradeBackendPage();
+        }
+        else if (mayLeaveNavGraph) {
+            this.leaveNavGraph();
+        }
         // Otherwise implicitly delegate control to the local nav AAC
     }
 

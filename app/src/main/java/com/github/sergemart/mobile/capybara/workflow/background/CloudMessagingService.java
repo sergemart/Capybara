@@ -6,6 +6,7 @@ import android.util.Log;
 import com.github.sergemart.mobile.capybara.BuildConfig;
 import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.Tools;
+import com.github.sergemart.mobile.capybara.data.datastore.AuthService;
 import com.github.sergemart.mobile.capybara.data.datastore.FunctionsService;
 import com.github.sergemart.mobile.capybara.data.datastore.GeoService;
 import com.github.sergemart.mobile.capybara.data.datastore.PreferenceStore;
@@ -132,6 +133,10 @@ public class CloudMessagingService
         String currentDeviceToken = CurrentUserRepo.get().readSync().getDeviceToken();
         if (newDeviceToken.equals(currentDeviceToken)) {                                            // break the possible loop
             if (BuildConfig.DEBUG) Log.d(TAG, "New device token actually not new; skipping update");
+            return;
+        }
+        if (!AuthService.get().isAuthenticated()) {                                                 // avoid early update error
+            if (BuildConfig.DEBUG) Log.d(TAG, "User is not authenticated; skipping update");
             return;
         }
         CurrentUser currentUser = new CurrentUser();
