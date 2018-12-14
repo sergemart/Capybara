@@ -25,21 +25,17 @@ public class InitialCommonWorkflowTests {
 
     @Rule
     public GrantPermissionRule mPermissionRule = GrantPermissionRule.grant(android.Manifest.permission.ACCESS_FINE_LOCATION);
+//    @Rule
+//    public ActivityTestRule<InitialCommonActivity> mActivityRule = new ActivityTestRule<>(InitialCommonActivity.class);
 
 
     // --------------------------- Set up / tear down
 
-    @BeforeClass
-    public static void SetUpClass() {
-        PreferenceStore.storeAppMode(-1);                                                     // should cause app start from the initial WF
-        AuthService.get().signOut();
-    }
-
-
     @AfterClass
     public static void TearDownClass() {
-        PreferenceStore.storeAppMode(-1);
-        AuthService.get().signOut();
+        SuT.get()
+            .resetApp()
+        ;
     }
 
 
@@ -48,11 +44,37 @@ public class InitialCommonWorkflowTests {
     @Test
     public void initial_Common_Workflow_Performs_Major_Main_Scenario() {
         SuT.get()
+            .resetApp()                                                                             // should cause app start from the initial WF
             .startApp()
         ;
         InitialCommonSetupPage.get()
             .assertThatPageIsDisplayed()
             .tellThatIAmMajor()
+        ;
+        InitialCommonSignInPage.get()
+            .assertThatPageIsDisplayed()
+            .proceedWithSignIn()
+            .assertThatSelectAnAccountDialogIsDisplayed()
+            .selectTheFirstAccountToSignIn()
+        ;
+        MajorWrappingPage.get()
+            .assertThatPageIsDisplayed()
+        ;
+        CommonLocatorPage.get()
+            .assertThatPageIsDisplayed()
+        ;
+    }
+
+
+    @Test
+    public void initial_Common_Workflow_Performs_Minor_Main_Scenario() {
+        SuT.get()
+            .resetApp()                                                                             // should cause app start from the initial WF
+            .startApp()
+        ;
+        InitialCommonSetupPage.get()
+            .assertThatPageIsDisplayed()
+            .tellThatIAmMinor()
         ;
         InitialCommonSignInPage.get()
             .assertThatPageIsDisplayed()

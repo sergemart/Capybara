@@ -15,7 +15,7 @@ import io.reactivex.Completable;
 // Singleton
 public class CurrentUserRepo {
 
-    private static CurrentUserRepo sInstance = new CurrentUserRepo();
+    private static CurrentUserRepo sInstance;
 
 
     // Private constructor

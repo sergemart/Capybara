@@ -5,6 +5,8 @@ import android.content.Intent;
 
 import com.github.sergemart.mobile.capybara.BuildConfig;
 import com.github.sergemart.mobile.capybara.Constants;
+import com.github.sergemart.mobile.capybara.data.datastore.AuthService;
+import com.github.sergemart.mobile.capybara.data.datastore.PreferenceStore;
 
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.platform.app.InstrumentationRegistry;
@@ -36,10 +38,17 @@ public class SuT {
 
     // --------------------------- Member variables
 
-    private UiDevice mDevice;
+    private final UiDevice mDevice;
 
 
     // --------------------------- Use cases
+
+    public SuT resetApp() {
+        PreferenceStore.storeAppMode(-1);
+        AuthService.get().signOut();
+        return this;
+    }
+
 
     public SuT startApp() {
         // Start from the home screen

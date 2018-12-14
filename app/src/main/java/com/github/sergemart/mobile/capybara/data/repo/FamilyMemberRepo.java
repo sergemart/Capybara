@@ -24,7 +24,7 @@ public class FamilyMemberRepo {
     private static final String TAG = FamilyMemberRepo.class.getSimpleName();
 
     @SuppressLint("StaticFieldLeak")                                                                // OK for the application context
-    private static FamilyMemberRepo sInstance = new FamilyMemberRepo();
+    private static FamilyMemberRepo sInstance;
 
 
     // Private constructor

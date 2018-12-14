@@ -7,7 +7,7 @@ import java.util.List;
 // Singleton
 public class TemplateStore {
 
-    private static TemplateStore sInstance = new TemplateStore();
+    private static TemplateStore sInstance;
 
 
     // Private constructor

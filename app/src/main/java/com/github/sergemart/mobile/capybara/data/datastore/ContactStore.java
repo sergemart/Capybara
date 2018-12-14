@@ -43,7 +43,7 @@ public class ContactStore {
     private static final String TAG = ContactStore.class.getSimpleName();
 
     @SuppressLint("StaticFieldLeak")                                                                // OK for the application context
-    private static ContactStore sInstance = new ContactStore();
+    private static ContactStore sInstance;
 
 
     // Private constructor

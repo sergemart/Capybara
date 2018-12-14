@@ -10,7 +10,7 @@ import com.google.android.gms.common.api.ApiException;
 // Singleton
 public class ResStore {
 
-    private static ResStore sInstance = new ResStore();
+    private static ResStore sInstance;
 
 
     // Private constructor
