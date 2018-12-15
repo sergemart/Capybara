@@ -137,7 +137,7 @@ public class InitialCommonUpgradeBackendFragment
     private void showRetryDialog(Throwable cause) {
         UpgradeBackendRetryDialogFragment.newInstance(cause).show(Objects.requireNonNull(
             super.getChildFragmentManager()),
-            Constants.TAG_SIGN_IN_RETRY_DIALOG
+            Constants.TAG_RETRY_SIGN_IN_DIALOG
         );
     }
 

@@ -18,7 +18,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 
 
-public class SignInRetryDialogFragment extends DialogFragment {
+public class RetrySignInDialogFragment extends DialogFragment {
 
     private Throwable mCause;
 
@@ -96,8 +96,8 @@ public class SignInRetryDialogFragment extends DialogFragment {
     /**
      * The dialog fragment factory
      */
-    public static SignInRetryDialogFragment newInstance(Throwable cause) {
-        SignInRetryDialogFragment instance = new SignInRetryDialogFragment();
+    public static RetrySignInDialogFragment newInstance(Throwable cause) {
+        RetrySignInDialogFragment instance = new RetrySignInDialogFragment();
         instance.setCause(cause);
         return instance;
     }

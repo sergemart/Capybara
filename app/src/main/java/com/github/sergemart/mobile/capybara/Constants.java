@@ -34,7 +34,7 @@ public final class Constants {
     // ----------------------- Dialog tags
 
     public static final String TAG_GRANT_PERMISSION_RETRY_DIALOG = "grantPermissionRetryDialog";
-    public static final String TAG_SIGN_IN_RETRY_DIALOG = "signInRetryDialog";
+    public static final String TAG_RETRY_SIGN_IN_DIALOG = "signInRetryDialog";
     public static final String TAG_CREATE_FAMILY_RETRY_DIALOG = "createFamilyRetryDialog";
     public static final String TAG_JOIN_FAMILY_RETRY_DIALOG = "joinFamilyRetryDialog";
 

@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 import com.github.sergemart.mobile.capybara.BuildConfig;
 import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
-import com.github.sergemart.mobile.capybara.workflow.dialog.SignInRetryDialogFragment;
+import com.github.sergemart.mobile.capybara.workflow.dialog.RetrySignInDialogFragment;
 import com.github.sergemart.mobile.capybara.data.datastore.AuthService;
 import com.github.sergemart.mobile.capybara.data.datastore.PreferenceStore;
 import com.github.sergemart.mobile.capybara.data.events.GenericEvent;
@@ -111,7 +111,7 @@ public class InitialCommonSignInFragment
                 case FAILURE:
                     if (BuildConfig.DEBUG) Log.d(TAG, "SignIn.FAILURE event received; invoking retry dialog");
                     mCause = event.getException();
-                    this.showSigninRetryDialog(mCause);
+                    this.showRetrySignInDialog(mCause);
                     break;
                 default:
             }
@@ -127,7 +127,7 @@ public class InitialCommonSignInFragment
                 case FAILURE:
                     if (BuildConfig.DEBUG) Log.d(TAG, "GetDeviceToken.FAILURE event received; invoking retry dialog");
                     mCause = event.getException();
-                    this.showSigninRetryDialog(mCause);
+                    this.showRetrySignInDialog(mCause);
                     break;
                 default:
             }
@@ -172,12 +172,12 @@ public class InitialCommonSignInFragment
 
 
     /**
-     * Show sign-in retry dialog
+     * Show retry sign-in dialog
      */
-    private void showSigninRetryDialog(Throwable cause) {
-        SignInRetryDialogFragment.newInstance(cause).show(Objects.requireNonNull(
+    private void showRetrySignInDialog(Throwable cause) {
+        RetrySignInDialogFragment.newInstance(cause).show(Objects.requireNonNull(
             super.getChildFragmentManager()),
-            Constants.TAG_SIGN_IN_RETRY_DIALOG
+            Constants.TAG_RETRY_SIGN_IN_DIALOG
         );
     }
 
@@ -205,7 +205,7 @@ public class InitialCommonSignInFragment
             e -> {
                 if (BuildConfig.DEBUG) Log.d(TAG, "Error while updating the current user data; invoking retry dialog");
                 mCause = e;
-                this.showSigninRetryDialog(mCause);
+                this.showRetrySignInDialog(mCause);
             }
         ));
     }
