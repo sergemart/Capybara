@@ -1,10 +1,13 @@
 package com.github.sergemart.mobile.capybara.data.datastore;
 
 import com.github.sergemart.mobile.capybara.Constants;
+import com.github.sergemart.mobile.capybara.atf.SuT;
+import com.github.sergemart.mobile.capybara.atf.TestTools;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -27,6 +30,8 @@ import static org.junit.Assert.assertThat;
 @MediumTest
 public class FirestoreServiceTests {
 
+    private static String sUserEmail;
+
     private FirebaseUser mCurrentUser;
 
 
@@ -34,8 +39,13 @@ public class FirestoreServiceTests {
 
     @BeforeClass
     public static void setUpClass() {
-        AuthService.get().signInWithEmailAndPassword(Constants.TEST_USER_1_EMAIL, Constants.TEST_USER_PASSWORD).blockingAwait();
-        AuthService.get().getCurrentUser().getUid();
+        sUserEmail = TestTools.get().getRandomEmail();
+        SuT.get()
+            .givenUserEmail(sUserEmail)
+            .doCreateUser()
+            .doCreateFamily()
+            .doSignIn()
+        ;
     }
 
 
@@ -45,9 +55,19 @@ public class FirestoreServiceTests {
     }
 
 
+    @After
+    public void tearDownTest() {
+    }
+
+
     @AfterClass
     public static void tearDownClass() {
-        AuthService.get().signOut();
+        SuT.get()
+            .givenUserEmail(sUserEmail)
+            .doDeleteFamily()
+            .doDeleteUser()
+            .doSignOut()
+        ;
     }
 
 
@@ -67,7 +87,7 @@ public class FirestoreServiceTests {
         // Then
         testObserver.assertNotSubscribed();
         // When
-        FirestoreService.get().updateCurrentUserAsync(userData).subscribe(testObserver);
+        FirestoreService.get().updateCurrentUserLocalReplicaAsync(userData).subscribe(testObserver);
         // Then
         testObserver.assertSubscribed();
         testObserver.assertComplete();
@@ -82,7 +102,7 @@ public class FirestoreServiceTests {
         userData.put("testKey1", "testValue1");
         userData.put("testKey2", "testValue2");
         // When
-        FirestoreService.get().updateCurrentUserAsync(userData).blockingAwait();
+        FirestoreService.get().updateCurrentUserLocalReplicaAsync(userData).blockingAwait();
         DocumentSnapshot result = FirestoreService.get().readCurrentUserAsync().blockingGet();
         // Then
         assertThat(result.get("testKey1"), is("testValue1"));

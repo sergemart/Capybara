@@ -77,6 +77,7 @@ public final class Constants {
     public static final String KEY_SENDER_EMAIL = "senderEmail";
     public static final String KEY_MESSAGE_TYPE = "messageType";
     public static final String KEY_IS_IN_ACTION_MODE = "isInActionMode";
+    public static final String KEY_IS_FAKE = "isFake";
 
 
     // ----------------------- Message types
@@ -116,9 +117,9 @@ public final class Constants {
 
     // ----------------------- Testing
 
-    public static final String TEST_USER_1_EMAIL = "capybara.test.dummy.1@gmail.com";
-    public static final String TEST_USER_2_EMAIL = "capybara.test.dummy.2@gmail.com";
-    public static final String TEST_USER_3_EMAIL = "capybara.test.dummy.3@gmail.com";
     public static final String TEST_USER_PASSWORD = "c@pyb@ra";
+    public static final String TEST_USER_EMAIL_PREFIX = "capy.";
+    public static final int TEST_USER_EMAIL_LENGTH = 15;
+    public static final String TEST_USER_EMAIL_DOMAIN = "@gmail.com";
 
 }

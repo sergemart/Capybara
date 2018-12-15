@@ -1,7 +1,7 @@
 package com.github.sergemart.mobile.capybara.data.datastore;
 
 import com.github.sergemart.mobile.capybara.R;
-import com.github.sergemart.mobile.capybara.exception.FirebaseSigninException;
+import com.github.sergemart.mobile.capybara.exception.FirebaseAuthException;
 import com.github.sergemart.mobile.capybara.exception.GoogleSigninException;
 import com.google.android.gms.auth.api.signin.GoogleSignInStatusCodes;
 import com.google.android.gms.common.api.ApiException;
@@ -99,7 +99,7 @@ public class ResStore {
                         resId = R.string.msg_google_client_connection_error;
                 }
             }
-        } else if (cause instanceof FirebaseSigninException) {
+        } else if (cause instanceof FirebaseAuthException) {
             resId = R.string.msg_firebase_client_connection_error;
         }
         return resId;

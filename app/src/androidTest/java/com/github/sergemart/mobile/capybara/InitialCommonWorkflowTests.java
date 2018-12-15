@@ -1,14 +1,19 @@
 package com.github.sergemart.mobile.capybara;
 
-import com.github.sergemart.mobile.capybara.atf.MajorWrappingPage;
+import com.github.sergemart.mobile.capybara.atf.CommonLocatorPage;
 import com.github.sergemart.mobile.capybara.atf.InitialCommonSetupPage;
 import com.github.sergemart.mobile.capybara.atf.InitialCommonSignInPage;
-import com.github.sergemart.mobile.capybara.atf.CommonLocatorPage;
+import com.github.sergemart.mobile.capybara.atf.InitialMinorAcceptInvitePage;
+import com.github.sergemart.mobile.capybara.atf.InitialMinorWaitForInvitePage;
+import com.github.sergemart.mobile.capybara.atf.MajorWrappingPage;
+import com.github.sergemart.mobile.capybara.atf.MinorWrappingPage;
 import com.github.sergemart.mobile.capybara.atf.SuT;
+import com.github.sergemart.mobile.capybara.atf.TestTools;
 import com.github.sergemart.mobile.capybara.data.datastore.AuthService;
-import com.github.sergemart.mobile.capybara.data.datastore.PreferenceStore;
 
+import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
@@ -29,12 +34,46 @@ public class InitialCommonWorkflowTests {
 //    public ActivityTestRule<InitialCommonActivity> mActivityRule = new ActivityTestRule<>(InitialCommonActivity.class);
 
 
+    private static String sMajorPartyEmail;
+    private static String sMinorPartyEmail;
+
+
     // --------------------------- Set up / tear down
+
+    @BeforeClass
+    public static void setUpClass() {
+        sMajorPartyEmail = TestTools.get().getRandomEmail();
+        sMinorPartyEmail = TestTools.get().getRandomEmail();
+
+        SuT.get()
+            .givenUserEmail(sMajorPartyEmail)
+            .doCreateUser()
+            .doCreateFamily()
+            .givenUserEmail(sMinorPartyEmail)
+            .doCreateUser()
+        ;
+    }
+
+
+    @Before
+    public void setUpTest() {
+    }
+
+
+    @After
+    public void tearDownTest() {
+    }
+
 
     @AfterClass
     public static void TearDownClass() {
         SuT.get()
-            .resetApp()
+            .givenUserEmail(sMajorPartyEmail)
+            .doDeleteFamily()
+            .doDeleteUser()
+            .givenUserEmail(sMinorPartyEmail)
+            .doDeleteUser()
+            .doResetApp()
         ;
     }
 
@@ -42,51 +81,60 @@ public class InitialCommonWorkflowTests {
     // --------------------------- Tests
 
     @Test
-    public void initial_Common_Workflow_Performs_Major_Main_Scenario() {
+    public void performs_Major_Main_Scenario_With_Phone_Account() {
         SuT.get()
-            .resetApp()                                                                             // should cause app start from the initial WF
-            .startApp()
+            .doResetApp()                                                                           // should cause app start from the initial WF
+            .doStartApp()
         ;
         InitialCommonSetupPage.get()
-            .assertThatPageIsDisplayed()
-            .tellThatIAmMajor()
+            .shouldPageBeDisplayed()
+            .doTellThatIAmMajor()
         ;
         InitialCommonSignInPage.get()
-            .assertThatPageIsDisplayed()
-            .proceedWithSignIn()
-            .assertThatSelectAnAccountDialogIsDisplayed()
-            .selectTheFirstAccountToSignIn()
+            .shouldPageBeDisplayed()
+            .doProceedWithSignIn()
+            .shouldSelectAnAccountDialogBeDisplayed()
+            .doSelectTheFirstAccountToSignIn()
         ;
         MajorWrappingPage.get()
-            .assertThatPageIsDisplayed()
+            .shouldPageBeDisplayed()
         ;
         CommonLocatorPage.get()
-            .assertThatPageIsDisplayed()
+            .shouldPageBeDisplayed()
         ;
     }
 
 
     @Test
-    public void initial_Common_Workflow_Performs_Minor_Main_Scenario() {
+    public void performs_Minor_Main_Scenario_With_Phone_Account() {
         SuT.get()
-            .resetApp()                                                                             // should cause app start from the initial WF
-            .startApp()
+            .doResetApp()                                                                           // should cause app start from the initial WF
+            .doStartApp()
         ;
         InitialCommonSetupPage.get()
-            .assertThatPageIsDisplayed()
-            .tellThatIAmMinor()
+            .shouldPageBeDisplayed()
+            .doTellThatIAmMinor()
         ;
         InitialCommonSignInPage.get()
-            .assertThatPageIsDisplayed()
-            .proceedWithSignIn()
-            .assertThatSelectAnAccountDialogIsDisplayed()
-            .selectTheFirstAccountToSignIn()
+            .shouldPageBeDisplayed()
+            .doProceedWithSignIn()
+            .shouldSelectAnAccountDialogBeDisplayed()
+            .doSelectTheFirstAccountToSignIn()
         ;
-        MajorWrappingPage.get()
-            .assertThatPageIsDisplayed()
+        InitialMinorWaitForInvitePage.get()
+            .shouldPageBeDisplayed()
+            .givenMajorPartyEmail(sMajorPartyEmail)
+            .doFakeReceiveInvite()
+        ;
+        InitialMinorAcceptInvitePage.get()
+            .shouldPageBeDisplayed()
+            .doAcceptInvite()
+        ;
+        MinorWrappingPage.get()
+            .shouldPageBeDisplayed()
         ;
         CommonLocatorPage.get()
-            .assertThatPageIsDisplayed()
+            .shouldPageBeDisplayed()
         ;
     }
 

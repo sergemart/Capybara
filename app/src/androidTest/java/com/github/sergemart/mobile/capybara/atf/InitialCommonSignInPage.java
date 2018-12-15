@@ -19,9 +19,6 @@ import static org.junit.Assert.fail;
 
 public class InitialCommonSignInPage {
 
-    private static InitialCommonSignInPage sInstance = new InitialCommonSignInPage();
-
-
     // Private constructor
     private InitialCommonSignInPage() {
         mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
@@ -30,14 +27,16 @@ public class InitialCommonSignInPage {
 
     // Factory method
     public static InitialCommonSignInPage get() {
-        if(sInstance == null) sInstance = new InitialCommonSignInPage();
-        return sInstance;
+        return new InitialCommonSignInPage();
     }
 
 
     // --------------------------- Member variables
 
     private UiDevice mDevice;
+    private UiObject2 mSignInButton;
+    private UiObject2 mSelectAccountDialog;
+    private UiObject mFirstAccountInList;
 
 
     // --------------------------- Locators
@@ -47,21 +46,58 @@ public class InitialCommonSignInPage {
     private static final UiSelector LR_ACCOUNT_LIST = new UiSelector().resourceId("android:id/list");
 
 
+    // --------------------------- Asserting widget getters
+
+    private UiObject2 getSignInButton() {
+        if (mSignInButton == null) {
+            mSignInButton = mDevice.wait(
+                Until.findObject(LR_SIGN_IN_BUTTON),
+                Constants.UI_AUTOMATOR_DEFAULT_TIMEOUT
+            );
+            assertNotNull("'Sign In' button is not displayed", mSignInButton);
+        }
+        return mSignInButton;
+    }
+
+
+    private UiObject2 getSelectAccountDialog() {
+        if (mSelectAccountDialog == null) {
+            mSelectAccountDialog = mDevice.wait(
+                Until.findObject(LR_SELECT_ACCOUNT_DIALOG),
+                Constants.UI_AUTOMATOR_DEFAULT_TIMEOUT
+            );
+            assertNotNull("'Select An Account' system dialog is not displayed", mSelectAccountDialog);
+        }
+        return mSelectAccountDialog;
+    }
+
+
+    private UiObject getFirstAccountInList() {
+        if (mFirstAccountInList == null) {
+            this.getSelectAccountDialog();
+            try {
+                UiCollection accountList = new UiCollection(LR_ACCOUNT_LIST);
+                mFirstAccountInList = accountList.getChild(new UiSelector().index(0));
+            } catch (UiObjectNotFoundException e) {
+                fail(e.getMessage());
+            }
+            assertNotNull("An account list is not displayed", mFirstAccountInList);
+        }
+        return mFirstAccountInList;
+    }
+
+
     // --------------------------- Use cases
 
-    public InitialCommonSignInPage proceedWithSignIn() {
-        UiObject2 signInButton = mDevice.findObject(LR_SIGN_IN_BUTTON);
-        assertNotNull("'Sign In' button not found", signInButton);
-        signInButton.click();
+    public InitialCommonSignInPage doProceedWithSignIn() {
+        this.getSignInButton().click();
         return this;
     }
 
 
-    public InitialCommonSignInPage selectTheFirstAccountToSignIn() {
+    public InitialCommonSignInPage doSelectTheFirstAccountToSignIn() {
         try {
-            UiCollection accountList = new UiCollection(LR_ACCOUNT_LIST);
-            UiObject firstAccountInList = accountList.getChild(new UiSelector().index(0));
-            firstAccountInList.click();
+            this.getFirstAccountInList().click();
         } catch (UiObjectNotFoundException e) {
             fail(e.getMessage());
         }
@@ -71,22 +107,18 @@ public class InitialCommonSignInPage {
 
     // --------------------------- Asserts
 
-    public InitialCommonSignInPage assertThatPageIsDisplayed() {
-        UiObject2 signInButton = mDevice.wait(
-            Until.findObject(LR_SIGN_IN_BUTTON),
-            Constants.UI_AUTOMATOR_DEFAULT_TIMEOUT
-        );
-        assertNotNull("'Initial Common Sign-In' page is not displayed", signInButton);
+    public InitialCommonSignInPage shouldPageBeDisplayed() {
+        try {
+            this.getSignInButton();
+        } catch (AssertionError e) {
+            fail("'Initial Common Sign-In' page is not displayed");
+        }
         return this;
     }
 
 
-    public InitialCommonSignInPage assertThatSelectAnAccountDialogIsDisplayed() {
-        UiObject2 selectAccountDialog = mDevice.wait(
-            Until.findObject(LR_SELECT_ACCOUNT_DIALOG),
-            Constants.UI_AUTOMATOR_DEFAULT_TIMEOUT
-        );
-        assertNotNull("'Select An Account' system dialog is not displayed", selectAccountDialog);
+    public InitialCommonSignInPage shouldSelectAnAccountDialogBeDisplayed() {
+        this.getSelectAccountDialog();
         return this;
     }
 

@@ -6,7 +6,12 @@ import android.content.Intent;
 import com.github.sergemart.mobile.capybara.BuildConfig;
 import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.data.datastore.AuthService;
+import com.github.sergemart.mobile.capybara.data.datastore.FirestoreService;
+import com.github.sergemart.mobile.capybara.data.datastore.FunctionsService;
 import com.github.sergemart.mobile.capybara.data.datastore.PreferenceStore;
+import com.github.sergemart.mobile.capybara.data.events.GenericEvent;
+import com.github.sergemart.mobile.capybara.data.model.CurrentUser;
+import com.github.sergemart.mobile.capybara.data.repo.CurrentUserRepo;
 
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.platform.app.InstrumentationRegistry;
@@ -21,36 +26,60 @@ import static org.hamcrest.Matchers.notNullValue;
 
 public class SuT {
 
-    private static SuT sInstance = new SuT();
-
-
     // Private constructor
     private SuT() {
         mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
+        mUserEmail = TestTools.get().getRandomEmail();
+        mUserPassword = Constants.TEST_USER_PASSWORD;
+        mAppMode = -1;
     }
 
 
     // Factory method
     public static SuT get() {
-        if(sInstance == null) sInstance = new SuT();
-        return sInstance;
+        return new SuT();
     }
+
 
     // --------------------------- Member variables
 
     private final UiDevice mDevice;
+    private String mUserEmail;
+    private String mUserPassword;
+    private int mAppMode;
+
+
+    // --------------------------- Givens
+
+    public SuT givenUserEmail(String email) {
+        mUserEmail = email;
+        return this;
+    }
+
+
+    public SuT givenUserPassword(String password) {
+        mUserPassword = password;
+        return this;
+    }
+
+
+    public SuT givenAppMode(int appMode) {
+        mAppMode = appMode;
+        return this;
+    }
 
 
     // --------------------------- Use cases
 
-    public SuT resetApp() {
+    public SuT doResetApp() {
         PreferenceStore.storeAppMode(-1);
+        PreferenceStore.storeFamilyJoined(false);
         AuthService.get().signOut();
         return this;
     }
 
 
-    public SuT startApp() {
+    public SuT doStartApp() {
         // Start from the home screen
         mDevice.pressHome();
         // Wait for launcher
@@ -73,4 +102,60 @@ public class SuT {
     }
 
 
+    public SuT doSignIn() {
+        AuthService.get().signInWithEmailAndPassword(mUserEmail, mUserPassword).blockingAwait();
+        return this;
+    }
+
+
+    public SuT doSignOut() {
+        AuthService.get().signOut();
+        return this;
+    }
+
+
+    public SuT doCreateUser() {
+        AuthService.get().createUserWithEmailAndPassword(mUserEmail, mUserPassword).blockingAwait();
+        AuthService.get().signInWithEmailAndPassword(mUserEmail, mUserPassword).blockingAwait();
+        CurrentUser currentUser = new CurrentUser();
+        currentUser.setAppMode(mAppMode);
+        currentUser.setDeviceToken(AuthService.get().getCurrentDeviceToken());
+        currentUser.setFake(true);
+        CurrentUserRepo.get().updateAsync(currentUser).blockingAwait();
+        return this;
+    }
+
+
+    public SuT doDeleteUser() {
+        AuthService.get().signInWithEmailAndPassword(mUserEmail, mUserPassword).blockingAwait();
+        FirestoreService.get().deleteCurrentUserAsync().blockingAwait();
+        AuthService.get().deleteUser().blockingAwait();
+        return this;
+    }
+
+
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    public SuT doCreateFamily() {
+        AuthService.get().signInWithEmailAndPassword(mUserEmail, mUserPassword).blockingAwait();
+        FunctionsService.get().createFamilyAsync();
+        FunctionsService.get().getCreateFamilySubject().blockingFirst();
+        return this;
+    }
+
+
+    public SuT doDeleteFamily() {
+        AuthService.get().signInWithEmailAndPassword(mUserEmail, mUserPassword).blockingAwait();
+        String userId = AuthService.get().getCurrentUser().getUid();
+        FirestoreService.get().deleteFamilyAsync(userId).blockingAwait();
+        return this;
+    }
+
+
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    public SuT doSendInvite() {
+        AuthService.get().signInWithEmailAndPassword(mUserEmail, mUserPassword).blockingAwait();
+        FunctionsService.get().sendInviteAsync(mUserEmail);
+        FunctionsService.get().getSendInviteSubject().blockingFirst();
+        return this;
+    }
 }

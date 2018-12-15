@@ -90,8 +90,13 @@ public class ErrorFatalFragment
 
     private void showErrorMessage(Throwable cause) {
         String messageToShow;
-        if (cause.getCause() == null) messageToShow = cause.getLocalizedMessage();
-        else messageToShow = cause.getLocalizedMessage() + " caused by:  " + cause.getCause().getLocalizedMessage();
+        if (cause == null) {
+            messageToShow = "";
+        } else if (cause.getCause() == null) {
+            messageToShow = cause.getLocalizedMessage();
+        } else {
+            messageToShow = cause.getLocalizedMessage() + " caused by:  " + cause.getCause().getLocalizedMessage();
+        }
         mErrorDetailsTextView.setText(messageToShow);
     }
 }

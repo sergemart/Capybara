@@ -124,7 +124,9 @@ public class FunctionsService {
     @SuppressWarnings("unchecked")
     public void createFamilyAsync() {
         if (!AuthService.get().isAuthenticated()) {
-            if (BuildConfig.DEBUG) Log.e(TAG, "User not authenticated while attempting to create family data on backend; skipping");
+            String errorMessage = mContext.getString(R.string.exception_firebase_not_authenticated);
+            if (BuildConfig.DEBUG) Log.e(TAG, errorMessage);
+            mCreateFamilySubject.onNext(GenericEvent.of(INTEGRITY_ERROR).setException(new FirebaseFunctionException(errorMessage)));
             return;
         }
 
@@ -190,11 +192,15 @@ public class FunctionsService {
     @SuppressWarnings("unchecked")
     public void createFamilyMemberAsync(String familyMemberEmail) {
         if (familyMemberEmail == null || familyMemberEmail.equals("")) {
-            if (BuildConfig.DEBUG) Log.e(TAG, "Empty or null family member email provided while attempting to store it on backend; skipping");
+            String errorMessage = mContext.getString(R.string.exception_firebase_wrong_call);
+            if (BuildConfig.DEBUG) Log.e(TAG, errorMessage);
+            mCreateFamilyMemberSubject.onNext(GenericEvent.of(INTEGRITY_ERROR).setException(new FirebaseFunctionException(errorMessage)));
             return;
         }
         if (!AuthService.get().isAuthenticated()) {
-            if (BuildConfig.DEBUG) Log.e(TAG, "User not authenticated while attempting to store family member on backend; skipping");
+            String errorMessage = mContext.getString(R.string.exception_firebase_not_authenticated);
+            if (BuildConfig.DEBUG) Log.e(TAG, errorMessage);
+            mCreateFamilyMemberSubject.onNext(GenericEvent.of(INTEGRITY_ERROR).setException(new FirebaseFunctionException(errorMessage)));
             return;
         }
 
@@ -258,11 +264,15 @@ public class FunctionsService {
     @SuppressWarnings("unchecked")
     public void deleteFamilyMemberAsync(String familyMemberEmail) {
         if (familyMemberEmail == null || familyMemberEmail.equals("")) {
-            if (BuildConfig.DEBUG) Log.e(TAG, "Empty or null family member email provided while attempting to remove it on backend; skipping");
+            String errorMessage = mContext.getString(R.string.exception_firebase_wrong_call);
+            if (BuildConfig.DEBUG) Log.e(TAG, errorMessage);
+            mDeleteFamilyMemberSubject.onNext(GenericEvent.of(INTEGRITY_ERROR).setException(new FirebaseFunctionException(errorMessage)));
             return;
         }
         if (!AuthService.get().isAuthenticated()) {
-            if (BuildConfig.DEBUG) Log.e(TAG, "User not authenticated while attempting to remove family member on backend; skipping");
+            String errorMessage = mContext.getString(R.string.exception_firebase_not_authenticated);
+            if (BuildConfig.DEBUG) Log.e(TAG, errorMessage);
+            mDeleteFamilyMemberSubject.onNext(GenericEvent.of(INTEGRITY_ERROR).setException(new FirebaseFunctionException(errorMessage)));
             return;
         }
 
@@ -326,7 +336,9 @@ public class FunctionsService {
     @SuppressWarnings("unchecked")
     public void checkFamilyMembershipAsync() {
         if (!AuthService.get().isAuthenticated()) {
-            if (BuildConfig.DEBUG) Log.e(TAG, "User not authenticated while attempting to remove family member on backend; skipping");
+            String errorMessage = mContext.getString(R.string.exception_firebase_not_authenticated);
+            if (BuildConfig.DEBUG) Log.e(TAG, errorMessage);
+            mCheckFamilyMembershipSubject.onNext(GenericEvent.of(INTEGRITY_ERROR).setException(new FirebaseFunctionException(errorMessage)));
             return;
         }
 
@@ -389,11 +401,15 @@ public class FunctionsService {
     @SuppressWarnings("unchecked")
     public void sendInviteAsync(String inviteeEmail) {
         if (inviteeEmail == null || inviteeEmail.equals("")) {
-            if (BuildConfig.DEBUG) Log.e(TAG, "Empty or null invitee email provided while attempting to send an invite; skipping");
+            String errorMessage = mContext.getString(R.string.exception_firebase_wrong_call);
+            if (BuildConfig.DEBUG) Log.e(TAG, errorMessage);
+            mSendInviteSubject.onNext(GenericEvent.of(INTEGRITY_ERROR).setException(new FirebaseFunctionException(errorMessage)));
             return;
         }
         if (!AuthService.get().isAuthenticated()) {
-            if (BuildConfig.DEBUG) Log.e(TAG, "User not authenticated while attempting to send an invite; skipping");
+            String errorMessage = mContext.getString(R.string.exception_firebase_not_authenticated);
+            if (BuildConfig.DEBUG) Log.e(TAG, errorMessage);
+            mSendInviteSubject.onNext(GenericEvent.of(INTEGRITY_ERROR).setException(new FirebaseFunctionException(errorMessage)));
             return;
         }
 
@@ -450,11 +466,15 @@ public class FunctionsService {
     @SuppressWarnings("unchecked")
     public void joinFamilyAsync(String invitingEmail) {
         if (invitingEmail == null || invitingEmail.equals("")) {
-            if (BuildConfig.DEBUG) Log.e(TAG, "Empty or null inviting email provided while attempting to join a family; skipping");
+            String errorMessage = mContext.getString(R.string.exception_firebase_wrong_call);
+            if (BuildConfig.DEBUG) Log.e(TAG, errorMessage);
+            mJoinFamilySubject.onNext(GenericEvent.of(INTEGRITY_ERROR).setException(new FirebaseFunctionException(errorMessage)));
             return;
         }
         if (!AuthService.get().isAuthenticated()) {
-            if (BuildConfig.DEBUG) Log.e(TAG, "User not authenticated while attempting to join a family; skipping");
+            String errorMessage = mContext.getString(R.string.exception_firebase_not_authenticated);
+            if (BuildConfig.DEBUG) Log.e(TAG, errorMessage);
+            mJoinFamilySubject.onNext(GenericEvent.of(INTEGRITY_ERROR).setException(new FirebaseFunctionException(errorMessage)));
             return;
         }
 
@@ -526,7 +546,9 @@ public class FunctionsService {
     @SuppressWarnings("unchecked")
     public void requestLocationsAsync() {
         if (!AuthService.get().isAuthenticated()) {
-            if (BuildConfig.DEBUG) Log.e(TAG, "User not authenticated while attempting to send location requests to a family; skipping");
+            String errorMessage = mContext.getString(R.string.exception_firebase_not_authenticated);
+            if (BuildConfig.DEBUG) Log.e(TAG, errorMessage);
+            mSendLocationRequestSubject.onNext(GenericEvent.of(INTEGRITY_ERROR).setException(new FirebaseFunctionException(errorMessage)));
             return;
         }
 
@@ -594,11 +616,15 @@ public class FunctionsService {
     @SuppressWarnings("unchecked")
     public void sendLocationAsync(Location location) {
         if (location == null) {
-            if (BuildConfig.DEBUG) Log.e(TAG, "Location is null while attempting to send it to a family; skipping");
+            String errorMessage = mContext.getString(R.string.exception_firebase_wrong_call);
+            if (BuildConfig.DEBUG) Log.e(TAG, errorMessage);
+            mSendLocationSubject.onNext(GenericEvent.of(INTEGRITY_ERROR).setException(new FirebaseFunctionException(errorMessage)));
             return;
         }
         if (!AuthService.get().isAuthenticated()) {
-            if (BuildConfig.DEBUG) Log.e(TAG, "User not authenticated while attempting to send location to a family; skipping");
+            String errorMessage = mContext.getString(R.string.exception_firebase_not_authenticated);
+            if (BuildConfig.DEBUG) Log.e(TAG, errorMessage);
+            mSendLocationSubject.onNext(GenericEvent.of(INTEGRITY_ERROR).setException(new FirebaseFunctionException(errorMessage)));
             return;
         }
 

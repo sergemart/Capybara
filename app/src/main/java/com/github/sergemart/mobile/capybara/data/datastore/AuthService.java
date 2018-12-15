@@ -12,7 +12,7 @@ import com.github.sergemart.mobile.capybara.Constants;
 import com.github.sergemart.mobile.capybara.R;
 import com.github.sergemart.mobile.capybara.data.events.GenericEvent;
 import com.github.sergemart.mobile.capybara.exception.FirebaseFunctionException;
-import com.github.sergemart.mobile.capybara.exception.FirebaseSigninException;
+import com.github.sergemart.mobile.capybara.exception.FirebaseAuthException;
 import com.github.sergemart.mobile.capybara.exception.GoogleSigninException;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -164,16 +164,16 @@ public class AuthService {
             .signInWithCredential(authCredential)
             .addOnCompleteListener(task -> {
                 if ( !task.isSuccessful() ) {                                                       // error check
-                    String errorMessage = mContext.getString(R.string.exception_firebase_client_connection_failed);
+                    String errorMessage = mContext.getString(R.string.exception_firebase_not_authenticated);
                     if (BuildConfig.DEBUG) Log.e(TAG, errorMessage);
-                    mSignInSubject.onNext(GenericEvent.of(FAILURE).setException( new FirebaseSigninException(errorMessage)) );
+                    mSignInSubject.onNext(GenericEvent.of(FAILURE).setException( new FirebaseAuthException(errorMessage)) );
                     return;
                 }
                 mFirebaseUser = mFirebaseAuth.getCurrentUser();
                 if (mFirebaseUser == null) {
                     String errorMessage = mContext.getString(R.string.exception_firebase_user_is_null);
                     if (BuildConfig.DEBUG) Log.e(TAG, errorMessage);
-                    mSignInSubject.onNext(GenericEvent.of(FAILURE).setException( new FirebaseSigninException(errorMessage)) );
+                    mSignInSubject.onNext(GenericEvent.of(FAILURE).setException( new FirebaseAuthException(errorMessage)) );
                     return;
                 }
                 mUsername = mFirebaseUser.getDisplayName();
@@ -194,16 +194,16 @@ public class AuthService {
                 .signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
                     if ( !task.isSuccessful() ) {                                                   // error check
-                        String errorMessage = mContext.getString(R.string.exception_firebase_client_connection_failed);
+                        String errorMessage = mContext.getString(R.string.exception_firebase_not_authenticated);
                         if (BuildConfig.DEBUG) Log.e(TAG, errorMessage);
-                        emitter.onError(new FirebaseSigninException(errorMessage));
+                        emitter.onError(new FirebaseAuthException(errorMessage));
                         return;
                     }
                     mFirebaseUser = mFirebaseAuth.getCurrentUser();
                     if (mFirebaseUser == null) {
                         String errorMessage = mContext.getString(R.string.exception_firebase_user_is_null);
                         if (BuildConfig.DEBUG) Log.e(TAG, errorMessage);
-                        emitter.onError(new FirebaseSigninException(errorMessage));
+                        emitter.onError(new FirebaseAuthException(errorMessage));
                         return;
                     }
                     mUsername = mFirebaseUser.getDisplayName();
@@ -226,8 +226,54 @@ public class AuthService {
             mUsername = Constants.DEFAULT_USERNAME;
             mSignOutSubject.onNext(GenericEvent.of(SUCCESS));
         } catch (Exception e) {
-            mSignOutSubject.onNext(GenericEvent.of(FAILURE).setException(new FirebaseSigninException(e)));
+            mSignOutSubject.onNext(GenericEvent.of(FAILURE).setException(new FirebaseAuthException(e)));
         }
+    }
+
+
+    // --------------------------- The interface: User management
+
+    /**
+     * Create a user with email and password.
+     * Out-of-workflow method to use in tests
+     */
+    public Completable createUserWithEmailAndPassword(String email, String password) {
+        return Completable.create(emitter ->
+            mFirebaseAuth
+                .createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(task -> {
+                    if ( !task.isSuccessful() ) {                                                   // error check
+                        String errorMessage = mContext.getString(R.string.exception_firebase_user_not_created);
+                        if (BuildConfig.DEBUG) Log.e(TAG, errorMessage);
+                        emitter.onError(new FirebaseAuthException(errorMessage));
+                        return;
+                    }
+                    if (BuildConfig.DEBUG) Log.d(TAG, "User created successfully: " + email);
+                    emitter.onComplete();
+                })
+        );
+    }
+
+
+    /**
+     * Delete a logged-in user.
+     * Out-of-workflow method to use in tests
+     */
+    public Completable deleteUser() {
+        return Completable.create(emitter ->
+            mFirebaseUser
+                .delete()
+                .addOnCompleteListener(task -> {
+                    if ( !task.isSuccessful() ) {                                                   // error check
+                        String errorMessage = mContext.getString(R.string.exception_firebase_user_not_deleted);
+                        if (BuildConfig.DEBUG) Log.e(TAG, errorMessage);
+                        emitter.onError(new FirebaseAuthException(errorMessage));
+                        return;
+                    }
+                    if (BuildConfig.DEBUG) Log.d(TAG, "User deleted successfully");
+                    emitter.onComplete();
+                })
+        );
     }
 
 

@@ -2,29 +2,43 @@ package com.github.sergemart.mobile.capybara.data.model;
 
 public class CurrentUser {
 
-    private String deviceToken;
-    private Integer appMode;
+    private String mDeviceToken;
+    private Integer mAppMode;
+    private Boolean mIsFake;
 
 
     // --------------------------- Getters/ setters
 
 
     public String getDeviceToken() {
-        return deviceToken;
+        return mDeviceToken;
     }
 
 
     public void setDeviceToken(String deviceToken) {
-        this.deviceToken = deviceToken;
+        this.mDeviceToken = deviceToken;
     }
 
 
     public Integer getAppMode() {
-        return appMode;
+        return mAppMode;
     }
 
 
     public void setAppMode(Integer appMode) {
-        this.appMode = appMode;
+        this.mAppMode = appMode;
     }
+
+
+    public Boolean isFake() {
+        return mIsFake;
+    }
+
+
+    public void setFake(Boolean fake) {
+        mIsFake = fake;
+    }
+
+
+
 }

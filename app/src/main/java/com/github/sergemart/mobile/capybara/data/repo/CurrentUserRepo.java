@@ -54,7 +54,8 @@ public class CurrentUserRepo {
             AuthService.get().setCurrentDeviceToken(currentUser.getDeviceToken());                  // update the app data
             userData.put(Constants.KEY_DEVICE_TOKEN, currentUser.getDeviceToken());
         }
-        return FirestoreService.get().updateCurrentUserAsync(userData);                                    // async update the backend data
+        if (currentUser.isFake() != null) userData.put(Constants.KEY_IS_FAKE, currentUser.isFake());
+        return FirestoreService.get().updateCurrentUserLocalReplicaAsync(userData);                 // async update the backend data
     }
 
 

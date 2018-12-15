@@ -14,9 +14,6 @@ import static org.junit.Assert.assertNotNull;
 
 public class CommonLocatorPage {
 
-    private static CommonLocatorPage sInstance = new CommonLocatorPage();
-
-
     // Private constructor
     private CommonLocatorPage() {
         mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
@@ -25,14 +22,14 @@ public class CommonLocatorPage {
 
     // Factory method
     public static CommonLocatorPage get() {
-        if(sInstance == null) sInstance = new CommonLocatorPage();
-        return sInstance;
+        return new CommonLocatorPage();
     }
 
 
     // --------------------------- Member variables
 
     private UiDevice mDevice;
+    private UiObject2 mMapFragment;
 
 
     // --------------------------- Locators
@@ -40,17 +37,27 @@ public class CommonLocatorPage {
     private static final BySelector LR_MAP_FRAGMENT = By.res("com.github.sergemart.mobile.capybara:id/fragment_map");
 
 
+    // --------------------------- Asserting widget getters
+
+    private UiObject2 getMapFragment() {
+        if (mMapFragment == null) {
+            mMapFragment = mDevice.wait(
+                Until.findObject(LR_MAP_FRAGMENT),
+                Constants.UI_AUTOMATOR_DEFAULT_TIMEOUT
+            );
+            assertNotNull("'Locator' page is not displayed", mMapFragment);
+        }
+        return mMapFragment;
+    }
+
+
     // --------------------------- Use cases
 
 
     // --------------------------- Asserts
 
-    public CommonLocatorPage assertThatPageIsDisplayed() {
-        UiObject2 mapFragment = mDevice.wait(
-            Until.findObject(LR_MAP_FRAGMENT),
-            Constants.UI_AUTOMATOR_DEFAULT_TIMEOUT
-        );
-        assertNotNull("'Map' page is not displayed", mapFragment);
+    public CommonLocatorPage shouldPageBeDisplayed() {
+        this.getMapFragment();
         return this;
     }
 
