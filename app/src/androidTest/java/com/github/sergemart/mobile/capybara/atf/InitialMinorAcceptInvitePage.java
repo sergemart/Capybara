@@ -1,9 +1,6 @@
 package com.github.sergemart.mobile.capybara.atf;
 
 import com.github.sergemart.mobile.capybara.Constants;
-import com.github.sergemart.mobile.capybara.data.events.GenericEvent;
-import com.github.sergemart.mobile.capybara.data.events.Result;
-import com.github.sergemart.mobile.capybara.data.repo.MessageRepo;
 
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.uiautomator.By;

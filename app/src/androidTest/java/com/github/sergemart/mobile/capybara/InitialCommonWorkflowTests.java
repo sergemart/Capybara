@@ -34,7 +34,6 @@ public class InitialCommonWorkflowTests {
 //    @Rule
 //    public ActivityTestRule<InitialCommonActivity> mActivityRule = new ActivityTestRule<>(InitialCommonActivity.class);
 
-
     private static String sMajorPartyEmail;
     private static String sMinorPartyEmail;
 
